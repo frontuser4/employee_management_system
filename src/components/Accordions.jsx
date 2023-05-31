@@ -12,7 +12,7 @@ import 'react-accessible-accordion/dist/fancy-example.css';
 
 export default function Accordions({heading, components}) {
     return (
-        <Accordion className='w-full focus:outline-none' allowZeroExpanded onChange={() => console.log('Hello world')}>
+        <Accordion className='w-full focus:outline-none' allowZeroExpanded>
             <AccordionItem>
                 <AccordionItemHeading>
                     <AccordionItemButton className="p-2 rounded border-teal-600 border">

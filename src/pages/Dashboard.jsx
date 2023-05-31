@@ -18,9 +18,11 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AddIcon from '@mui/icons-material/Add';
-import Calendra from '../components/Calendra';
 import AddModal from '../components/AddModal';
 import Table from '../components/Table';
+import Calendar from '../components/Calendra';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useLocation } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -95,7 +97,10 @@ export default function Dashboard() {
   const [open, setOpen] = useState(false);
   const [openCalendra, setOpenCalendra] = useState(false);
   const [openForm, setOpenForm] = useState(false);
-
+  const [calendarValue, setCalendarValue ] = useState('');
+  const {state} = useLocation();
+  console.log(state.data.empId);
+  console.log(state.stockist);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -106,7 +111,7 @@ export default function Dashboard() {
 
   const handleCalendra = ()=> {
     setOpenCalendra(true)
- }
+  }
  
  const handleAdd = ()=> {
   setOpenForm(true)
@@ -143,6 +148,25 @@ export default function Dashboard() {
         <Divider />
         <List>
             <ListItem disablePadding sx={{ display: 'block' }}>
+            <ListItemButton
+                onClick={handleAdd}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                   <AccountCircleIcon />
+                </ListItemIcon>
+                <ListItemText primary="Profile" sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
               <ListItemButton
                 onClick={handleCalendra}
                 sx={{
@@ -187,9 +211,19 @@ export default function Dashboard() {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         <Table/>
-      </Box>
-      <Calendra open={openCalendra} setOpen={setOpenCalendra}/>
-      <AddModal open={openForm} setOpen={setOpenForm}/>
+      </Box>  
+      <Calendar 
+        open={openCalendra} 
+        setOpen={setOpenCalendra} 
+        setCalendar={setCalendarValue} 
+      />
+      <AddModal 
+        open={openForm} 
+        setOpen={setOpenForm} 
+        calendarValue={calendarValue} 
+        empId={state.data.empId}
+        stockist={state.stockist}
+      />
     </Box>
   );
 }

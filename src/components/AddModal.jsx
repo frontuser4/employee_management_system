@@ -7,7 +7,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import AddForm from './AddForm';
 
-export default function AddModal({open, setOpen}) {
+export default function AddModal({open, setOpen, calendarValue, empId, stockist}) {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -28,7 +28,11 @@ export default function AddModal({open, setOpen}) {
           Monthly Expenses
         </DialogTitle>
         <DialogContent>
-         <AddForm/>
+         <AddForm 
+           calendarValue={calendarValue} 
+           empId={empId}
+           stockist={stockist}
+          />
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={handleClose}>

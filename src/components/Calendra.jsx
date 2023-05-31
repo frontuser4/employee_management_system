@@ -11,15 +11,17 @@ import DialogContent from '@mui/material/DialogContent';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
-export default function Calendar({ open, setOpen }) {
+export default function Calendar({ open, setOpen, setCalendar }) {
+
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-    const [value, setValue] = useState(dayjs('2023-05-29'));
+    const [value, setValue] = useState(dayjs());
 
     const handleClose = () => {
+        setCalendar(dayjs(value.$d).format('YYYY-MM-DD'))
         setOpen(false);
     };
-
+    console.log("calendra: ", dayjs(value.$d).format('YYYY'), dayjs(value.$d).format('MM'), dayjs(value.$d).format('DD'))
     return (
         <div>
             <Dialog

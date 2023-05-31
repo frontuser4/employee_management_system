@@ -1,11 +1,10 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useState} from 'react';
 import { useForm } from "react-hook-form";
 import toast, { Toaster } from 'react-hot-toast';
-import { useNavigate, redirect } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-const url = 'http://142.93.208.119:80/token/'
-
+const url = 'http://142.93.208.119:8000/account/weblogin';
 
 const Login = () => {
 
@@ -15,12 +14,15 @@ const Login = () => {
 
     function submitData(data) {
         axios.post(url, data).then((res) => {
-            toast.success(res.data.message)
-            setTimeout(()=>{
+            console.log(res.data.status)
+            if(res.data.status){
+                toast.success(res.data.message)
                 navigate('/dashboard', {state: res.data})
-            }, 1000)
+            }else{
+                toast.error(res.data.message)
+            }
         }).catch((err) => {
-            toast.success(err.message)
+            toast.error(err.message)
             console.log(err)
         })
     }
@@ -34,7 +36,7 @@ const Login = () => {
             submitData(data);
             reset();
         })} className='flex flex-col' >
-                    <input {...register("username")} placeholder="Username" className='mb-4 p-2 rounded' />
+                    <input {...register("empId")} placeholder="employee Id" className='mb-4 p-2 rounded' />
                     <input {...register("password")} type='password' placeholder="Password" className='mb-4 p-2 rounded' />
                     <input type="submit" className='bg-orange-600 text-white p-2 rounded cursor-pointer' />
                 </form>
