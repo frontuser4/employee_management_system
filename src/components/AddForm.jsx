@@ -1,33 +1,34 @@
 import { useState } from 'react';
-// import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
 import TextFeild from './TextFeild';
-import Dropdown, {AttendanceDropdown, ModeDropdown} from './Dropdown';
-
+import Dropdown, { AttendanceDropdown, ModeDropdown } from './Dropdown';
 import Accordions from './Accordions';
-import axios from 'axios';
 import dayjs from 'dayjs';
-// axios.defaults.headers.common['Authorization'] = `Token e6c9d81a9238dee3f44bcb132dd7f91cf4ec1c95`;
-axios.defaults.headers.common['Authorization'] = `jhsajdkhsakdjhsdjakjdhsajdsd`;
-const url = 'http://142.93.208.119:80/account/expence';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { post } from '../utils/api';
 
-const AddForm = ({calendarValue, empId, stockist}) => {
-  
-  // const { state } = useLocation();
+const AddForm = () => {
+
+  const { state } = useLocation();
   const { register, handleSubmit, reset } = useForm();
   const [data, setData] = useState("");
   const [attendance, setAttendance] = useState('');
   const [modeTravel, setModeTravel] = useState('');
-  const [stockistData, setStockistData ] = useState('');
-  const expensID = `${empId}${dayjs(calendarValue).format('YYYY')}${dayjs(calendarValue).format('MM')}${dayjs(calendarValue).format('DD')}`;
+  const [stockistData, setStockistData] = useState('');
+  const [date, setDate] = useState(dayjs());
+  const expensID = `${state.data.empId}${dayjs(date.$d).format('YYYY')}${dayjs(date.$d).format('MM')}${dayjs(date.$d).format('DD')}`;
 
-  const submitData = (data, url) => {
-    axios.post(url, data).then((res) => {
-      console.log(res)
-    }).catch((err) => {
-      console.log(err);
-    })
+  const submitData = async (data) => {
+    try {
+     const result = await post('/account/expence', data)
+     console.log('form-data: ', result)
+    } catch (error) {
+       console.log("error: ", error);
+    }
   }
 
   return (
@@ -35,16 +36,39 @@ const AddForm = ({calendarValue, empId, stockist}) => {
       <div className='bg-white w-full max-w-5xl md:my-3 rounded px-4 py-2'>
         <form onSubmit={handleSubmit((data) => {
           setData(data);
-          submitData({expenceId: expensID, emp:empId, dateExp: calendarValue, payer: stockistData, attendance, modeTravel, ...data}, url);
+          submitData(
+            {  
+               expenceId: expensID,
+               emp: state.data.empId, 
+               dateExp: dayjs(date.$d).format('YYYY-MM-DD'), 
+               payer: stockistData, 
+               attendance, 
+               modeTravel, 
+               ...data 
+            }
+          );
           reset();
         })} autoComplete='off'>
-          <div className='grid md:grid-cols-3 gap-3 mb-4'>
+
+          <div className='grid md:grid-cols-2 gap-3 mb-4'>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="Select Date"
+                value={date}
+                onChange={(newDate) => setDate(newDate)}
+                slotProps={{textField:{size:'small'}}}
+              />
+            </LocalizationProvider>
+
             <AttendanceDropdown
               title='Attendance'
-              option={['present', 'absent', 'MRM', ]}
+              option={['present', 'absent', 'MRM',]}
               value={attendance}
               onChange={(e) => setAttendance(e.target.value)}
             />
+          </div>
+
+          <div className='grid md:grid-cols-2 gap-3 mb-4'>
             <TextFeild
               value="tc"
               register={register}
@@ -69,7 +93,7 @@ const AddForm = ({calendarValue, empId, stockist}) => {
             />
             <Dropdown
               title='Stockist'
-              option={stockist}
+              option={state.stockist}
               value={stockistData}
               onChange={(e) => setStockistData(e.target.value)}
             />
@@ -128,7 +152,7 @@ const AddForm = ({calendarValue, empId, stockist}) => {
                       register={register}
                       placeholder="TRAVELING LONG"
                     />
-                     <TextFeild
+                    <TextFeild
                       value="lodginBoardig"
                       register={register}
                       placeholder="TRAVELING BOARDING"

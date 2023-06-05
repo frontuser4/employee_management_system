@@ -22,6 +22,7 @@
     "@mui/x-date-pickers-pro": "^6.5.0",
     "axios": "^1.4.0",
     "dayjs": "^1.11.7",
+    "dotenv": "^16.1.4",
     "export-to-csv": "^0.2.1",
     "material-react-table": "^1.12.0",
     "react": "^18.2.0",

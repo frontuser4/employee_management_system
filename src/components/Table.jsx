@@ -1,12 +1,11 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect} from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import { Box, Button } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { ExportToCsv } from 'export-to-csv'; //or use your library of choice here
-import axios from 'axios';
 import { useLocation } from 'react-router-dom';
-axios.defaults.headers.common['Authorization'] = `jhsajdkhsakdjhsdjakjdhsajdsd`;
-const url = 'http://142.93.208.119:80/account/expence';
+import {get} from '../utils/api';
+
 
 //defining columns outside of the component is fine, is stable
 // const columns = [
@@ -160,13 +159,15 @@ const Table = () => {
 
   const { state } = useLocation();
   const [userData, setUserData] = useState([]);
+
+   const getExprenceData = async()=>{
+    const result = await get('/account/expence', state.data.empId);
+    console.log("result: ", result)
+    setUserData(result);
+   }
+
   useEffect(() => {
-    axios.get(url, { params: { empId: state.data.empId } }).then((res) => {
-      setUserData(res.data.excpences);
-      console.log(res)
-    }).catch((err) => {
-      console.log("error: ", err);
-    })
+    getExprenceData();
   }, [])
 
   const columns = [
@@ -333,10 +334,12 @@ const Table = () => {
 
   return (
     <MaterialReactTable
+      muiTableProps={{sx:{
+        overflowX:'scroll'
+      }}}
       columns={columns}
       data={userData}
       enableRowSelection
-      mui
       positionToolbarAlertBanner="bottom"
       renderTopToolbarCustomActions={({ table }) => (
         <Box

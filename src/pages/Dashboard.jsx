@@ -16,11 +16,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AddIcon from '@mui/icons-material/Add';
 import AddModal from '../components/AddModal';
 import Table from '../components/Table';
-import Calendar from '../components/Calendra';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useLocation } from 'react-router-dom';
 import Profile from '../components/Profile';
@@ -96,9 +94,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export default function Dashboard() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
-  const [openCalendra, setOpenCalendra] = useState(false);
   const [openForm, setOpenForm] = useState(false);
-  const [calendarValue, setCalendarValue ] = useState('');
   const [openProfile, setOpenProfile] = useState(false);
   const {state} = useLocation();
 
@@ -109,10 +105,6 @@ export default function Dashboard() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
-  const handleCalendra = ()=> {
-    setOpenCalendra(true)
-  }
  
  const handleAdd = ()=> {
   setOpenForm(true)
@@ -172,25 +164,6 @@ export default function Dashboard() {
                 <ListItemText primary="Profile" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
               <ListItemButton
-                onClick={handleCalendra}
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <CalendarMonthIcon />
-                </ListItemIcon>
-                <ListItemText primary="Calendra" sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-              <ListItemButton
                 onClick={handleAdd}
                 sx={{
                   minHeight: 48,
@@ -212,19 +185,13 @@ export default function Dashboard() {
             </ListItem>
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3,  }}>
         <DrawerHeader />
         <Table/>
       </Box>  
-      <Calendar 
-        open={openCalendra} 
-        setOpen={setOpenCalendra} 
-        setCalendar={setCalendarValue} 
-      />
       <AddModal 
         open={openForm} 
         setOpen={setOpenForm} 
-        calendarValue={calendarValue} 
         empId={state.data.empId}
         stockist={state.stockist}
       />

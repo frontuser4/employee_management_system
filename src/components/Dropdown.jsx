@@ -2,7 +2,7 @@
 const Dropdown = ({title, option, value, onChange}) => {
   return (
     <div>
-        <select id="countries" value={value} onChange={onChange} className="w-full p-2 border-emerald-600 border rounded focus:outline-none">
+        <select id="countries" defaultValue="stockist name" value={value} onChange={onChange} className="w-full p-2 border-emerald-600 border rounded focus:outline-none">
         <option selected>{title}</option>
         {
           option?.map((data, index)=>{
@@ -17,7 +17,7 @@ const Dropdown = ({title, option, value, onChange}) => {
 const AttendanceDropdown = ({title, option, value, onChange})=>{
   return (
     <div>
-        <select id="countries"  value={value} onChange={onChange} className="w-full p-2 border-emerald-600 border rounded focus:outline-none">
+        <select id="countries" defaultValue="attendance"  value={value} onChange={onChange} className="w-full p-2 border-emerald-600 border rounded focus:outline-none">
         <option selected>{title}</option>
         {
           option?.map((data, index)=>{
@@ -32,7 +32,7 @@ const AttendanceDropdown = ({title, option, value, onChange})=>{
 const ModeDropdown = ({title, option, value, onChange})=>{
   return (
     <div>
-        <select id="countries" value={value} onChange={onChange} className="w-full p-2 border-emerald-600 border rounded focus:outline-none">
+        <select id="countries" defaultValue="mode" value={value} onChange={onChange} className="w-full p-2 border-emerald-600 border rounded focus:outline-none">
         <option selected>{title}</option>
         {
           option?.map((data, index)=>{
