@@ -185,7 +185,7 @@ export default function Dashboard() {
             </ListItem>
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3,  }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, overflowX:'auto' }}>
         <DrawerHeader />
         <Table/>
       </Box>  
