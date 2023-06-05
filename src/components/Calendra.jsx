@@ -21,7 +21,6 @@ export default function Calendar({ open, setOpen, setCalendar }) {
         setCalendar(dayjs(value.$d).format('YYYY-MM-DD'))
         setOpen(false);
     };
-    console.log("calendra: ", dayjs(value.$d).format('YYYY'), dayjs(value.$d).format('MM'), dayjs(value.$d).format('DD'))
     return (
         <div>
             <Dialog

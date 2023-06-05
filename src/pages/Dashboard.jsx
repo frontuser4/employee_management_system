@@ -23,6 +23,7 @@ import Table from '../components/Table';
 import Calendar from '../components/Calendra';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useLocation } from 'react-router-dom';
+import Profile from '../components/Profile';
 
 const drawerWidth = 240;
 
@@ -98,9 +99,9 @@ export default function Dashboard() {
   const [openCalendra, setOpenCalendra] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [calendarValue, setCalendarValue ] = useState('');
+  const [openProfile, setOpenProfile] = useState(false);
   const {state} = useLocation();
-  console.log(state.data.empId);
-  console.log(state.stockist);
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -121,7 +122,8 @@ export default function Dashboard() {
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
-        <Toolbar>
+        <Toolbar className='flex items-center justify-between'>
+          <Box className='flex items-center'>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -137,6 +139,8 @@ export default function Dashboard() {
           <Typography variant="h6" noWrap component="div">
             EMS
           </Typography>
+          </Box>
+        <Typography>Hello, {state.data.name}</Typography>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -149,7 +153,7 @@ export default function Dashboard() {
         <List>
             <ListItem disablePadding sx={{ display: 'block' }}>
             <ListItemButton
-                onClick={handleAdd}
+                onClick={()=> setOpenProfile(true)}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? 'initial' : 'center',
@@ -224,6 +228,10 @@ export default function Dashboard() {
         empId={state.data.empId}
         stockist={state.stockist}
       />
-    </Box>
+      <Profile
+       open={openProfile}
+       setOpen={setOpenProfile}
+      />
+    </Box>   
   );
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+// import { useLocation } from 'react-router-dom';
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
 import TextFeild from './TextFeild';
@@ -10,11 +10,11 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 // axios.defaults.headers.common['Authorization'] = `Token e6c9d81a9238dee3f44bcb132dd7f91cf4ec1c95`;
 axios.defaults.headers.common['Authorization'] = `jhsajdkhsakdjhsdjakjdhsajdsd`;
-const url = 'http://142.93.208.119:8000/account/expence';
+const url = 'http://142.93.208.119:80/account/expence';
 
 const AddForm = ({calendarValue, empId, stockist}) => {
   
-  const { state } = useLocation();
+  // const { state } = useLocation();
   const { register, handleSubmit, reset } = useForm();
   const [data, setData] = useState("");
   const [attendance, setAttendance] = useState('');
@@ -35,7 +35,7 @@ const AddForm = ({calendarValue, empId, stockist}) => {
       <div className='bg-white w-full max-w-5xl md:my-3 rounded px-4 py-2'>
         <form onSubmit={handleSubmit((data) => {
           setData(data);
-          submitData({expId: expensID, empId:empId, dateExp: calendarValue, stockist: stockistData, attendance, modeTravel, ...data}, url);
+          submitData({expenceId: expensID, emp:empId, dateExp: calendarValue, payer: stockistData, attendance, modeTravel, ...data}, url);
           reset();
         })} autoComplete='off'>
           <div className='grid md:grid-cols-3 gap-3 mb-4'>
@@ -121,7 +121,7 @@ const AddForm = ({calendarValue, empId, stockist}) => {
                     <TextFeild
                       value="localConv"
                       register={register}
-                      placeholder="localConv"
+                      placeholder="LOCAL CONV"
                     />
                     <TextFeild
                       value="travelingLong"

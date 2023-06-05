@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
-const url = 'http://142.93.208.119:8000/account/weblogin';
+const url = 'http://142.93.208.119:80/account/weblogin';
 
 const Login = () => {
 
@@ -14,7 +14,7 @@ const Login = () => {
 
     function submitData(data) {
         axios.post(url, data).then((res) => {
-            console.log(res.data.status)
+            // console.log(res.data.status)
             if(res.data.status){
                 toast.success(res.data.message)
                 navigate('/dashboard', {state: res.data})
