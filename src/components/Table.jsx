@@ -8,6 +8,17 @@ import { get } from '../utils/api';
 import dayjs from 'dayjs';
 import {  MonthDropDown, YearDropDown } from '../components/Dropdown';
 
+function AttendanceColor({cell}){
+  if(cell.getValue() === 'present'){
+    return <div className='bg-green-400 w-16 p-1 rounded text-center'>{cell.getValue()}</div>;
+  }else if(cell.getValue() === 'absent'){
+    return <div className='bg-red-400 w-16 p-1 rounded text-center'>{cell.getValue()}</div>;
+  }else if(cell.getValue() === 'MRM'){
+    return <div className='bg-cyan-400 w-16 p-1 rounded text-center'>{cell.getValue()}</div>;
+  }
+   return cell.getValue();
+}
+
 const Table = () => {
 
   const { state } = useLocation();
@@ -18,15 +29,15 @@ const Table = () => {
   const [isLoading, setLoading] = useState(false);
 
   const getExprenceData = async () => {
-    setLoading(true)
+    setLoading(true);
     const result = await get('/account/expence', state.data.empId, month, year);
     setUserData(result);
-    setLoading(false)
+    setLoading(false);
   }
 
-  // useEffect(() => {
-  //   getExprenceData();
-  // }, [])
+  useEffect(() => {
+    getExprenceData();
+  }, [])
 
   useEffect(() => {
     getExprenceData();
@@ -47,9 +58,9 @@ const Table = () => {
       accessorKey: 'attendance',
       header: 'Attendance',
       size: 50,
-      muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-        ...getCommonEditTextFieldProps(cell),
-      }),
+      Cell: ({ cell }) => {
+        return <AttendanceColor cell={cell}/>;
+      },
     },
     {
       accessorKey: 'tc',
@@ -191,16 +202,22 @@ const Table = () => {
   };
 
   const getCommonEditTextFieldProps = (cell) => {
-    console.log("cell: ", cell);
+    setCell(cell);
   }
 
   return (
     <MaterialReactTable
       columns={columns}
       data={userData}
-      enableRowSelection
       enablePagination={false}
-      positionToolbarAlertBanner="bottom"
+      enableColumnActions={true}
+      muiSelectCheckboxProps={false}
+      renderRowActions={({row, table})=>(
+        <Box>
+          <button>edit</button>
+          <button>edit</button>
+        </Box>
+      )}
       state={{ isLoading: isLoading }}
       renderTopToolbarCustomActions={({ table }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -225,9 +242,6 @@ const Table = () => {
           </div>
         </Box>
       )}
-      renderRowActions={({row, table})=>{
-        console.log({row, table})
-      }}
     />
   );
 };

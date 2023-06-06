@@ -56,6 +56,12 @@ const ScoreCard = () => {
       data={[]}
       enableRowSelection
       positionToolbarAlertBanner="bottom"
+      // enableColumnActions={true}
+      enableRowActions={({row, table})=>(
+        <Box>
+          <button>delete</button>
+        </Box>
+      )}
       renderTopToolbarCustomActions={({ table }) => (
         <Box
           sx={{ display: 'flex', gap: '1rem', p: '0.5rem', flexWrap: 'wrap' }}
