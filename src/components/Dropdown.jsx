@@ -4,49 +4,121 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
+const StockistDropdown = ({title, option, value, onChange})=>{
+  const [open, setOpen] = useState(false);
 
-const Dropdown = ({title, option, value, onChange}) => {
-  return (
-    <div>
-        <select id="countries" defaultValue="stockist name" value={value} onChange={onChange} className="w-full p-2 border-emerald-600 border rounded focus:outline-none">
-        <option selected>{title}</option>
-        {
+  const handleChange = (event) => {
+    onChange(event.target.value);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  return(
+    <FormControl sx={{ width: '100%'}}>
+        <InputLabel id="demo-controlled-open-select-label">{title}</InputLabel>
+        <Select
+          labelId="demo-controlled-open-select-label"
+          id="demo-controlled-open-select"
+          open={open}
+          onClose={handleClose}
+          onOpen={handleOpen}
+          value={value}
+          label={title}
+          onChange={handleChange}
+          size='small'
+        >
+         {
           option?.map((data, index)=>{
-            return <option key={index} value={data.payerId} >[{data.payerId}] {data.stokist_name}</option>
+           return <MenuItem key={index} value={data.payerId}>[{data.payerId}] {data.stokist_name}</MenuItem>
           })
         }
-    </select>
-    </div>
+        </Select>
+      </FormControl>
   )
 }
 
 const AttendanceDropdown = ({title, option, value, onChange})=>{
-  return (
-    <div>
-        <select id="countries" defaultValue="attendance"  value={value} onChange={onChange} className="w-full p-2 border-emerald-600 border rounded focus:outline-none">
-        <option selected>{title}</option>
-        {
+  const [open, setOpen] = useState(false);
+
+  const handleChange = (event) => {
+    onChange(event.target.value);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  return(
+    <FormControl sx={{ width: '100%'}}>
+        <InputLabel id="demo-controlled-open-select-label">{title}</InputLabel>
+        <Select
+          labelId="demo-controlled-open-select-label"
+          id="demo-controlled-open-select"
+          open={open}
+          onClose={handleClose}
+          onOpen={handleOpen}
+          value={value}
+          label={title}
+          onChange={handleChange}
+          size='small'
+        >
+         {
           option?.map((data, index)=>{
-            return <option key={index} value={data} >{data}</option>
+           return <MenuItem key={index} value={data}>{data}</MenuItem>
           })
         }
-    </select>
-    </div>
+          
+        </Select>
+      </FormControl>
   )
 }
 
 const ModeDropdown = ({title, option, value, onChange})=>{
-  return (
-    <div>
-        <select id="countries" defaultValue="mode" value={value} onChange={onChange} className="w-full p-2 border-emerald-600 border rounded focus:outline-none">
-        <option selected>{title}</option>
-        {
+  const [open, setOpen] = useState(false);
+
+  const handleChange = (event) => {
+    onChange(event.target.value);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  return(
+    <FormControl sx={{ width: '100%'}}>
+        <InputLabel id="demo-controlled-open-select-label">{title}</InputLabel>
+        <Select
+          labelId="demo-controlled-open-select-label"
+          id="demo-controlled-open-select"
+          open={open}
+          onClose={handleClose}
+          onOpen={handleOpen}
+          value={value}
+          label={title}
+          onChange={handleChange}
+          size='small'
+        >
+           {
           option?.map((data, index)=>{
-            return <option key={index} value={data} >{data}</option>
+           return <MenuItem key={index} value={data}>{data}</MenuItem>
           })
         }
-    </select>
-    </div>
+        </Select>
+      </FormControl>
   )
 }
 
@@ -79,29 +151,29 @@ const MonthDropDown = ({month, setMonth})=>{
           onChange={handleChange}
           size='small'
         >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <MenuItem value={0}>Jan</MenuItem>
-          <MenuItem value={1}>Feb</MenuItem>
-          <MenuItem value={2}>March</MenuItem>
-          <MenuItem value={3}>April</MenuItem>
-          <MenuItem value={4}>May</MenuItem>
-          <MenuItem value={5}>June</MenuItem>
-          <MenuItem value={6}>July</MenuItem>
-          <MenuItem value={7}>Aug</MenuItem>
-          <MenuItem value={8}>Sep</MenuItem>
-          <MenuItem value={9}>Oct</MenuItem>
-          <MenuItem value={10}>Nov</MenuItem>
-          <MenuItem value={11}>Dec</MenuItem>
+          <MenuItem value={1}>Jan</MenuItem>
+          <MenuItem value={2}>Feb</MenuItem>
+          <MenuItem value={3}>March</MenuItem>
+          <MenuItem value={4}>April</MenuItem>
+          <MenuItem value={5}>May</MenuItem>
+          <MenuItem value={6}>June</MenuItem>
+          <MenuItem value={7}>July</MenuItem>
+          <MenuItem value={8}>Aug</MenuItem>
+          <MenuItem value={9}>Sep</MenuItem>
+          <MenuItem value={10}>Oct</MenuItem>
+          <MenuItem value={11}>Nov</MenuItem>
+          <MenuItem value={12}>Dec</MenuItem>
         </Select>
       </FormControl>
   )
 }
 
 const YearDropDown = ({year, setYear})=>{
-  const [open, setOpen] = useState(false);
 
+  // console.log(year.map((year)=> year+1));
+
+  const [open, setOpen] = useState(false);
+  
   const handleChange = (event) => {
     setYear(event.target.value);
   };
@@ -140,6 +212,4 @@ const YearDropDown = ({year, setYear})=>{
   )
 }
 
-export {AttendanceDropdown, ModeDropdown, MonthDropDown, YearDropDown}
-
-export default Dropdown
+export {AttendanceDropdown, ModeDropdown, StockistDropdown, MonthDropDown, YearDropDown}

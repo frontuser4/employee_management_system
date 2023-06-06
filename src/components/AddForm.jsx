@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
 import TextFeild from './TextFeild';
-import Dropdown, { AttendanceDropdown, ModeDropdown } from './Dropdown';
+import { AttendanceDropdown, ModeDropdown, StockistDropdown } from './Dropdown';
 import Accordions from './Accordions';
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -50,7 +50,7 @@ const AddForm = () => {
           reset();
         })} autoComplete='off'>
 
-          <div className='grid md:grid-cols-2 gap-3 mb-4'>
+          <div className='grid md:grid-cols-2 place-items-center gap-3 mb-4'>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="Select Date"
@@ -64,7 +64,7 @@ const AddForm = () => {
               title='Attendance'
               option={['present', 'absent', 'MRM',]}
               value={attendance}
-              onChange={(e) => setAttendance(e.target.value)}
+              onChange={(e) => setAttendance(e)}
             />
           </div>
 
@@ -91,11 +91,11 @@ const AddForm = () => {
               register={register}
               placeholder="WORKING HOURS"
             />
-            <Dropdown
+            <StockistDropdown
               title='Stockist'
               option={state.stockist}
               value={stockistData}
-              onChange={(e) => setStockistData(e.target.value)}
+              onChange={(e) => setStockistData(e)}
             />
           </div>
           <div className='grid md:grid-cols-3 gap-3 mb-4'>
@@ -121,7 +121,7 @@ const AddForm = () => {
               title='Mode of Travel'
               option={['train', 'bus', 'bike']}
               value={modeTravel}
-              onChange={(e) => setModeTravel(e.target.value)}
+              onChange={(e) => setModeTravel(e)}
             />
             <TextFeild
               value="distance"

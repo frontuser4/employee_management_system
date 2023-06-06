@@ -2,31 +2,39 @@ import { useState, useEffect } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import { Box, Button } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import { ExportToCsv } from 'export-to-csv'; 
+import { ExportToCsv } from 'export-to-csv';
 import { useLocation } from 'react-router-dom';
 import { get } from '../utils/api';
-import { MonthDropDown } from '../components/Dropdown';
-import { YearDropDown } from '../components/Dropdown';
+import dayjs from 'dayjs';
+import {  MonthDropDown, YearDropDown } from '../components/Dropdown';
 
 const Table = () => {
 
   const { state } = useLocation();
   const [userData, setUserData] = useState([]);
-  const [month, setMonth] = useState(0);
-  const [year, setYear] = useState(2015);
+  const [date, setDate] = useState(dayjs());
+  const [year, setYear] = useState(dayjs(date.$d).format('YYYY'));
+  const [month, setMonth] = useState(dayjs(date.$d).format('MM').split('')[1]);
+  const [isLoading, setLoading] = useState(false);
 
   const getExprenceData = async () => {
+    setLoading(true)
     const result = await get('/account/expence', state.data.empId, month, year);
     setUserData(result);
+    setLoading(false)
   }
+
+  // useEffect(() => {
+  //   getExprenceData();
+  // }, [])
 
   useEffect(() => {
     getExprenceData();
-  }, [month, year])
+  }, [year, month])
 
   const columns = [
     {
-      accessorKey: 'emp',
+      accessorKey: 'emp_id',
       header: 'empId',
       size: 40,
     },
@@ -191,11 +199,13 @@ const Table = () => {
       columns={columns}
       data={userData}
       enableRowSelection
+      enablePagination={false}
       positionToolbarAlertBanner="bottom"
+      state={{ isLoading: isLoading }}
       renderTopToolbarCustomActions={({ table }) => (
-        <Box sx={{display:'flex'}}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Box
-            sx={{  p: '0.5rem' }}
+            sx={{ p: '0.5rem' }}
           >
             <Button
               color="primary"
@@ -215,6 +225,9 @@ const Table = () => {
           </div>
         </Box>
       )}
+      renderRowActions={({row, table})=>{
+        console.log({row, table})
+      }}
     />
   );
 };
