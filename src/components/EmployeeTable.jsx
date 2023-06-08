@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import dayjs from 'dayjs';
 import { getEmp } from '../utils/api';
@@ -6,7 +6,7 @@ import { MonthDropDown, YearDropDown } from '../components/Dropdown';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export const EmployeeTable = () => {
-    
+   
     const navigate = useNavigate();
     const {state} = useLocation();
     const [empData, setEmpData] = useState([]);
@@ -17,21 +17,22 @@ export const EmployeeTable = () => {
     const getEmployeData = async () => {
         const result = await getEmp('/account/emplist',  month, year);
         setEmpData(result);
-        console.log(result)
     }
 
     useEffect(() => {
         getEmployeData();
     }, [])
 
-    const columns = useMemo(
-        //column definitions...
-        () => [
+    useEffect(()=>{
+        getEmployeData()
+    }, [month, year])
+
+    const columns = [
             {
                 accessorKey: 'emp__empId',
                 header: 'EmpId',
                 Cell: ({ cell }) => {
-                    return <button onClick={()=> navigate('/dashboard', {state: state})}  className='bg-cyan-400 px-2 py-1 rounded'>{cell.getValue()}</button>;
+                    return <button onClick={()=> navigate(`/employee/${cell.row.original.emp__empId}`, {state : {day: dayjs(date.$d).format('DD').split('')[1], month: month, year: year, ...state}})}  className='bg-cyan-400 px-2 py-1 rounded'>{cell.getValue()}</button>;
                   },
             },
             {
@@ -46,10 +47,7 @@ export const EmployeeTable = () => {
                 accessorKey: 'emp__hq',
                 header: 'Emp HQ',
             },
-        ],
-        [],
-        //end
-    );
+        ]
 
     return (
         <MaterialReactTable

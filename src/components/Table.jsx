@@ -3,10 +3,9 @@ import { MaterialReactTable } from 'material-react-table';
 import { Box, Button, IconButton } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { ExportToCsv } from 'export-to-csv';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { get, post, update } from '../utils/api';
 import dayjs from 'dayjs';
-import { MonthDropDown, YearDropDown } from '../components/Dropdown';
 import EditIcon from '@mui/icons-material/Edit';
 
 function AttendanceColor({ cell }) {
@@ -21,22 +20,20 @@ function AttendanceColor({ cell }) {
   return cell.getValue();
 }
 
-const Table = ({openForm}) => {
+const Table = ({}) => {
 
   const { state } = useLocation();
+  const {id} = useParams();
   const [userData, setUserData] = useState([]);
-  const [date, setDate] = useState(dayjs());
-  const [year, setYear] = useState(dayjs(date.$d).format('YYYY'));
-  const [month, setMonth] = useState(dayjs(date.$d).format('MM').split('')[1]);
   const [isLoading, setLoading] = useState(false);
   const [checked, setChecked] = useState(true);
   const [approval, setApproval] = useState([]);
-  const expensID = `${state.data.empId}${dayjs(date.$d).format('YYYY')}${dayjs(date.$d).format('MM')}${dayjs(date.$d).format('DD')}`;
+  const expensID = `${id}${dayjs(state.year).format('YYYY')}${dayjs(state.month).format('MM')}${dayjs(state.day).format('DD')}`;
 
   const getExprenceData = async () => {
     setLoading(true);
     setUserData([])
-    const result = await get('/account/expence', state.data.empId, month, year);
+    const result = await get('/account/expence', id, state.month, state.year);
     setUserData(result);
     setLoading(false);
   }
@@ -47,7 +44,7 @@ const Table = ({openForm}) => {
 
   useEffect(() => {
     getExprenceData();
-  }, [year, month, openForm, ])
+  }, [state.year, state.month])
 
   const handleClick = (expenceId)=> {
       if(checked){
@@ -278,12 +275,6 @@ const Table = ({openForm}) => {
               Export All Data
             </Button>
           </Box>
-          <div>
-            <MonthDropDown month={month} setMonth={setMonth} />
-          </div>
-          <div>
-            <YearDropDown year={year} setYear={setYear} />
-          </div>
         </Box>
       )}
       renderBottomToolbar={({ table }) => (

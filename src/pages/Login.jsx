@@ -21,7 +21,7 @@ const Login = () => {
             if(res.data.status){
                 toast.success(res.data.message)
                 dispatch(login(res.data));
-                navigate('/employee', {state: res.data})
+                navigate(`${res.data.desig != 'SM' || res.data.desig != 'HO' || res.data.desig != 'accounts' ? `/employee/${res.data.empId}` : '/dashboard' }`, {state: res.data})
             }else{
                 toast.error(res.data.message)
             }

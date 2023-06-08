@@ -1,6 +1,6 @@
 import axios from "axios";
 axios.defaults.headers.common['Authorization'] = `jhsajdkhsakdjhsdjakjdhsajdsd`;
-const BASE_URL = 'http://142.93.208.119:8000';
+const BASE_URL = 'http://142.93.208.119:80';
 
 
 async function get(url, id, month, year){

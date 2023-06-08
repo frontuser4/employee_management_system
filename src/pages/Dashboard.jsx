@@ -22,7 +22,7 @@ import Table from '../components/Table';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useLocation, useParams } from 'react-router-dom';
 import Profile from '../components/Profile';
-
+import EmployeeTable from '../components/EmployeeTable'
 
 const drawerWidth = 240;
 
@@ -191,7 +191,7 @@ export default function Dashboard() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3, overflowX:'auto' }}>
         <DrawerHeader />
-        <Table openForm={openForm}/>
+        <EmployeeTable />
       </Box>  
       <AddModal 
         open={openForm} 
