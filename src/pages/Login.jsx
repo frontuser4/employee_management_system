@@ -3,6 +3,8 @@ import { useState} from 'react';
 import { useForm } from "react-hook-form";
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { login } from '../store/loginSlice';
 
 const url = 'http://142.93.208.119:80/account/weblogin';
 
@@ -11,13 +13,15 @@ const Login = () => {
     const { register, handleSubmit, reset } = useForm();
     const [data, setData] = useState("");
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     function submitData(data) {
         axios.post(url, data).then((res) => {
             // console.log(res.data.status)
             if(res.data.status){
                 toast.success(res.data.message)
-                navigate('/dashboard', {state: res.data})
+                dispatch(login(res.data));
+                navigate('/employee', {state: res.data})
             }else{
                 toast.error(res.data.message)
             }

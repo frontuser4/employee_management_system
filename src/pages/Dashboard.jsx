@@ -20,8 +20,9 @@ import AddIcon from '@mui/icons-material/Add';
 import AddModal from '../components/AddModal';
 import Table from '../components/Table';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import Profile from '../components/Profile';
+
 
 const drawerWidth = 240;
 
@@ -98,7 +99,7 @@ export default function Dashboard() {
   const [openForm, setOpenForm] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
   const {state} = useLocation();
-
+  const params = useParams();
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -110,6 +111,8 @@ export default function Dashboard() {
  const handleAdd = ()=> {
   setOpenForm(true)
  }
+
+ console.log("params: ", params);
 
   return (
     <Box sx={{ display: 'flex' }}>

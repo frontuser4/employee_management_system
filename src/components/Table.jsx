@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { MaterialReactTable } from 'material-react-table';
-import { Box, Button, IconButton, MenuItem } from '@mui/material';
+import { Box, Button, IconButton } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { ExportToCsv } from 'export-to-csv';
 import { useLocation } from 'react-router-dom';
@@ -20,18 +20,18 @@ function AttendanceColor({ cell }) {
   }
   return cell.getValue();
 }
-const options = []
 
 const Table = ({openForm}) => {
+
   const { state } = useLocation();
   const [userData, setUserData] = useState([]);
   const [date, setDate] = useState(dayjs());
   const [year, setYear] = useState(dayjs(date.$d).format('YYYY'));
   const [month, setMonth] = useState(dayjs(date.$d).format('MM').split('')[1]);
   const [isLoading, setLoading] = useState(false);
-  const [rowSelection, setRowSelection] = useState({});
+  const [checked, setChecked] = useState(true);
+  const [approval, setApproval] = useState([]);
   const expensID = `${state.data.empId}${dayjs(date.$d).format('YYYY')}${dayjs(date.$d).format('MM')}${dayjs(date.$d).format('DD')}`;
-
 
   const getExprenceData = async () => {
     setLoading(true);
@@ -41,8 +41,6 @@ const Table = ({openForm}) => {
     setLoading(false);
   }
 
-  console.log("rowSelection: ", rowSelection);
-
   useEffect(() => {
     getExprenceData();
   }, [])
@@ -50,6 +48,18 @@ const Table = ({openForm}) => {
   useEffect(() => {
     getExprenceData();
   }, [year, month, openForm, ])
+
+  const handleClick = (expenceId)=> {
+      if(checked){
+        setApproval([...approval, { expenceId: expenceId, approval: "approved"}])
+      }
+  }
+
+  const handleApproval = async ()=>{
+      //  const updateRes = await update('/account/expence', {data: approval})
+      //  console.log("Approval updates: ", updateRes);
+      console.log("desig: ", state.data.desig);
+  }
 
   const columns = [
     {
@@ -189,9 +199,21 @@ const Table = ({openForm}) => {
       accessorKey: 'approval',
       header: 'Approval',
       size: 50,
-      Cell: ({ cell, table }) =>{
-        // console.log("Cell", cell.row.expenceId)
-        return <div className='bg-red-400 w-16 p-1 rounded text-center'>{cell.getValue()}</div>;
+      Cell: ({ cell }) =>{
+        return (
+          <div className='flex gap-2'>
+            <div className='bg-red-400 w-16 p-1 rounded text-center'>{cell.getValue()}</div>
+            {
+              state.data.desig === 'accounts' ? '' : ( <input 
+                type='checkbox' 
+                value={checked}
+                className='w-4'
+                onChange={(e)=> setChecked(e.target.checked)}   
+                onClick={()=> handleClick(cell.row.original.expenceId)}
+             />) 
+            }
+          </div>
+        );
       }
     },
   ];
@@ -230,16 +252,9 @@ const Table = ({openForm}) => {
       data={userData}
       enablePagination={false}
       enableColumnActions={true}
-      getRowId={(originalRow) => options.push({expenceId:originalRow.expenceId, approval: originalRow.approval})}
       onEditingRowSave={handleSaveRowEdits}
-      onRowSelectionChange={setRowSelection}
-      enableRowSelection
-      enableRowActions
-      muiSelectCheckboxProps={({row, table})=>{
-          if(table.getSelectedRowModel){
-            // console.log("checkbox: ", row.original)
-          }
-      }}
+      enableRowSelection={false}
+      enableRowActions = {state.data.desig === 'accounts' ? false : true}
       renderRowActions={({ row, table }) => (
         <Box>
           <IconButton onClick={()=> table.setEditingRow(row) }>
@@ -247,7 +262,7 @@ const Table = ({openForm}) => {
           </IconButton>
         </Box>
       )}
-      state={{ isLoading: isLoading, rowSelection }}
+      state={{ isLoading: isLoading }}
       renderTopToolbarCustomActions={({ table }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Box
@@ -269,6 +284,11 @@ const Table = ({openForm}) => {
           <div>
             <YearDropDown year={year} setYear={setYear} />
           </div>
+        </Box>
+      )}
+      renderBottomToolbar={({ table }) => (
+        <Box className='p-2 flex items-center justify-end'>
+          <Button onClick={handleApproval} variant='contained'>Submit</Button>
         </Box>
       )}
     />

@@ -25,7 +25,7 @@ async function post(url, data){
 async function update(url, data){
     try {
         // console.log(`${BASE_URL}${url} ${data}`)
-        const res = await axios.put(`${BASE_URL}${url}`, data);
+        const res = await axios.patch(`${BASE_URL}${url}`, data);
         console.log("res: ". res)
          return res;
         } catch (error) {
@@ -33,4 +33,13 @@ async function update(url, data){
     }
 }
 
-export {get, post, update}
+async function getEmp(url, month, year){
+    try {
+     const result = await axios.get(`${BASE_URL}${url}`, { params: { month: month, year:year } });
+     return result.data.excpences;
+    } catch (error) {
+        console.log("get: ", error)
+    }
+}
+
+export {get, post, update, getEmp}
