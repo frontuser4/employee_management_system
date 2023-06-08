@@ -92,6 +92,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 
 export default function Dashboard() {
+  
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [openForm, setOpenForm] = useState(false);
@@ -187,7 +188,7 @@ export default function Dashboard() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3, overflowX:'auto' }}>
         <DrawerHeader />
-        <Table/>
+        <Table openForm={openForm}/>
       </Box>  
       <AddModal 
         open={openForm} 

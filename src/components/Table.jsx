@@ -1,39 +1,47 @@
 import { useState, useEffect } from 'react';
 import { MaterialReactTable } from 'material-react-table';
-import { Box, Button } from '@mui/material';
+import { Box, Button, IconButton, MenuItem } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { ExportToCsv } from 'export-to-csv';
 import { useLocation } from 'react-router-dom';
-import { get } from '../utils/api';
+import { get, post, update } from '../utils/api';
 import dayjs from 'dayjs';
-import {  MonthDropDown, YearDropDown } from '../components/Dropdown';
+import { MonthDropDown, YearDropDown } from '../components/Dropdown';
+import EditIcon from '@mui/icons-material/Edit';
 
-function AttendanceColor({cell}){
-  if(cell.getValue() === 'present'){
+function AttendanceColor({ cell }) {
+
+  if (cell.getValue() === 'present') {
     return <div className='bg-green-400 w-16 p-1 rounded text-center'>{cell.getValue()}</div>;
-  }else if(cell.getValue() === 'absent'){
+  } else if (cell.getValue() === 'absent') {
     return <div className='bg-red-400 w-16 p-1 rounded text-center'>{cell.getValue()}</div>;
-  }else if(cell.getValue() === 'MRM'){
+  } else if (cell.getValue() === 'MRM') {
     return <div className='bg-cyan-400 w-16 p-1 rounded text-center'>{cell.getValue()}</div>;
   }
-   return cell.getValue();
+  return cell.getValue();
 }
+const options = []
 
-const Table = () => {
-
+const Table = ({openForm}) => {
   const { state } = useLocation();
   const [userData, setUserData] = useState([]);
   const [date, setDate] = useState(dayjs());
   const [year, setYear] = useState(dayjs(date.$d).format('YYYY'));
   const [month, setMonth] = useState(dayjs(date.$d).format('MM').split('')[1]);
   const [isLoading, setLoading] = useState(false);
+  const [rowSelection, setRowSelection] = useState({});
+  const expensID = `${state.data.empId}${dayjs(date.$d).format('YYYY')}${dayjs(date.$d).format('MM')}${dayjs(date.$d).format('DD')}`;
+
 
   const getExprenceData = async () => {
     setLoading(true);
+    setUserData([])
     const result = await get('/account/expence', state.data.empId, month, year);
     setUserData(result);
     setLoading(false);
   }
+
+  console.log("rowSelection: ", rowSelection);
 
   useEffect(() => {
     getExprenceData();
@@ -41,7 +49,7 @@ const Table = () => {
 
   useEffect(() => {
     getExprenceData();
-  }, [year, month])
+  }, [year, month, openForm, ])
 
   const columns = [
     {
@@ -59,7 +67,7 @@ const Table = () => {
       header: 'Attendance',
       size: 50,
       Cell: ({ cell }) => {
-        return <AttendanceColor cell={cell}/>;
+        return <AttendanceColor cell={cell} />;
       },
     },
     {
@@ -83,7 +91,7 @@ const Table = () => {
       size: 50,
     },
     {
-      accessorKey: 'payer',
+      accessorKey: 'payer__payerId',
       header: 'Payer',
       size: 50,
     },
@@ -144,7 +152,6 @@ const Table = () => {
       header: 'FOOD GST',
       size: 50,
     },
-
     {
       accessorKey: 'internet',
       header: 'INTERNET',
@@ -178,7 +185,15 @@ const Table = () => {
       header: 'NIGHT ALLOWANCE',
       size: 50,
     },
-
+    {
+      accessorKey: 'approval',
+      header: 'Approval',
+      size: 50,
+      Cell: ({ cell, table }) =>{
+        // console.log("Cell", cell.row.expenceId)
+        return <div className='bg-red-400 w-16 p-1 rounded text-center'>{cell.getValue()}</div>;
+      }
+    },
   ];
 
   const csvOptions = {
@@ -193,32 +208,46 @@ const Table = () => {
 
   const csvExporter = new ExportToCsv(csvOptions);
 
-  const handleExportRows = (rows) => {
-    csvExporter.generateCsv(rows.map((row) => row.original));
-  };
-
   const handleExportData = () => {
     csvExporter.generateCsv(userData);
   };
 
-  const getCommonEditTextFieldProps = (cell) => {
-    setCell(cell);
+  const handleSaveRowEdits = async ({ exitEditingMode, row, values })=> {
+    userData[row.index] = values;
+    //send/receive api updates here, then refetch or update local table data for re-render
+    const updatedRes = await post('/account/expence', {emp: state.data.empId, expenceId: expensID, ...values});
+    console.log("updateRes",updatedRes);
+    // console.log("row: ", row.original.id);
+    // console.log("values: ", values);
+    setUserData([...userData]);
+    exitEditingMode();
   }
 
   return (
     <MaterialReactTable
+      initialState={{ columnVisibility: { emp_id: false } }}
       columns={columns}
       data={userData}
       enablePagination={false}
       enableColumnActions={true}
-      muiSelectCheckboxProps={false}
-      renderRowActions={({row, table})=>(
+      getRowId={(originalRow) => options.push({expenceId:originalRow.expenceId, approval: originalRow.approval})}
+      onEditingRowSave={handleSaveRowEdits}
+      onRowSelectionChange={setRowSelection}
+      enableRowSelection
+      enableRowActions
+      muiSelectCheckboxProps={({row, table})=>{
+          if(table.getSelectedRowModel){
+            // console.log("checkbox: ", row.original)
+          }
+      }}
+      renderRowActions={({ row, table }) => (
         <Box>
-          <button>edit</button>
-          <button>edit</button>
+          <IconButton onClick={()=> table.setEditingRow(row) }>
+            <EditIcon />
+          </IconButton>
         </Box>
       )}
-      state={{ isLoading: isLoading }}
+      state={{ isLoading: isLoading, rowSelection }}
       renderTopToolbarCustomActions={({ table }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Box

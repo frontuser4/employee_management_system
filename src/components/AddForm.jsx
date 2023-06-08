@@ -41,7 +41,7 @@ const AddForm = () => {
                expenceId: expensID,
                emp: state.data.empId, 
                dateExp: dayjs(date.$d).format('YYYY-MM-DD'), 
-               payer: stockistData, 
+               payer__payerId: stockistData, 
                attendance, 
                modeTravel, 
                ...data 
