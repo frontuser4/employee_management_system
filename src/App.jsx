@@ -1,4 +1,3 @@
-import './App.css';
 import {
   createBrowserRouter,
   RouterProvider,
@@ -7,16 +6,23 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import PageNotFound from './pages/PageNotFound';
 import ScoreCard from './pages/ScoreCard';
+import Admin from './pages/Admin';
 import Employee from './pages/Employee';
 
-const router = createBrowserRouter([{path:'/', element:<Login/>, errorElement: <PageNotFound/>}, {path:'/dashboard', element:<Dashboard/>}, {path:'/scorecard', element: <ScoreCard/>}, {path:'/employee/:id', element: <Employee/>}])
+const router = createBrowserRouter(
+  [
+    { path: '/login', element: <Login />, errorElement: <PageNotFound /> },
+    { path: '/', element: <Dashboard />, children: [{path:'/admin', element: <Admin/>}, {path:'/employee/:id', element: <Employee/>}] },
+    { path: '/scorecard', element: <ScoreCard /> }, 
+  ]
+);
 
 function App() {
- 
+
   return (
-  <>
-   <RouterProvider router={router}/>
-  </>
+    <>
+      <RouterProvider router={router} />
+    </>
   )
 }
 

@@ -7,6 +7,8 @@ import { useLocation, useParams } from 'react-router-dom';
 import { get, post, update } from '../utils/api';
 import dayjs from 'dayjs';
 import EditIcon from '@mui/icons-material/Edit';
+import AddModal from './AddModal';
+import AddIcon from '@mui/icons-material/Add';
 
 function AttendanceColor({ cell }) {
 
@@ -20,7 +22,7 @@ function AttendanceColor({ cell }) {
   return cell.getValue();
 }
 
-const Table = ({}) => {
+const Table = () => {
 
   const { state } = useLocation();
   const {id} = useParams();
@@ -28,6 +30,7 @@ const Table = ({}) => {
   const [isLoading, setLoading] = useState(false);
   const [checked, setChecked] = useState(true);
   const [approval, setApproval] = useState([]);
+  const [openForm, setOpenForm] = useState(false);
   const expensID = `${id}${dayjs(state.year).format('YYYY')}${dayjs(state.month).format('MM')}${dayjs(state.day).format('DD')}`;
 
   const getExprenceData = async () => {
@@ -242,7 +245,12 @@ const Table = ({}) => {
     exitEditingMode();
   }
 
+  const handleAdd = ()=> {
+    setOpenForm(true)
+   }
+   
   return (
+    <>
     <MaterialReactTable
       initialState={{ columnVisibility: { emp_id: false } }}
       columns={columns}
@@ -263,8 +271,18 @@ const Table = ({}) => {
       renderTopToolbarCustomActions={({ table }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Box
-            sx={{ p: '0.5rem' }}
+            sx={{ display: 'flex', gap: 2, p: '0.5rem' }}
           >
+             <Button
+              color="primary"
+              //export all data that is currently in the table (ignore pagination, sorting, filtering, etc.)
+              onClick={handleAdd}
+              startIcon={<AddIcon />}
+              variant="contained"
+            >
+              Add
+            </Button>
+
             <Button
               color="primary"
               //export all data that is currently in the table (ignore pagination, sorting, filtering, etc.)
@@ -283,6 +301,13 @@ const Table = ({}) => {
         </Box>
       )}
     />
+     <AddModal 
+        open={openForm} 
+        setOpen={setOpenForm} 
+        empId={state.data.empId}
+        stockist={state.stockist}
+      />
+  </>
   );
 };
 

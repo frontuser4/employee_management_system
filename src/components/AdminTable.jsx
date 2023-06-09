@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import dayjs from 'dayjs';
 import { getEmp } from '../utils/api';
-import { MonthDropDown, YearDropDown } from '../components/Dropdown';
+import { MonthDropDown, YearDropDown } from './Dropdown';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-export const EmployeeTable = () => {
+export const AdminTable = () => {
    
     const navigate = useNavigate();
     const {state} = useLocation();
@@ -91,4 +91,4 @@ export const EmployeeTable = () => {
     );
 };
 
-export default EmployeeTable;
+export default AdminTable;

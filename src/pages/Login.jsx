@@ -19,9 +19,9 @@ const Login = () => {
         axios.post(url, data).then((res) => {
             // console.log(res.data.status)
             if(res.data.status){
-                toast.success(res.data.message)
+                toast.success(res.data.message);
                 dispatch(login(res.data));
-                navigate(`${res.data.desig != 'SM' || res.data.desig != 'HO' || res.data.desig != 'accounts' ? `/employee/${res.data.empId}` : '/dashboard' }`, {state: res.data})
+                navigate('/', {state: res.data});
             }else{
                 toast.error(res.data.message)
             }

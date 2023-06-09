@@ -14,15 +14,9 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import AddIcon from '@mui/icons-material/Add';
-import AddModal from '../components/AddModal';
-import Table from '../components/Table';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { useLocation, useParams } from 'react-router-dom';
-import Profile from '../components/Profile';
-import EmployeeTable from '../components/EmployeeTable'
+import { useLocation, Link, Outlet } from 'react-router-dom';
+import TableViewIcon from '@mui/icons-material/TableView';
 
 const drawerWidth = 240;
 
@@ -96,10 +90,8 @@ export default function Dashboard() {
   
   const theme = useTheme();
   const [open, setOpen] = useState(false);
-  const [openForm, setOpenForm] = useState(false);
-  const [openProfile, setOpenProfile] = useState(false);
   const {state} = useLocation();
-  const params = useParams();
+ 
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -108,12 +100,6 @@ export default function Dashboard() {
     setOpen(false);
   };
  
- const handleAdd = ()=> {
-  setOpenForm(true)
- }
-
- console.log("params: ", params);
-
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -149,60 +135,52 @@ export default function Dashboard() {
         <List>
             <ListItem disablePadding sx={{ display: 'block' }}>
             <ListItemButton
-                onClick={()=> setOpenProfile(true)}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? 'initial' : 'center',
                   px: 2.5,
                 }}
               >
-                <ListItemIcon
+                <Link
+                  to={'/admin'}
+                  state={state}
                   sx={{
                     minWidth: 0,
                     mr: open ? 3 : 'auto',
                     justifyContent: 'center',
                   }}
                 >
-                   <AccountCircleIcon />
-                </ListItemIcon>
+                   <TableViewIcon />
+                </Link>
                 <ListItemText primary="Profile" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
               <ListItemButton
-                onClick={handleAdd}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? 'initial' : 'center',
                   px: 2.5,
                 }}
               >
-                <ListItemIcon
+                <Link
+                  to={`/employee/${state.data.empId}`}
+                  state={state}
                   sx={{
                     minWidth: 0,
                     mr: open ? 3 : 'auto',
                     justifyContent: 'center',
                   }}
                 >
-                   <AddIcon />
-                </ListItemIcon>
-                <ListItemText primary="Add" sx={{ opacity: open ? 1 : 0 }} />
+                   <TableViewIcon />
+                </Link>
+                <ListItemText primary="Employee" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3, overflowX:'auto' }}>
         <DrawerHeader />
-        <EmployeeTable />
+        <Outlet/>
       </Box>  
-      <AddModal 
-        open={openForm} 
-        setOpen={setOpenForm} 
-        empId={state.data.empId}
-        stockist={state.stockist}
-      />
-      <Profile
-       open={openProfile}
-       setOpen={setOpenProfile}
-      />
     </Box>   
   );
 }
