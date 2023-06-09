@@ -22,7 +22,7 @@ function AttendanceColor({ cell }) {
   return cell.getValue();
 }
 
-const Table = () => {
+const ExpenceTable = () => {
 
   const { state } = useLocation();
   const {id} = useParams();
@@ -196,6 +196,27 @@ const Table = () => {
       size: 50,
     },
     {
+      accessorKey: 'total',
+      header: 'Total',
+      size: 50,
+      Cell: ({ cell }) =>{
+        return (
+          <div className='flex gap-2'>
+            <div className='bg-red-400 w-16 p-1 rounded text-center'></div>
+            {
+              state.data.desig === 'accounts' ? '' : ( <input 
+                type='checkbox' 
+                value='65'
+                className='w-4'
+                onChange={(e)=> setChecked(e.target.checked)}   
+                onClick={()=> handleClick(cell.row.original.expenceId)}
+             />) 
+            }
+          </div>
+        );
+      }
+    },
+    {
       accessorKey: 'approval',
       header: 'Approval',
       size: 50,
@@ -311,4 +332,4 @@ const Table = () => {
   );
 };
 
-export default Table;
+export default ExpenceTable;

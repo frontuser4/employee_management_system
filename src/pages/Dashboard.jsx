@@ -4,19 +4,16 @@ import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import { useLocation, Link, Outlet } from 'react-router-dom';
-import TableViewIcon from '@mui/icons-material/TableView';
+import { useLocation } from 'react-router-dom';
+import { Tooltip, IconButton, Avatar, Menu, MenuItem } from '@mui/material';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import ScoreCard from './ScoreCard';
+import EmployeeTables from './EmployeeTables';
+import ExpenceTables from './ExpenceTables';
+import TabPanels from '../components/TabPanels';
+import Card from '../components/Card';
 
 const drawerWidth = 240;
 
@@ -91,6 +88,8 @@ export default function Dashboard() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const {state} = useLocation();
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
  
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -99,87 +98,76 @@ export default function Dashboard() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
+  };
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
  
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar className='flex items-center justify-between'>
-          <Box className='flex items-center'>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(open && { display: 'none' }),
-            }}
+      <AppBar component="nav">
+        <Toolbar>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
           >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            EMS
+            ESM
           </Typography>
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Profile settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt="Profile">
+                 <AccountCircleIcon />
+                </Avatar>
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+                <MenuItem className='flex flex-col gap-2'>
+                  <Typography textAlign="center">Name : {state.data.name}</Typography>
+                  <Typography textAlign="center">Id : {state.data.empId}</Typography>
+                  <Typography textAlign="center">Designation : {state.data.desig}</Typography>
+                  <Typography textAlign="center">Hq : {state.data.hq}</Typography>
+                </MenuItem>
+            </Menu>
           </Box>
-        <Typography>Hello, {state.data.name}</Typography>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
-            <ListItem disablePadding sx={{ display: 'block' }}>
-            <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-              >
-                <Link
-                  to={'/admin'}
-                  state={state}
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
-                  }}
-                >
-                   <TableViewIcon />
-                </Link>
-                <ListItemText primary="Profile" sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-              >
-                <Link
-                  to={`/employee/${state.data.empId}`}
-                  state={state}
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
-                  }}
-                >
-                   <TableViewIcon />
-                </Link>
-                <ListItemText primary="Employee" sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-        </List>
-      </Drawer>
+     
       <Box component="main" sx={{ flexGrow: 1, p: 3, overflowX:'auto' }}>
         <DrawerHeader />
-        <Outlet/>
+        {
+           state.data.desig !== 'SM' ? <EmployeeTables/> :   (<Box className="flex flex-col gap-6">
+            <TabPanels ExpenceTables={ExpenceTables} ScoreCard={ScoreCard} Card={Card} />
+           </Box>)
+        }
       </Box>  
     </Box>   
   );

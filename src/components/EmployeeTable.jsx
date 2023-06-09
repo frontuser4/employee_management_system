@@ -5,7 +5,7 @@ import { getEmp } from '../utils/api';
 import { MonthDropDown, YearDropDown } from './Dropdown';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-export const AdminTable = () => {
+export const EmployeeTable = () => {
    
     const navigate = useNavigate();
     const {state} = useLocation();
@@ -32,7 +32,7 @@ export const AdminTable = () => {
                 accessorKey: 'emp__empId',
                 header: 'EmpId',
                 Cell: ({ cell }) => {
-                    return <button onClick={()=> navigate(`/employee/${cell.row.original.emp__empId}`, {state : {day: dayjs(date.$d).format('DD').split('')[1], month: month, year: year, ...state}})}  className='bg-cyan-400 px-2 py-1 rounded'>{cell.getValue()}</button>;
+                    return <button onClick={()=> navigate(`/expence/${cell.row.original.emp__empId}`, {state : {day: dayjs(date.$d).format('DD').split('')[1], month: month, year: year, ...state}})}  className='bg-cyan-400 px-2 py-1 rounded'>{cell.getValue()}</button>;
                   },
             },
             {
@@ -91,4 +91,4 @@ export const AdminTable = () => {
     );
 };
 
-export default AdminTable;
+export default EmployeeTable;

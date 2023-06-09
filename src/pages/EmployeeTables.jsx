@@ -4,9 +4,9 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useLocation } from 'react-router-dom';
-import AdminTable from '../components/AdminTable'; 
+import EmployeeTable from '../components/EmployeeTable'; 
 
-function Admin() {
+function EmployeeTables() {
 
   const { state } = useLocation();
 
@@ -28,11 +28,11 @@ function Admin() {
         </Toolbar>
       </AppBar>
        <Box component="main" sx={{ flexGrow: 1, px: 2, overflowX:'auto' }}>
-        <AdminTable />
+        <EmployeeTable />
       </Box>  
     </Box>
   );
 }
 
 
-export default Admin;
+export default EmployeeTables;

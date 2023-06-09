@@ -21,7 +21,7 @@ const Login = () => {
             if(res.data.status){
                 toast.success(res.data.message);
                 dispatch(login(res.data));
-                navigate('/', {state: res.data});
+                navigate('/dashboard', {state: res.data});
             }else{
                 toast.error(res.data.message)
             }
