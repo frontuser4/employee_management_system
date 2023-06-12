@@ -32,8 +32,8 @@ export const EmployeeTable = () => {
                 accessorKey: 'emp__empId',
                 header: 'EmpId',
                 Cell: ({ cell }) => {
-                    return <button onClick={()=> navigate(`/expence/${cell.row.original.emp__empId}`, {state : {day: dayjs(date.$d).format('DD').split('')[1], month: month, year: year, ...state}})}  className='bg-cyan-400 px-2 py-1 rounded'>{cell.getValue()}</button>;
-                  },
+                    return <button onClick={()=> navigate(`/tab`, {state: {...state ,empId:cell.row.original.emp__empId, month, year}}) }  className='bg-cyan-400 px-2 py-1 rounded'>{cell.getValue()}</button>;
+                },
             },
             {
                 accessorKey: 'emp__name',

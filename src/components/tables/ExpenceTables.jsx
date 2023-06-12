@@ -4,12 +4,12 @@ import { Box, Button, IconButton } from "@mui/material";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { ExportToCsv } from "export-to-csv";
 import { useLocation} from "react-router-dom";
-import { get, post} from "../utils/api";
+import { get, post} from "../../utils/api";
 import dayjs from "dayjs";
 import EditIcon from "@mui/icons-material/Edit";
-import AddModal from "./AddModal";
+import AddModal from "../AddModal";
 import AddIcon from "@mui/icons-material/Add";
- 
+
 
 function AttendanceColor({ cell }) {
   if (cell.getValue() === "present") {
@@ -34,7 +34,7 @@ function AttendanceColor({ cell }) {
   return cell.getValue();
 }
 
-const ExpenceTable = ({year, month}) => {
+const ExpenceTables = ({year, month}) => {
 
   const { state } = useLocation();
   const [userData, setUserData] = useState([]);
@@ -339,4 +339,4 @@ const ExpenceTable = ({year, month}) => {
   );
 };
 
-export default ExpenceTable;
+export default ExpenceTables;

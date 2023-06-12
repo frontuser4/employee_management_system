@@ -17,9 +17,10 @@ const Login = () => {
 
     function submitData(data) {
         axios.post(url, data).then((res) => {
-            // console.log(res.data.status)
             if(res.data.status){
                 toast.success(res.data.message);
+                localStorage.setItem('token', res.data.token);
+                console.log(res.data.token)
                 dispatch(login(res.data));
                 navigate('/dashboard', {state: res.data});
             }else{

@@ -42,7 +42,7 @@ function a11yProps(index) {
   };
 }
 
-export default function TabPanels({ExpenceTables, ScoreCard, Card, year, month}) {
+export default function TabPanel({ExpenceTables, ScoreCard, Card, year, month}) {
 
   const theme = useTheme();
   const [value, setValue] = useState(0);
