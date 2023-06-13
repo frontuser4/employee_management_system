@@ -1,6 +1,7 @@
-import ExpenceTable from '../components/ExpenceTable';
+import ExpenceTable from '../component/expence/ExpenceTable';
 
 const ExpenceTables = ({year, month}) => {
+
   return (
     <>
     <ExpenceTable

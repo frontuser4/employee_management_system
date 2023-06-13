@@ -5,7 +5,7 @@ import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { Tooltip, IconButton, Avatar, Menu, MenuItem, Button } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EmployeeTables from './EmployeeTables';
@@ -117,8 +117,9 @@ export default function Dashboard() {
       <Box component="main" sx={{ flexGrow: 1, p: 3, overflowX:'auto' }}>
         <DrawerHeader />
         {
-           state.data.desig != 'SM' ? <EmployeeTables/> :   (<TabPanelTables/>)
+          state.data.desig != 'SM' ? <EmployeeTables/> :   (<TabPanelTables/>)
         }
+        <Outlet />
       </Box>  
     </Box>   
   );

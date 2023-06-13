@@ -4,12 +4,12 @@ import { Box, Button, IconButton } from "@mui/material";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { ExportToCsv } from "export-to-csv";
 import { useLocation} from "react-router-dom";
-import { get, post} from "../utils/api";
+import { get, post, update} from "../utils/api";
 import dayjs from "dayjs";
 import EditIcon from "@mui/icons-material/Edit";
 import AddModal from "./AddModal";
 import AddIcon from "@mui/icons-material/Add";
- 
+
 
 function AttendanceColor({ cell }) {
   if (cell.getValue() === "present") {
@@ -35,7 +35,7 @@ function AttendanceColor({ cell }) {
 }
 
 const ExpenceTable = ({year, month}) => {
-
+  
   const { state } = useLocation();
   const [userData, setUserData] = useState([]);
   const [isLoading, setLoading] = useState(false);
@@ -43,12 +43,11 @@ const ExpenceTable = ({year, month}) => {
   const [approval, setApproval] = useState([]);
   const [openForm, setOpenForm] = useState(false);
   const [date, setDate] = useState(dayjs());
-  const expensID = `${state.data.empId}${dayjs(year).format("YYYY")}${dayjs(month).format("MM")}${dayjs(date).format("DD")}`;
+  const expensID = `${state.emp === 'emp' ? state.empId : state.data.empId} ${dayjs(`${state.emp === 'emp' ? state.year : year}`).format("YYYY")}${dayjs(`${state.emp === 'emp' ? state.month : month}`).format("MM")}${dayjs(date).format("DD")}`;
 
   const getExprenceData = async () => {
     setLoading(true);
-    setUserData([]);
-    const result = await get("/account/expence", state.data.empId, month, year);
+    const result = await get("/account/expence", `${state.emp === 'emp' ? state.empId : state.data.empId}`, `${state.emp === 'emp' ? state.month : month}`, `${state.emp === 'emp' ? state.year : year}`);
     setUserData(result);
     setLoading(false);
   };
@@ -70,10 +69,14 @@ const ExpenceTable = ({year, month}) => {
     }
   };
 
-  const handleApproval = async () => {
-    //  const updateRes = await update('/account/expence', {data: approval})
-    //  console.log("Approval updates: ", updateRes);
-    console.log("desig: ", state.data.desig);
+  const handleEdit = (row)=> {
+      console.log('row: ', row.original);
+      setOpenForm(true)
+  }
+
+ async function handleApproval() {
+     const updateRes = await update('/account/expence', {data: approval})
+     console.log("Approval updates: ", updateRes);
   };
 
   const columns = [
@@ -290,7 +293,7 @@ const ExpenceTable = ({year, month}) => {
         enableRowActions={state.data.desig === "accounts" ? false : true}
         renderRowActions={({ row, table }) => (
           <Box>
-            <IconButton onClick={() => table.setEditingRow(row)}>
+            <IconButton onClick={()=> table.setEditingRow(row) }>
               <EditIcon />
             </IconButton>
           </Box>

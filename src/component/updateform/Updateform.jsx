@@ -1,60 +1,35 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import "react-datepicker/dist/react-datepicker.css";
-import TextFeild from './TextFeild';
-import { AttendanceDropdown, ModeDropdown, StockistDropdown } from './Dropdown';
-import Accordions from './Accordions';
+import TextFeild from '../../components/TextFeild';
+import { AttendanceDropdown, ModeDropdown, StockistDropdown } from '../../components/Dropdown';
+import Accordions from '../../components/Accordions';
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { post } from '../utils/api';
-import toast, { Toaster } from 'react-hot-toast';
+import { update } from '../../utils/api';
 
 
-const defaultState = {
-  expenceId: "",
-  tc: "",
-  pc: "",
-  dailyConv: "",
-  attendance: "",
-  dateExp: "",
-  sale: "",
-  approval: "",
-  workingHr: "",
-  localConv: "",
-  travelingLong: "",
-  lodginBoardig: "",
-  food: "",
-  foodGST: "",
-  nightAllowance: "",
-  internet: "",
-  postageCourier: "",
-  printingStationary: "",
-  other: "",
-  otherGst: "",
-  payer__payerId: ""
-}
-
-const AddForm = ({setOpen}) => {
+const UpdateForm = ({setOpen, editData}) => {
   
   const { state } = useLocation();
-  const [formData, setFormData] = useState(defaultState);
+  const [formData, setFormData] = useState(editData);
   const [attendance, setAttendance] = useState('');
   const [modeTravel, setModeTravel] = useState('');
   const [stockistData, setStockistData] = useState('');
   const [date, setDate] = useState(dayjs());
   const expensID = `${state.data.empId}${dayjs(date.$d).format('YYYY')}${dayjs(date.$d).format('MM')}${dayjs(date.$d).format('DD')}`;
 
-  const submitData = async(data) => {
-    try {
-     const result = await post('/account/expence', data)
-     console.log('form-data: ', result);
-     toast.success('Added Successfully');
-     setOpen(false);
-    } catch (error) {
-       console.log("error: ", error);
-    }
+  const submitData = (data) => {
+    console.log("formData: ", data);
+    // try {
+    //  const result = await post('/account/expence', data)
+    //  console.log('form-data: ', result)
+    //  setOpen(false)
+    // } catch (error) {
+    //    console.log("error: ", error);
+    // }
   }
 
   const handlerChange = (event)=>{
@@ -293,9 +268,8 @@ const AddForm = ({setOpen}) => {
           <button className="block uppercase shadow bg-teal-600 hover:bg-teal-700 focus:shadow-outline focus:outline-none text-white text-xs py-3 px-10 rounded">Submit</button>
         </form>
       </div>
-      <Toaster  position="top-right" />
     </div>
   )
 }
 
-export default AddForm;
+export default UpdateForm;

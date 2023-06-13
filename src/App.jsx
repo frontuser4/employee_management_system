@@ -8,9 +8,6 @@ import PageNotFound from "./pages/PageNotFound";
 import ScoreCard from "./pages/ScoreCard";
 import EmployeeTables from "./pages/EmployeeTables";
 import ExpenceTables from "./pages/ExpenceTables";
-import ExpTable from "./components/expence/ExpTable";
-import TabTables from "./pages/TabTables";
-
 
 const router = createBrowserRouter([
   {
@@ -22,12 +19,11 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: <Dashboard />,
+    children : [{path:'expence', element: <ExpenceTables />}]
   },
   { path: "/employee", element: <EmployeeTables /> },
-  { path: "/expence", element: <ExpenceTables /> },
   { path: "/scorecard", element: <ScoreCard /> },
-  { path: "/exp", element: <ExpTable /> },
-  { path: "/tab", element: <TabTables /> }
+  // { path: "/exp", element: <Exp /> },
 ]);
 
 function App() {

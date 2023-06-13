@@ -5,9 +5,9 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import AddForm from './AddForm';
+import UpdateForm from './Updateform';
 
-export default function AddModal({open, setOpen}) {
+export default function UpdateModal({open, setOpen, editData}) {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -28,7 +28,7 @@ export default function AddModal({open, setOpen}) {
           Monthly Expenses
         </DialogTitle>
         <DialogContent>
-         <AddForm setOpen={setOpen}/>
+         <UpdateForm setOpen={setOpen} editData={editData}/>
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={handleClose}>
