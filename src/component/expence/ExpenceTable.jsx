@@ -1,8 +1,7 @@
 import {useEffect, useState} from "react";
-import './style.css';
+// import './style.css';
 import { get } from '../../utils/api';
-import EditIcon from "@mui/icons-material/Edit";
-import dayjs from "dayjs";
+import EditIcon from "@mui/icons-material/Edit";                                                  
 import AddIcon from "@mui/icons-material/Add";
 import { useLocation } from 'react-router-dom';
 import UpdateModal from "../updateform/UpdateModal";
@@ -40,7 +39,7 @@ const ExpenceTable = ({year, month}) => {
         </button>
       </div>
       <div className="table-box">
-        <div className="table1-box" style={{zIndex: 10000}}>
+        <div className="table1-box">
           <table  border={1} >
             <tr style={{background:'#d7d7d7'}}>
               <th>Action</th>
@@ -62,7 +61,7 @@ const ExpenceTable = ({year, month}) => {
            }
           </table>
         </div>
-        <div style={{ overflowX: "scroll", zIndex: -9999 }}>
+        <div style={{ overflowX: "scroll" }}>
           <table cellPadding={10} border={1} >
             <tr style={{background:'#d7d7d7'}}>
               <th>TC</th>

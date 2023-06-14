@@ -21,15 +21,15 @@ const UpdateForm = ({setOpen, editData}) => {
   const [date, setDate] = useState(dayjs());
   const expensID = `${state.data.empId}${dayjs(date.$d).format('YYYY')}${dayjs(date.$d).format('MM')}${dayjs(date.$d).format('DD')}`;
 
-  const submitData = (data) => {
+  const submitData = async(data) => {
     console.log("formData: ", data);
-    // try {
-    //  const result = await post('/account/expence', data)
-    //  console.log('form-data: ', result)
-    //  setOpen(false)
-    // } catch (error) {
-    //    console.log("error: ", error);
-    // }
+    try {
+     const result = await update('/account/expence', data)
+     console.log('form-data: ', result)
+     setOpen(false)
+    } catch (error) {
+       console.log("error: ", error);
+    }
   }
 
   const handlerChange = (event)=>{

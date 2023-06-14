@@ -9,7 +9,8 @@ import dayjs from "dayjs";
 import EditIcon from "@mui/icons-material/Edit";
 import AddModal from "./AddModal";
 import AddIcon from "@mui/icons-material/Add";
-
+import UpdateModal from '../component/updateform/UpdateModal';
+import toast, {Toaster} from 'react-hot-toast';
 
 function AttendanceColor({ cell }) {
   if (cell.getValue() === "present") {
@@ -41,7 +42,10 @@ const ExpenceTable = ({year, month}) => {
   const [isLoading, setLoading] = useState(false);
   const [checked, setChecked] = useState(true);
   const [approval, setApproval] = useState([]);
+  // const [approvalMsg, setApprovalMsg] = useState('');
   const [openForm, setOpenForm] = useState(false);
+  const [updateForm, setUpdateForm ] = useState(false);
+  const [editData, setEditData] = useState({});
   const [date, setDate] = useState(dayjs());
   const expensID = `${state.emp === 'emp' ? state.empId : state.data.empId} ${dayjs(`${state.emp === 'emp' ? state.year : year}`).format("YYYY")}${dayjs(`${state.emp === 'emp' ? state.month : month}`).format("MM")}${dayjs(date).format("DD")}`;
 
@@ -70,13 +74,15 @@ const ExpenceTable = ({year, month}) => {
   };
 
   const handleEdit = (row)=> {
-      console.log('row: ', row.original);
-      setOpenForm(true)
+      setEditData(row.original);
+      setUpdateForm(true);
   }
 
  async function handleApproval() {
      const updateRes = await update('/account/expence', {data: approval})
      console.log("Approval updates: ", updateRes);
+    //  setApprovalMsg(updateRes.data.message);
+     toast.success(updateRes.data.message);
   };
 
   const columns = [
@@ -293,7 +299,7 @@ const ExpenceTable = ({year, month}) => {
         enableRowActions={state.data.desig === "accounts" ? false : true}
         renderRowActions={({ row, table }) => (
           <Box>
-            <IconButton onClick={()=> table.setEditingRow(row) }>
+            <IconButton onClick={()=> handleEdit(row)}>
               <EditIcon />
             </IconButton>
           </Box>
@@ -338,6 +344,13 @@ const ExpenceTable = ({year, month}) => {
         empId={state.data.empId}
         stockist={state.stockist}
       />
+      <UpdateModal
+        open={updateForm}
+        setOpen={setUpdateForm}
+        editData={editData}
+        stockist={state.stockist}
+      />
+      <Toaster  position="top-center" />
     </>
   );
 };

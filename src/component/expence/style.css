@@ -1,6 +1,6 @@
 table {
     width: 100%;
-  }
+}
 
   .table-box {
     display: grid;
@@ -16,17 +16,16 @@ table {
     margin-inline-start: 2px !important;
     margin-inline-end: 2px !important;
     border-collapse: collapse;
-  }
+ }
 
   .list-title {
     background-color: #d7d7d7;
   }
 
-  .row1,
+  /* .row1,
   .row2 {
-
     border: 1px solid black;
-  }
+  } */
 
   th{
     border: 1px solid black;
@@ -43,8 +42,8 @@ table {
   }
 
 .table1-box{
-padding-right: 2px;
-}
+    padding-right: 2px;
+ }
 
   /* media query for desktop */
   @media (min-width: 1025px) {}
