@@ -1,69 +1,77 @@
-import {useEffect, useState} from "react";
-// import './style.css';
-import { get } from '../../utils/api';
-import EditIcon from "@mui/icons-material/Edit";                                                  
+import { useEffect, useState } from "react";
+import "./style.css";
+import { get, update } from "../../utils/api";
+import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 import UpdateModal from "../updateform/UpdateModal";
-import AddModal from '../../components/AddModal';
+import AddModal from "../../components/AddModal";
+import toast, {Toaster} from 'react-hot-toast';
 
-const ExpenceTable = ({year, month}) => {
-   
-   const { state } = useLocation();
-   const [tableData, setTableData] = useState(null);
-   const [openForm, setOpenForm] = useState(false);
-   const [updateForm, setUpdateForm] = useState(false);
-   const [editData, setEditData] = useState(null);
+const ExpenceTable = ({ year, month }) => {
+  
+  const { state } = useLocation();
+  const [tableData, setTableData] = useState(null);
+  const [openForm, setOpenForm] = useState(false);
+  const [updateForm, setUpdateForm] = useState(false);
+  const [editData, setEditData] = useState(null);
+  const [checked, setChecked] = useState(true);
+  const [approval, setApproval] = useState([]);
 
-   async function fetchData(){
-    const res = await get("/account/expence", `${state.emp === 'emp' ? state.empId : state.data.empId}`, `${state.emp === 'emp' ? state.month : month }`, `${state.emp === 'emp' ? state.year : year}`);
+  async function fetchData() {
+    const res = await get(
+      "/account/expence",
+      `${state.emp === "emp" ? state.empId : state.data.empId}`,
+      `${state.emp === "emp" ? state.month : month}`,
+      `${state.emp === "emp" ? state.year : year}`
+    );
     setTableData(res);
-   }
+  }
 
-   useEffect(()=>{
-     fetchData();
-   }, [month, year]);
+  useEffect(() => {
+    fetchData();
+  }, [month, year]);
 
-   const handleEdit = (data)=>{
-      setEditData(data);
-      setUpdateForm(true);
-      console.log("edit data: ", data);
-   }
+  const handleEdit = (data) => {
+    setEditData(data);
+    setUpdateForm(true);
+    console.log("edit data: ", data);
+  };
+
+  const handleClick = (expenceId)=> {
+    if (checked) {
+      setApproval([
+        ...approval,
+        { expenceId: expenceId, approval: "approved" },
+      ]);
+    }
+  }
+
+  const handleSubmit = async() => {
+    const updateRes = await update('/account/expence', {data: approval})
+    console.log("Approval updates: ", updateRes);
+    toast.success(updateRes.data.message);
+  }
 
   return (
     <>
       <div>
-        <button className="bg-[#0ea5e9] px-3 py-1 text-xl rounded text-white mb-2 hover:bg-cyan-600" onClick={()=> setOpenForm(true)}>
+        <button
+          className="bg-[#0ea5e9] px-3 py-1 text-xl rounded text-white mb-2 hover:bg-cyan-600"
+          onClick={() => setOpenForm(true)}
+        >
           <AddIcon />
           Add
         </button>
       </div>
-      <div className="table-box">
-        <div className="table1-box">
-          <table  border={1} >
-            <tr style={{background:'#d7d7d7'}}>
+
+      <div className="container">
+        <table>
+          <thead>
+            <tr>
               <th>Action</th>
               <th>Date</th>
               <th>Attendence</th>
-            </tr>
-           {
-             tableData?.map((data, index)=>{
-                 return(
-                   <tr key={index}>
-                     <td><button onClick={()=> handleEdit(data)}>
-                      <EditIcon/>
-                      </button></td>
-                     <td>{data.dateExp}</td>
-                     <td>{data.attendance}</td>
-                   </tr>
-                 )
-             })
-           }
-          </table>
-        </div>
-        <div style={{ overflowX: "scroll" }}>
-          <table cellPadding={10} border={1} >
-            <tr style={{background:'#d7d7d7'}}>
               <th>TC</th>
               <th>PC</th>
               <th>SALE</th>
@@ -81,42 +89,74 @@ const ExpenceTable = ({year, month}) => {
               <th>APPROVAL</th>
               <th>TOTAL</th>
             </tr>
-           {
-              tableData?.map((data, index)=>{
-                return (
-                  <tr key={index}>
-                    <td>{data.tc}</td>
-                    <td>{data.pc}</td>
-                    <td>{data.sale}</td>
-                    <td>{data.dailyConv}</td>
-                    <td>{data.travelingLong}</td>
-                    <td>{data.lodginBoardig}</td>
-                    <td>{data.nightAllowance}</td>
-                    <td>{data.food}</td>
-                    <td>{data.foodGST}</td>
-                    <td>{data.internet}</td>
-                    <td>{data.payer}</td>
-                    <td>{data.printingStationary}</td>
-                    <td>{data.postageCourier}</td>
-                    <td>{data.localConv}</td>
-                    <td>{data.approval}</td>
-                    <td>{`${data.dailyConv + data.travelingLong + data.lodginBoardig + data.nightAllowance + data.food + data.foodGST + data.internet + data.printingStationary + data.postageCourier + data.localConv}`}</td>
-                  </tr>
-                )
-              })
-           }
-          </table>
-        </div>
+          </thead>
+          <tbody>
+            {tableData?.map((data, index) => {
+              return (
+                <tr key={index}>
+                  <td>
+                    <button onClick={() => handleEdit(data)}>
+                      <EditIcon />
+                    </button>
+                  </td>
+                  <td>{data.dateExp}</td>
+                  <td>{data.attendance}</td>
+                  <td>{data.tc}</td>
+                  <td>{data.pc}</td>
+                  <td>{data.sale}</td>
+                  <td>{data.dailyConv}</td>
+                  <td>{data.travelingLong}</td>
+                  <td>{data.lodginBoardig}</td>
+                  <td>{data.nightAllowance}</td>
+                  <td>{data.food}</td>
+                  <td>{data.foodGST}</td>
+                  <td>{data.internet}</td>
+                  <td>{data.payer}</td>
+                  <td>{data.printingStationary}</td>
+                  <td>{data.postageCourier}</td>
+                  <td>{data.localConv}</td>
+                  <td className="flex items-center gap-2">
+                    {data.approval}
+                    <div>
+                      <input
+                        type="checkbox"
+                        value={checked}
+                        className="w-4"
+                        onChange={(e) => setChecked(e.target.checked)}
+                        onClick={() => handleClick(data.expenceId)}
+                      />
+                    </div>
+                  </td>
+                  <td>{`${
+                    data.dailyConv +
+                    data.travelingLong +
+                    data.lodginBoardig +
+                    data.nightAllowance +
+                    data.food +
+                    data.foodGST +
+                    data.internet +
+                    data.printingStationary +
+                    data.postageCourier +
+                    data.localConv
+                  }`}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
-      <AddModal
-        open={openForm}
-        setOpen={setOpenForm}
+      
+        <div className="flex justify-end mt-4 text-white">
+           <button className="bg-cyan-500 px-3 py-1 rounded" onClick={handleSubmit}>submit</button>
+         </div>
+
+      <AddModal open={openForm} setOpen={setOpenForm} />
+      <UpdateModal
+        open={updateForm}
+        setOpen={setUpdateForm}
+        editData={editData}
       />
-      <UpdateModal 
-         open={updateForm}
-         setOpen={setUpdateForm}
-         editData={editData}
-      />
+       <Toaster  position="top-center" />
     </>
   );
 };

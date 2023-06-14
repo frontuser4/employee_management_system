@@ -1,5 +1,5 @@
-// import ExpenceTable from '../component/expence/ExpenceTable';
-import ExpenceTable from '../components/ExpenceTable';
+import ExpenceTable from '../component/expence/ExpenceTable';
+// import ExpenceTable from '../components/ExpenceTable';
 
 const ExpenceTables = ({year, month}) => {
 
