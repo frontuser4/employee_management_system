@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import dayjs from 'dayjs';
-import { getEmp } from '../utils/api';
-import { MonthDropDown, YearDropDown } from './Dropdown';
+import { getEmp } from '../../utils/api';
+import { MonthDropDown, YearDropDown } from '../Dropdown';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export const EmployeeTable = () => {

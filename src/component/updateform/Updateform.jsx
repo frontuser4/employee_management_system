@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import "react-datepicker/dist/react-datepicker.css";
-import TextFeild from '../../components/TextFeild';
-import { AttendanceDropdown, ModeDropdown, StockistDropdown } from '../../components/Dropdown';
-import Accordions from '../../components/Accordions';
+import TextFeild from '../TextFeild';
+import { AttendanceDropdown, ModeDropdown, StockistDropdown } from '../Dropdown';
+import Accordions from '../Accordions';
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -11,7 +11,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { update } from '../../utils/api';
 
 
-const UpdateForm = ({setOpen, editData}) => {
+const UpdateForm = ({setOpen, editData, setCloseUpdateform}) => {
   
   const { state } = useLocation();
   const [formData, setFormData] = useState(editData);
@@ -21,10 +21,10 @@ const UpdateForm = ({setOpen, editData}) => {
   const [date, setDate] = useState(dayjs());
   const expensID = `${state.data.empId}${dayjs(date.$d).format('YYYY')}${dayjs(date.$d).format('MM')}${dayjs(date.$d).format('DD')}`;
 
-  const submitData = async(data) => {
-    console.log("formData: ", data);
+  const submitData = async() => {
+    console.log("formData: ", formData);
     try {
-     const result = await update('/account/expence', data)
+     const result = await update('/account/expence', formData)
      console.log('form-data: ', result)
      setOpen(false)
     } catch (error) {
@@ -46,9 +46,10 @@ const UpdateForm = ({setOpen, editData}) => {
 
   const submitHandler = (e)=>{
     e.preventDefault();
-    submitData(formData)
+    submitData();
     setFormData({})
     setOpen(false)
+    setCloseUpdateform((prev)=> !prev);
   }
 
   return (

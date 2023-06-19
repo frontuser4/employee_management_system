@@ -7,7 +7,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import AddForm from './AddForm';
 
-export default function AddModal({open, setOpen}) {
+export default function AddModal({open, setOpen, setCloseForm}) {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -28,15 +28,15 @@ export default function AddModal({open, setOpen}) {
           Monthly Expenses
         </DialogTitle>
         <DialogContent>
-         <AddForm setOpen={setOpen}/>
+         <AddForm setOpen={setOpen} setCloseForm={setCloseForm}/>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleClose}>
+          <Button variant='contained' autoFocus onClick={handleClose}>
             Cancel
           </Button>
-          <Button onClick={handleClose} autoFocus>
+          {/* <Button  onClick={handleClose} autoFocus>
             Save
-          </Button>
+          </Button> */}
         </DialogActions>
       </Dialog>
     </div>

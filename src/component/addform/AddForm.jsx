@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import "react-datepicker/dist/react-datepicker.css";
-import TextFeild from './TextFeild';
-import { AttendanceDropdown, ModeDropdown, StockistDropdown } from './Dropdown';
-import Accordions from './Accordions';
+import TextFeild from '../TextFeild';
+import { AttendanceDropdown, ModeDropdown, StockistDropdown } from '../Dropdown';
+import Accordions from '../Accordions';
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { post } from '../utils/api';
+import { post } from '../../utils/api';
 import toast, { Toaster } from 'react-hot-toast';
 
 
@@ -36,7 +36,7 @@ const defaultState = {
   payer__payerId: ""
 }
 
-const AddForm = ({setOpen}) => {
+const AddForm = ({setOpen, setCloseForm}) => {
   
   const { state } = useLocation();
   const [formData, setFormData] = useState(defaultState);
@@ -74,6 +74,7 @@ const AddForm = ({setOpen}) => {
     submitData(formData)
     setFormData({})
     setOpen(false)
+    setCloseForm((prev)=> !prev);
   }
 
   return (

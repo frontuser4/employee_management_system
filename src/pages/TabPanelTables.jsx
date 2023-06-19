@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Box } from '@mui/material';
-import TabPanels from '../components/TabPanels';
-import { MonthDropDown, YearDropDown } from '../components/Dropdown';
+import TabPanels from '../component/TabPanels';
+import { MonthDropDown, YearDropDown } from '../component/Dropdown';
 import ExpenceTables from './ExpenceTables';
 import ScoreCard from './ScoreCard';
-import Card from '../components/Card';
+import Card from '../component/Card';
 import dayjs from 'dayjs';
 
 const TabPanelTables = () => {

@@ -4,7 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useLocation } from 'react-router-dom';
-import EmployeeTable from '../components/EmployeeTable'; 
+import EmployeeTable from '../component/employee/EmployeeTable'; 
 
 function EmployeeTables() {
 
