@@ -1,54 +1,61 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import "react-datepicker/dist/react-datepicker.css";
-import { useForm } from "react-hook-form";
-import TextFeild from './TextFeild';
-import { AttendanceDropdown, ModeDropdown, StockistDropdown } from './Dropdown';
-import Accordions from './Accordions';
+import TextFeild from '../TextFeild';
+import { AttendanceDropdown, ModeDropdown, StockistDropdown } from '../Dropdown';
+import Accordions from '../Accordions';
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { post } from '../utils/api';
+import { update } from '../../utils/api';
 
-const AddForm = () => {
 
+const UpdateForm = ({setOpen, editData, setCloseUpdateform}) => {
+  
   const { state } = useLocation();
-  const { register, handleSubmit, reset } = useForm();
-  const [data, setData] = useState("");
+  const [formData, setFormData] = useState(editData);
   const [attendance, setAttendance] = useState('');
   const [modeTravel, setModeTravel] = useState('');
   const [stockistData, setStockistData] = useState('');
   const [date, setDate] = useState(dayjs());
   const expensID = `${state.data.empId}${dayjs(date.$d).format('YYYY')}${dayjs(date.$d).format('MM')}${dayjs(date.$d).format('DD')}`;
 
-  const submitData = async (data) => {
+  const submitData = async() => {
+    console.log("formData: ", formData);
     try {
-     const result = await post('/account/expence', data)
+     const result = await update('/account/expence', formData)
      console.log('form-data: ', result)
+     setOpen(false)
     } catch (error) {
        console.log("error: ", error);
     }
   }
 
+  const handlerChange = (event)=>{
+    setFormData((prev)=> ({...prev,  
+      expenceId: expensID,
+      emp: state.data.empId, 
+      dateExp: dayjs(date.$d).format('YYYY-MM-DD'), 
+      payer__payerId: stockistData, 
+      attendance, 
+      modeTravel, 
+      [event.target.name]: event.target.value
+   }))
+  }
+
+  const submitHandler = (e)=>{
+    e.preventDefault();
+    submitData();
+    setFormData({})
+    setOpen(false)
+    setCloseUpdateform((prev)=> !prev);
+  }
+
   return (
     <div className='flex justify-center'>
       <div className='bg-white w-full max-w-5xl md:my-3 rounded px-4 py-2'>
-        <form onSubmit={handleSubmit((data) => {
-          setData(data);
-          submitData(
-            {  
-               expenceId: expensID,
-               emp: state.data.empId, 
-               dateExp: dayjs(date.$d).format('YYYY-MM-DD'), 
-               payer__payerId: stockistData, 
-               attendance, 
-               modeTravel, 
-               ...data 
-            }
-          );
-          reset();
-        })} autoComplete='off'>
+        <form onSubmit={submitHandler} autoComplete='off'>
 
           <div className='grid md:grid-cols-2 place-items-center gap-3 mb-4'>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -70,25 +77,29 @@ const AddForm = () => {
 
           <div className='grid md:grid-cols-2 gap-3 mb-4'>
             <TextFeild
-              value="tc"
-              register={register}
+              names="tc"
+              value={formData.tc}
+              handlerChange={handlerChange}
               placeholder="TC"
             />
             <TextFeild
-              value="pc"
-              register={register}
+              names="pc"
+              value={formData.pc}
+              handlerChange={handlerChange}
               placeholder="PC"
             />
           </div>
           <div className='grid md:grid-cols-3 gap-3 mb-4'>
             <TextFeild
-              value="sale"
-              register={register}
+              names="sale"
+              value={formData.sale}
+              handlerChange={handlerChange}
               placeholder="SALE"
             />
             <TextFeild
-              value="workingHr"
-              register={register}
+              names="workingHr"
+              value={formData.workingHr}
+              handlerChange={handlerChange}
               placeholder="WORKING HOURS"
             />
             <StockistDropdown
@@ -100,18 +111,21 @@ const AddForm = () => {
           </div>
           <div className='grid md:grid-cols-3 gap-3 mb-4'>
             <TextFeild
-              value="townMarketWork"
-              register={register}
+              names="townMarketWork"
+              value={formData.townMarketWork}
+              handlerChange={handlerChange}
               placeholder="TOWN AND MARKET WORKED"
             />
             <TextFeild
-              value="travelSource"
-              register={register}
+              names="travelSource"
+              value={formData.travelSource}
+              handlerChange={handlerChange}
               placeholder="TRAVEL FROM"
             />
             <TextFeild
-              value="travelDestination"
-              register={register}
+              names="travelDestination"
+              value={formData.travelDestination}
+              handlerChange={handlerChange}
               placeholder="TRAVEL TO"
             />
           </div>
@@ -124,13 +138,15 @@ const AddForm = () => {
               onChange={(e) => setModeTravel(e)}
             />
             <TextFeild
-              value="distance"
-              register={register}
+              names="distance"
+              value={formData.distance}
+              handlerChange={handlerChange}
               placeholder="ONE SIDE KM"
             />
             <TextFeild
-              value="dailyConveyance"
-              register={register}
+              names="dailyConveyance"
+              value={formData.dailyConveyance}
+              handlerChange={handlerChange}
               placeholder="DAILY CONVEYANCE"
             />
           </div>
@@ -143,18 +159,21 @@ const AddForm = () => {
                   <div className='grid md:grid-cols-3 gap-3'>
 
                     <TextFeild
-                      value="localConv"
-                      register={register}
+                      names="localConv"
+                      value={formData.localConv}
+                      handlerChange={handlerChange}
                       placeholder="LOCAL CONV"
                     />
                     <TextFeild
-                      value="travelingLong"
-                      register={register}
+                      names="travelingLong"
+                      value={formData.travelingLong}
+                      handlerChange={handlerChange}
                       placeholder="TRAVELING LONG"
                     />
                     <TextFeild
-                      value="lodginBoardig"
-                      register={register}
+                      names="lodginBoardig"
+                      value={formData.lodginBoardig}
+                      handlerChange={handlerChange}
                       placeholder="TRAVELING BOARDING"
                     />
                   </div>
@@ -170,13 +189,15 @@ const AddForm = () => {
                 <>
                   <div className='grid md:grid-cols-2 gap-3 '>
                     <TextFeild
-                      value="food"
-                      register={register}
+                      names="food"
+                      value={formData.food}
+                      handlerChange={handlerChange}
                       placeholder="FOOD"
                     />
                     <TextFeild
-                      value="foodGST"
-                      register={register}
+                      names="foodGST"
+                      value={formData.foodGST}
+                      handlerChange={handlerChange}
                       placeholder="FOOD GST"
                     />
                   </div>
@@ -192,18 +213,21 @@ const AddForm = () => {
                 <>
                   <div className='grid md:grid-cols-3 gap-3 '>
                     <TextFeild
-                      value="internet"
-                      register={register}
+                      names="internet"
+                      value={formData.internet}
+                      handlerChange={handlerChange}
                       placeholder="INTERNET"
                     />
                     <TextFeild
-                      value="postageCourier"
-                      register={register}
+                      names="postageCourier"
+                      value={formData.postageCourier}
+                      handlerChange={handlerChange}
                       placeholder="COURIER"
                     />
                     <TextFeild
-                      value="printingStationary"
-                      register={register}
+                      names="printingStationary"
+                      value={formData.printingStationary}
+                      handlerChange={handlerChange}
                       placeholder="STATIONARY"
                     />
                   </div>
@@ -219,18 +243,21 @@ const AddForm = () => {
                 <>
                   <div className='grid md:grid-cols-3 gap-3 mb-4'>
                     <TextFeild
-                      value="other"
-                      register={register}
+                      names="other"
+                      value={formData.other}
+                      handlerChange={handlerChange}
                       placeholder="OTHER"
                     />
                     <TextFeild
-                      value="otherGst"
-                      register={register}
+                      names="otherGst"
+                      value={formData.otherGst}
+                      handlerChange={handlerChange}
                       placeholder="OTHERS GST"
                     />
                     <TextFeild
-                      value="nightAllowance"
-                      register={register}
+                      names="nightAllowance"
+                      value={formData.nightAllowance}
+                      handlerChange={handlerChange}
                       placeholder="NIGHT ALLOWANCE"
                     />
                   </div>
@@ -246,4 +273,4 @@ const AddForm = () => {
   )
 }
 
-export default AddForm;
+export default UpdateForm;

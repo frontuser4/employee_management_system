@@ -1,6 +1,6 @@
 import axios from "axios";
 axios.defaults.headers.common['Authorization'] = `jhsajdkhsakdjhsdjakjdhsajdsd`;
-const BASE_URL = 'http://142.93.208.119:80';
+const BASE_URL = 'http://142.93.208.119:8000';
 
 
 async function get(url, id, month, year){
@@ -25,8 +25,8 @@ async function post(url, data){
 async function update(url, data){
     try {
         // console.log(`${BASE_URL}${url} ${data}`)
-        const res = await axios.patch(`${BASE_URL}${url}`, data);
-        console.log("res: ". res)
+        const res = await axios.post(`${BASE_URL}${url}`, data);
+        console.log("res: ". res);
          return res;
         } catch (error) {
         console.log("get: ", error)

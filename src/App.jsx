@@ -1,6 +1,6 @@
 import {
   createBrowserRouter,
-  RouterProvider
+  RouterProvider,
 } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -19,11 +19,11 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: <Dashboard />,
+    children : [{path:'expence', element: <ExpenceTables />}]
   },
   { path: "/employee", element: <EmployeeTables /> },
-  { path: "/expence/:id", element: <ExpenceTables /> },
-  { path: "/scorecard", element: <ScoreCard /> }
-
+  { path: "/scorecard", element: <ScoreCard /> },
+  // { path: "/exp", element: <Exp /> },
 ]);
 
 function App() {
