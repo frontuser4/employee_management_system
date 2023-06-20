@@ -8,6 +8,7 @@ import PageNotFound from "./pages/PageNotFound";
 import ScoreCard from "./pages/ScoreCard";
 import EmployeeTables from "./pages/EmployeeTables";
 import EmployeeTablesTwo from './pages/EmployeeTableTwo';
+import Card from './component/Card';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
   {path:'expence', element: <EmployeeTablesTwo />},
   { path: "/employee", element: <EmployeeTables /> },
   { path: "/scorecard", element: <ScoreCard /> },
+  { path: "/cards", element: <Card /> },
 ]);
 
 function App() {
