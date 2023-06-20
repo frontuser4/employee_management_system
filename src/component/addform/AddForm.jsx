@@ -11,7 +11,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { post } from '../../utils/api';
 import toast, { Toaster } from 'react-hot-toast';
 
-
 const defaultState = {
   expenceId: "",
   tc: "",
@@ -40,17 +39,27 @@ const AddForm = ({setOpen, setCloseForm}) => {
   
   const { state } = useLocation();
   const [formData, setFormData] = useState(defaultState);
-  const [attendance, setAttendance] = useState('');
+  const [attendance, setAttendance] = useState('present');
   const [modeTravel, setModeTravel] = useState('');
   const [stockistData, setStockistData] = useState('');
   const [date, setDate] = useState(dayjs());
   const expensID = `${state.data.empId}${dayjs(date.$d).format('YYYY')}${dayjs(date.$d).format('MM')}${dayjs(date.$d).format('DD')}`;
 
-  const submitData = async(data) => {
+  const submitData = async() => {
+    const data = {
+      ...formData,
+      expenceId: expensID,
+      emp: state.data.empId, 
+      dateExp: dayjs(date.$d).format('YYYY-MM-DD'), 
+      payer: stockistData, 
+      attendance, 
+      modeTravel,
+    }
+    console.log("formdatapost: ", data);
     try {
      const result = await post('/account/expence', data)
      console.log('form-data: ', result);
-     toast.success('Added Successfully');
+     toast.success(result.data.message);
      setOpen(false);
     } catch (error) {
        console.log("error: ", error);
@@ -58,20 +67,12 @@ const AddForm = ({setOpen, setCloseForm}) => {
   }
 
   const handlerChange = (event)=>{
-    setFormData((prev)=> ({...prev,  
-      expenceId: expensID,
-      emp: state.data.empId, 
-      dateExp: dayjs(date.$d).format('YYYY-MM-DD'), 
-      payer__payerId: stockistData, 
-      attendance, 
-      modeTravel, 
-      [event.target.name]: event.target.value
-   }))
+    setFormData((prev)=> ({...prev, [event.target.name]: event.target.value}))
   }
 
   const submitHandler = (e)=>{
     e.preventDefault();
-    submitData(formData)
+    submitData()
     setFormData({})
     setOpen(false)
     setCloseForm((prev)=> !prev);
@@ -169,7 +170,7 @@ const AddForm = ({setOpen, setCloseForm}) => {
               placeholder="ONE SIDE KM"
             />
             <TextFeild
-              names="dailyConveyance"
+              names="dailyConv"
               value={formData.dailyConveyance}
               handlerChange={handlerChange}
               placeholder="DAILY CONVEYANCE"

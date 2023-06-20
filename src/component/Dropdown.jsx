@@ -5,6 +5,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
 const StockistDropdown = ({title, option, value, onChange})=>{
+
   const [open, setOpen] = useState(false);
 
   const handleChange = (event) => {
@@ -60,11 +61,11 @@ const AttendanceDropdown = ({title, option, value, onChange})=>{
 
   return(
     <FormControl sx={{ width: '100%'}}>
-        <InputLabel id="demo-controlled-open-select-label">{title}</InputLabel>
         <Select
           labelId="demo-controlled-open-select-label"
           id="demo-controlled-open-select"
           open={open}
+          defaultValue="present"
           onClose={handleClose}
           onOpen={handleOpen}
           value={value}
@@ -79,7 +80,7 @@ const AttendanceDropdown = ({title, option, value, onChange})=>{
         }
           
         </Select>
-      </FormControl>
+    </FormControl>
   )
 }
 

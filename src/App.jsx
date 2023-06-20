@@ -7,7 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import PageNotFound from "./pages/PageNotFound";
 import ScoreCard from "./pages/ScoreCard";
 import EmployeeTables from "./pages/EmployeeTables";
-import ExpenceTables from "./pages/ExpenceTables";
+import EmployeeTablesTwo from './pages/EmployeeTableTwo';
 
 const router = createBrowserRouter([
   {
@@ -19,11 +19,10 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: <Dashboard />,
-    children : [{path:'expence', element: <ExpenceTables />}]
   },
+  {path:'expence', element: <EmployeeTablesTwo />},
   { path: "/employee", element: <EmployeeTables /> },
   { path: "/scorecard", element: <ScoreCard /> },
-  // { path: "/exp", element: <Exp /> },
 ]);
 
 function App() {
