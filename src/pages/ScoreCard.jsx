@@ -1,6 +1,8 @@
 import '../globaltable.css';
 
+
 const ScoreCard = () => {
+  
 
   return (
     <>
@@ -8,10 +10,10 @@ const ScoreCard = () => {
   <table>
     <thead>
       <tr>
-        <th>DATA1</th>
-        <th>DATA2</th>
-        <th>DATA3</th>
-        <th>DATA4</th>
+        <th>PARAMETERS</th>
+        <th>TARGET</th>
+        <th>SCORE</th>
+        <th>TOTAL SCORE</th>
       </tr>
     </thead>
     <tbody>

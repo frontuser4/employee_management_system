@@ -42,7 +42,7 @@ function a11yProps(index) {
   };
 }
 
-export default function TabPanels({ExpenceTables, ScoreCard, Card, year, month}) {
+export default function TabPanels({ExpenceTables, ScoreCard, Card, year, month, empId}) {
 
   const theme = useTheme();
   const [value, setValue] = useState(0);
@@ -84,7 +84,11 @@ export default function TabPanels({ExpenceTables, ScoreCard, Card, year, month})
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
           <ScoreCard />
-          <Card/>
+          <Card 
+            empId={empId}
+            month={month}
+            year={year}
+          />
         </TabPanel>
       </SwipeableViews>
     </Box>

@@ -11,6 +11,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 const ExpenceTable = ({ year, month }) => {
+
   const { state } = useLocation();
   const [tableData, setTableData] = useState(null);
   const [openForm, setOpenForm] = useState(false);
@@ -42,7 +43,6 @@ const ExpenceTable = ({ year, month }) => {
   const handleEdit = (data) => {
     setEditData(data);
     setUpdateForm(true);
-    console.log("edit data: ", data);
   };
 
   const handleClick = (expenceId) => {
@@ -83,6 +83,7 @@ const ExpenceTable = ({ year, month }) => {
               <th>TC</th>
               <th>PC</th>
               <th>SALE</th>
+              <th>MODE TRAVEL</th>
               <th>DALY CONV</th>
               <th>TRAVELING LONG</th>
               <th>TRAVELING BOARDING</th>
@@ -94,6 +95,7 @@ const ExpenceTable = ({ year, month }) => {
               <th>PRINTING STATIONARY</th>
               <th>POSTAGE COURIER</th>
               <th>LOCAL CONVEY</th>
+              <th>WORKING HOURS</th>
               <th>APPROVAL</th>
               <th>TOTAL</th>
             </tr>
@@ -117,7 +119,8 @@ const ExpenceTable = ({ year, month }) => {
                     <td>{data.tc}</td>
                     <td>{data.pc}</td>
                     <td>{data.sale}</td>
-                    <td>{data.dailyConveyance}</td>
+                    <td>{data.modeTravel}</td>
+                    <td>{data.dailyConv}</td>
                     <td>{data.travelingLong}</td>
                     <td>{data.lodginBoardig}</td>
                     <td>{data.nightAllowance}</td>
@@ -128,6 +131,7 @@ const ExpenceTable = ({ year, month }) => {
                     <td>{data.printingStationary}</td>
                     <td>{data.postageCourier}</td>
                     <td>{data.localConv}</td>
+                    <td>{data.workingHr}</td>
                     <td className="flex items-center gap-2">
                       {data.approval}
                       <div>

@@ -32,7 +32,7 @@ export const EmployeeTable = () => {
                 accessorKey: 'emp__empId',
                 header: 'EmpId',
                 Cell: ({ cell }) => {
-                    return <button onClick={()=> navigate(`expence`, {state: {...state , emp:'emp', empId:cell.row.original.emp__empId, month, year}}) }  className='bg-cyan-400 px-2 py-1 rounded'>{cell.getValue()}</button>;
+                    return <button onClick={()=> navigate(`/expence`, {state: {...state , emp:'emp', empId:cell.row.original.emp__empId, month, year}}) }  className='bg-cyan-400 px-2 py-1 rounded'>{cell.getValue()}</button>;
                 },
             },
             {

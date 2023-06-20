@@ -5,31 +5,41 @@ import TextFeild from '../TextFeild';
 import { AttendanceDropdown, ModeDropdown, StockistDropdown } from '../Dropdown';
 import Accordions from '../Accordions';
 import dayjs from 'dayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { update } from '../../utils/api';
-
+import toast, { Toaster } from 'react-hot-toast';
 
 const UpdateForm = ({setOpen, editData, setCloseUpdateform}) => {
   
   const { state } = useLocation();
   const [formData, setFormData] = useState(editData);
-  const [attendance, setAttendance] = useState('');
-  const [modeTravel, setModeTravel] = useState('');
-  const [stockistData, setStockistData] = useState('');
-  const [date, setDate] = useState(dayjs());
+  const [attendance, setAttendance] = useState(formData.attendance);
+  const [modeTravel, setModeTravel] = useState(formData.modeTravel);
+  const [stockistData, setStockistData] = useState(formData.payer__payerId);
+  const [date, setDate] = useState(dayjs(formData.dateExp));
   const expensID = `${state.data.empId}${dayjs(date.$d).format('YYYY')}${dayjs(date.$d).format('MM')}${dayjs(date.$d).format('DD')}`;
 
   const submitData = async() => {
-    console.log("formData: ", formData);
+
+    const data = {
+      ...formData,
+      expenceId: expensID,
+      emp: state.data.empId, 
+      payer: stockistData, 
+      attendance, 
+      modeTravel,
+    }
+
+    console.log("updated: ", data);
+
     try {
-     const result = await update('/account/expence', formData)
+     const result = await update('/account/expence', data);
      console.log('form-data: ', result)
+     toast.success(result.data.message);
      setOpen(false)
     } catch (error) {
        console.log("error: ", error);
     }
+
   }
 
   const handlerChange = (event)=>{
@@ -57,16 +67,7 @@ const UpdateForm = ({setOpen, editData, setCloseUpdateform}) => {
       <div className='bg-white w-full max-w-5xl md:my-3 rounded px-4 py-2'>
         <form onSubmit={submitHandler} autoComplete='off'>
 
-          <div className='grid md:grid-cols-2 place-items-center gap-3 mb-4'>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="Select Date"
-                value={date}
-                onChange={(newDate) => setDate(newDate)}
-                slotProps={{textField:{size:'small'}}}
-              />
-            </LocalizationProvider>
-
+          <div className='grid md:grid-cols place-items-center mb-4'>
             <AttendanceDropdown
               title='Attendance'
               option={['present', 'absent', 'MRM',]}
@@ -144,7 +145,7 @@ const UpdateForm = ({setOpen, editData, setCloseUpdateform}) => {
               placeholder="ONE SIDE KM"
             />
             <TextFeild
-              names="dailyConveyance"
+              names="dailyConv"
               value={formData.dailyConveyance}
               handlerChange={handlerChange}
               placeholder="DAILY CONVEYANCE"
@@ -269,6 +270,7 @@ const UpdateForm = ({setOpen, editData, setCloseUpdateform}) => {
           <button className="block uppercase shadow bg-teal-600 hover:bg-teal-700 focus:shadow-outline focus:outline-none text-white text-xs py-3 px-10 rounded">Submit</button>
         </form>
       </div>
+      <Toaster  position="top-right" />
     </div>
   )
 }
