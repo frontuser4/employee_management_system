@@ -114,24 +114,24 @@ const ExpenceTable = ({ year, month }) => {
                         <EditIcon />
                       </button>
                     </td>
-                    <td>{data.dateExp}</td>
-                    <td>{data.attendance}</td>
-                    <td>{data.tc}</td>
-                    <td>{data.pc}</td>
-                    <td>{data.sale}</td>
-                    <td>{data.modeTravel}</td>
-                    <td>{data.dailyConv}</td>
-                    <td>{data.travelingLong}</td>
-                    <td>{data.lodginBoardig}</td>
-                    <td>{data.nightAllowance}</td>
-                    <td>{data.food}</td>
-                    <td>{data.foodGST}</td>
-                    <td>{data.internet}</td>
-                    <td>{data.payer__payerId}</td>
-                    <td>{data.printingStationary}</td>
-                    <td>{data.postageCourier}</td>
-                    <td>{data.localConv}</td>
-                    <td>{data.workingHr}</td>
+                    <td className="text-center">{data.dateExp}</td>
+                    <td className="text-center">{data.attendance}</td>
+                    <td className="text-center">{data.tc}</td>
+                    <td className="text-center">{data.pc}</td>
+                    <td className="text-center">{data.sale}</td>
+                    <td className="text-center">{data.modeTravel}</td>
+                    <td className="text-center">{data.dailyConv}</td>
+                    <td className="text-center">{data.travelingLong}</td>
+                    <td className="text-center">{data.lodginBoardig}</td>
+                    <td className="text-center">{data.nightAllowance}</td>
+                    <td className="text-center">{data.food}</td>
+                    <td className="text-center">{data.foodGST}</td>
+                    <td className="text-center">{data.internet}</td>
+                    <td className="text-center">{data.payer__payerId}</td>
+                    <td className="text-center">{data.printingStationary}</td>
+                    <td className="text-center">{data.postageCourier}</td>
+                    <td className="text-center">{data.localConv}</td>
+                    <td className="text-center">{data.workingHr}</td>
                     <td className="flex items-center gap-2">
                       {data.approval}
                       <div>
@@ -144,7 +144,7 @@ const ExpenceTable = ({ year, month }) => {
                         />
                       </div>
                     </td>
-                    <td>{`${
+                    <td className="text-center">{`${
                       data.dailyConv +
                       data.travelingLong +
                       data.lodginBoardig +

@@ -23,6 +23,7 @@ const TabPanelTables = ({empId}) => {
         </div>
       </div>
       <TabPanels
+        value={0}
         index={0}
         ExpenceTables={ExpenceTables}
         ScoreCard={ScoreCard}
