@@ -1,9 +1,9 @@
 
-const TextFeild = ({names, value, handlerChange, placeholder }) => {
-
+const TextFeild = ({names, value, handlerChange, placeholder, disable}) => {
     return (
         <div>
             <input
+                disabled={disable === 'absent' ? true : false}
                 name={names}
                 value={value}
                 onChange={handlerChange}

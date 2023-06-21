@@ -8,6 +8,7 @@ import Card from "../component/Card";
 import dayjs from "dayjs";
 
 const TabPanelTables = ({empId}) => {
+  
   const [date, setDate] = useState(dayjs());
   const [year, setYear] = useState(dayjs(date.$d).format("YYYY"));
   const [month, setMonth] = useState(dayjs(date.$d).format("MM").split("")[1]);
@@ -23,6 +24,8 @@ const TabPanelTables = ({empId}) => {
         </div>
       </div>
       <TabPanels
+        value={0}
+        index={0}
         ExpenceTables={ExpenceTables}
         ScoreCard={ScoreCard}
         Card={Card}

@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
 import { useTheme } from '@mui/material/styles';
@@ -7,6 +7,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { scoreSummaryGet } from "../utils/api";
 
 function TabPanel(props) {
 
@@ -46,6 +47,21 @@ export default function TabPanels({ExpenceTables, ScoreCard, Card, year, month, 
 
   const theme = useTheme();
   const [value, setValue] = useState(0);
+  const [score, setScore] = useState(null);
+  const [saleTargetLY, setSaleTargetLY] = useState(null);
+  const [saleTargetTY, setSaleTargetTY] = useState(null);
+
+  const fetchScoreCardData = async () => {
+    const res = await scoreSummaryGet("/account/score", empId, month, year);
+    setScore(res.score);
+    setSaleTargetLY(res.sale_target_LY);
+    setSaleTargetTY(res.sale_target_TY);
+  };
+
+
+  useEffect(() => {
+    fetchScoreCardData();
+  }, []);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -85,9 +101,9 @@ export default function TabPanels({ExpenceTables, ScoreCard, Card, year, month, 
         <TabPanel value={value} index={1} dir={theme.direction}>
           <ScoreCard />
           <Card 
-            empId={empId}
-            month={month}
-            year={year}
+            score={score}
+            saleTargetLY={saleTargetLY}
+            saleTargetTY={saleTargetTY}
           />
         </TabPanel>
       </SwipeableViews>
