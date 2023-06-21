@@ -239,6 +239,36 @@ const UpdateForm = ({setOpen, editData, setCloseUpdateform}) => {
 
           <div className='grid mb-4'>
             <Accordions
+              heading="Promotion and Expansion"
+              components={
+                <>
+                  <div className='grid md:grid-cols-2 gap-3 '>
+                    <TextFeild
+                      names="poster"
+                      value={formData.poster}
+                      handlerChange={handlerChange}
+                      placeholder="POSTER ACTIVITY"
+                    />
+                    <TextFeild
+                      names="openOutlet"
+                      value={formData.openOutlet}
+                      handlerChange={handlerChange}
+                      placeholder="OPEN OUTLET"
+                    />
+                    <TextFeild
+                      names="openOutlet"
+                      value={formData.openOutlet}
+                      handlerChange={handlerChange}
+                      placeholder="OPEN OUTLET"
+                    />
+                  </div>
+                </>
+              }
+            />
+          </div>
+
+          <div className='grid mb-4'>
+            <Accordions
               heading="others"
               components={
                 <>

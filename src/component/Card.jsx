@@ -63,6 +63,18 @@ const Card = ({ score, saleTargetLY, saleTargetTY }) => {
           <Typography>AVG PC</Typography>
           <Typography>{score?.pc_sum/score?.workingDays}</Typography>
         </Box>
+        <Box className="flex items-center justify-center flex-col w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
+          <Typography>POSTER</Typography>
+          <Typography>{score?.poster_sum}</Typography>
+        </Box>
+        <Box className="flex items-center justify-center flex-col w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
+          <Typography>NEW OUTLET</Typography>
+          <Typography>{score?.outlet_sum}</Typography>
+        </Box>
+        <Box className="flex items-center justify-center flex-col w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
+          <Typography>NEW TOWN</Typography>
+          <Typography>{score?.town_sum}</Typography>
+        </Box>
       </Paper>
     </Box>
 

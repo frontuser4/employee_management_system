@@ -107,12 +107,14 @@ const AddForm = ({setOpen, setCloseForm}) => {
               value={formData.tc}
               handlerChange={handlerChange}
               placeholder="TC"
+              disable={attendance}
             />
             <TextFeild
               names="pc"
               value={formData.pc}
               handlerChange={handlerChange}
               placeholder="PC"
+              disable={attendance}
             />
           </div>
           <div className='grid md:grid-cols-3 gap-3 mb-4'>
@@ -121,18 +123,21 @@ const AddForm = ({setOpen, setCloseForm}) => {
               value={formData.sale}
               handlerChange={handlerChange}
               placeholder="SALE"
+              disable={attendance}
             />
             <TextFeild
               names="workingHr"
               value={formData.workingHr}
               handlerChange={handlerChange}
               placeholder="WORKING HOURS"
+              disable={attendance}
             />
             <StockistDropdown
               title='Stockist'
               option={state.stockist}
               value={stockistData}
               onChange={(e) => setStockistData(e)}
+              disable={attendance}
             />
           </div>
           <div className='grid md:grid-cols-3 gap-3 mb-4'>
@@ -141,18 +146,21 @@ const AddForm = ({setOpen, setCloseForm}) => {
               value={formData.townMarketWork}
               handlerChange={handlerChange}
               placeholder="TOWN AND MARKET WORKED"
+              disable={attendance}
             />
             <TextFeild
               names="travelSource"
               value={formData.travelSource}
               handlerChange={handlerChange}
               placeholder="TRAVEL FROM"
+              disable={attendance}
             />
             <TextFeild
               names="travelDestination"
               value={formData.travelDestination}
               handlerChange={handlerChange}
               placeholder="TRAVEL TO"
+              disable={attendance}
             />
           </div>
 
@@ -168,12 +176,14 @@ const AddForm = ({setOpen, setCloseForm}) => {
               value={formData.distance}
               handlerChange={handlerChange}
               placeholder="ONE SIDE KM"
+              disable={attendance}
             />
             <TextFeild
               names="dailyConv"
               value={formData.dailyConveyance}
               handlerChange={handlerChange}
               placeholder="DAILY CONVEYANCE"
+              disable={attendance}
             />
           </div>
 
@@ -189,18 +199,23 @@ const AddForm = ({setOpen, setCloseForm}) => {
                       value={formData.localConv}
                       handlerChange={handlerChange}
                       placeholder="LOCAL CONV"
+                      disable={attendance}
+ 
                     />
                     <TextFeild
                       names="travelingLong"
                       value={formData.travelingLong}
                       handlerChange={handlerChange}
                       placeholder="TRAVELING LONG"
+                      disable={attendance}
+
                     />
                     <TextFeild
                       names="lodginBoardig"
                       value={formData.lodginBoardig}
                       handlerChange={handlerChange}
                       placeholder="TRAVELING BOARDING"
+                      disable={attendance}
                     />
                   </div>
                 </>
@@ -219,12 +234,15 @@ const AddForm = ({setOpen, setCloseForm}) => {
                       value={formData.food}
                       handlerChange={handlerChange}
                       placeholder="FOOD"
+                      disable={attendance}
                     />
                     <TextFeild
                       names="foodGST"
                       value={formData.foodGST}
                       handlerChange={handlerChange}
                       placeholder="FOOD GST"
+                      disable={attendance}
+
                     />
                   </div>
                 </>
@@ -243,18 +261,56 @@ const AddForm = ({setOpen, setCloseForm}) => {
                       value={formData.internet}
                       handlerChange={handlerChange}
                       placeholder="INTERNET"
+                      disable={attendance}
                     />
                     <TextFeild
                       names="postageCourier"
                       value={formData.postageCourier}
                       handlerChange={handlerChange}
                       placeholder="COURIER"
+                      disable={attendance}
+
                     />
                     <TextFeild
                       names="printingStationary"
                       value={formData.printingStationary}
                       handlerChange={handlerChange}
                       placeholder="STATIONARY"
+                      disable={attendance}
+
+                    />
+                  </div>
+                </>
+              }
+            />
+          </div>
+
+          <div className='grid mb-4'>
+            <Accordions
+              heading="Promotion and Expension"
+              components={
+                <>
+                  <div className='grid md:grid-cols-3 gap-3 '>
+                    <TextFeild
+                      names="poster"
+                      value={formData.poster}
+                      handlerChange={handlerChange}
+                      placeholder="POSTER ACTIVITY"
+                      disable={attendance}
+                    />
+                    <TextFeild
+                      names="openOutlet"
+                      value={formData.openOutlet}
+                      handlerChange={handlerChange}
+                      placeholder="NEW OUTLET OPENED"
+                      disable={attendance}
+                    />
+                    <TextFeild
+                      names="openTown"
+                      value={formData.openTown}
+                      handlerChange={handlerChange}
+                      placeholder="NEW TOWN OPENED"
+                      disable={attendance}
                     />
                   </div>
                 </>
@@ -273,18 +329,24 @@ const AddForm = ({setOpen, setCloseForm}) => {
                       value={formData.other}
                       handlerChange={handlerChange}
                       placeholder="OTHER"
+                      disable={attendance}
+
                     />
                     <TextFeild
                       names="otherGst"
                       value={formData.otherGst}
                       handlerChange={handlerChange}
                       placeholder="OTHERS GST"
+                      disable={attendance}
+
                     />
                     <TextFeild
                       names="nightAllowance"
                       value={formData.nightAllowance}
                       handlerChange={handlerChange}
                       placeholder="NIGHT ALLOWANCE"
+                      disable={attendance}
+
                     />
                   </div>
                 </>
