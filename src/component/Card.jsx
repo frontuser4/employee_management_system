@@ -51,6 +51,14 @@ const Card = ({ score, saleTargetLY, saleTargetTY }) => {
           <Typography>MTH TGT</Typography>
           <Typography>{saleTargetTY?.tgsum}</Typography>
         </Box>
+        <Box className="flex items-center flex-col justify-center w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
+          <Typography>MTH ACH</Typography>
+          <Typography>{saleTargetTY?.kgsum}</Typography>
+        </Box>
+        <Box className="flex items-center flex-col justify-center w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
+          <Typography>LY ACH</Typography>
+          <Typography>{saleTargetLY?.kgsum}</Typography>
+        </Box>
         <Box className="flex items-center flex-col justify-center  bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
           <Typography>AVERAGES HOURS</Typography>
           <Typography>{score?.wHr_sum/score?.workingDays}</Typography>
@@ -68,12 +76,28 @@ const Card = ({ score, saleTargetLY, saleTargetTY }) => {
           <Typography>{score?.poster_sum}</Typography>
         </Box>
         <Box className="flex items-center justify-center flex-col w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
+          <Typography>AVG POSTER</Typography>
+          <Typography>{score?.poster_sum / score?.workingDays}</Typography>
+        </Box>
+        <Box className="flex items-center justify-center flex-col w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
           <Typography>NEW OUTLET</Typography>
           <Typography>{score?.outlet_sum}</Typography>
         </Box>
         <Box className="flex items-center justify-center flex-col w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
           <Typography>NEW TOWN</Typography>
           <Typography>{score?.town_sum}</Typography>
+        </Box>
+        <Box className="flex items-center justify-center flex-col w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
+          <Typography>INDEX</Typography>
+          <Typography>{parseFloat((saleTargetTY?.kgsum * 100)/saleTargetTY?.tgsum).toFixed(2)}</Typography>
+        </Box>
+        <Box className="flex items-center justify-center flex-col w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
+          <Typography>GROWTH</Typography>
+          <Typography>{parseFloat((saleTargetTY?.kgsum * 100)/saleTargetLY?.kgsum).toFixed(2)}</Typography>
+        </Box>
+        <Box className="flex items-center justify-center flex-col w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
+          <Typography>GAP KG</Typography>
+          <Typography>{Math.round(saleTargetLY?.kgsum - saleTargetTY?.kgsum)}</Typography>
         </Box>
       </Paper>
     </Box>

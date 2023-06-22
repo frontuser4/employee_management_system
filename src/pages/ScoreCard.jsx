@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "../globaltable.css";
 
 const ScoreCard = () => {
-  // const [score, setScore] = useState(40);
+  
   const [marksOne, setMarksOne] = useState(0);
   const [marksTwo, setMarksTwo] = useState(0);
   const [marksThree, setMarksThree] = useState(0);
@@ -10,7 +10,6 @@ const ScoreCard = () => {
   const [scoreGradeOne, setScoreGradeOne] = useState("");
   const [scoreGradeTwo, setScoreGradeTwo] = useState("");
   const [scoreGradeThree, setScoreGradeThree] = useState("");
-
 
   const totalScore = {
     scoreOne: 10,
@@ -143,10 +142,6 @@ const ScoreCard = () => {
     scoreThreeGrade(15);
   }, []);
 
-  console.log("one: ", {marksOne, scoreGradeOne});
-  console.log("two: ", {marksTwo, scoreGradeTwo});
-  console.log("three: ", {marksThree, scoreGradeThree});
-
   return (
     <>
       <div className="container">
@@ -185,16 +180,16 @@ const ScoreCard = () => {
               <td>{totalScore.scoreFour}</td>
             </tr>
             <tr>
-              <td>COVERAGE/DISTRIBUTION</td>
+              <td>PROMOTION ACTIVITY</td>
               <td>100</td>
               <td>10</td>
               <td>{totalScore.scoreFive}</td>
             </tr>
             <tr>
-              <td>DAILY REPORTING</td>
-              <td>OUTLETS</td>
-              <td>5</td>
-              <td>{totalScore.scoreSix}</td>
+              <td>PJP CHANGE</td>
+              <td>100</td>
+              <td>10</td>
+              <td>{totalScore.scoreFive}</td>
             </tr>
             <tr>
               <td>CLAIM/GIFT SUBMISSIONS</td>

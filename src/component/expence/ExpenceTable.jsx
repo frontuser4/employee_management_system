@@ -26,18 +26,14 @@ const ExpenceTable = ({ year, month }) => {
 
   async function fetchData() {
     setLoading(true);
-    const res = await get(
-      "/account/expence",
-      `${state.emp === "emp" ? state.empId : state.data.empId}`,
-      `${state.emp === "emp" ? state.month : month}`,
-      `${state.emp === "emp" ? state.year : year}`
-    );
+    const res = await get("/account/expence", state.data.empId, month, year);
     setTableData(res);
     setLoading(false);
   }
 
   useEffect(() => {
     fetchData();
+    console.log("closeForm called: ")
   }, [month, year, closeUpdateForm, closeForm, checkedRefresh]);
 
   const handleEdit = (data) => {

@@ -1,82 +1,90 @@
-import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
-import TextFeild from '../TextFeild';
-import { AttendanceDropdown, ModeDropdown, StockistDropdown } from '../Dropdown';
-import Accordions from '../Accordions';
-import dayjs from 'dayjs';
-import { update } from '../../utils/api';
-import toast, { Toaster } from 'react-hot-toast';
+import TextFeild from "../TextFeild";
+import {
+  AttendanceDropdown,
+  ModeDropdown,
+  StockistDropdown,
+} from "../Dropdown";
+import Accordions from "../Accordions";
+import dayjs from "dayjs";
+import { update } from "../../utils/api";
+import toast, { Toaster } from "react-hot-toast";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 
-const UpdateForm = ({setOpen, editData, setCloseUpdateform}) => {
-  
+const UpdateForm = ({ setOpen, editData, setCloseUpdateform }) => {
   const { state } = useLocation();
   const [formData, setFormData] = useState(editData);
   const [attendance, setAttendance] = useState(formData.attendance);
   const [modeTravel, setModeTravel] = useState(formData.modeTravel);
   const [stockistData, setStockistData] = useState(formData.payer__payerId);
+  const [pjpChnage, setPjpChange] = useState(true);
+  const [promotionActivity, setPromotionActivity] = useState(true);
   const [date, setDate] = useState(dayjs(formData.dateExp));
-  const expensID = `${state.data.empId}${dayjs(date.$d).format('YYYY')}${dayjs(date.$d).format('MM')}${dayjs(date.$d).format('DD')}`;
+  const expensID = `${state.data.empId}${dayjs(date.$d).format("YYYY")}${dayjs(
+    date.$d
+  ).format("MM")}${dayjs(date.$d).format("DD")}`;
 
-  const submitData = async() => {
-
+  const submitData = async () => {
     const data = {
       ...formData,
       expenceId: expensID,
-      emp: state.data.empId, 
-      payer: stockistData, 
-      attendance, 
+      emp: state.data.empId,
+      payer: stockistData,
+      attendance,
       modeTravel,
-    }
+    };
 
     console.log("updated: ", data);
 
     try {
-     const result = await update('/account/expence', data);
-     console.log('form-data: ', result)
-     toast.success(result.data.message);
-     setOpen(false)
+      const result = await update("/account/expence", data);
+      console.log("form-data: ", result);
+      toast.success(result.data.message);
+      setOpen(false);
     } catch (error) {
-       console.log("error: ", error);
+      console.log("error: ", error);
     }
+  };
 
-  }
-
-  const handlerChange = (event)=>{
-    setFormData((prev)=> ({...prev,  
+  const handlerChange = (event) => {
+    setFormData((prev) => ({
+      ...prev,
       expenceId: expensID,
-      emp: state.data.empId, 
-      dateExp: dayjs(date.$d).format('YYYY-MM-DD'), 
-      payer__payerId: stockistData, 
-      attendance, 
-      modeTravel, 
-      [event.target.name]: event.target.value
-   }))
-  }
+      emp: state.data.empId,
+      dateExp: dayjs(date.$d).format("YYYY-MM-DD"),
+      payer__payerId: stockistData,
+      attendance,
+      modeTravel,
+      [event.target.name]: event.target.value,
+    }));
+  };
 
-  const submitHandler = (e)=>{
+  const submitHandler = (e) => {
     e.preventDefault();
     submitData();
-    setFormData({})
-    setOpen(false)
-    setCloseUpdateform((prev)=> !prev);
-  }
+    setFormData({});
+    setOpen(false);
+    setCloseUpdateform((prev) => !prev);
+  };
 
   return (
-    <div className='flex justify-center'>
-      <div className='bg-white w-full max-w-5xl md:my-3 rounded px-4 py-2'>
-        <form onSubmit={submitHandler} autoComplete='off'>
-
-          <div className='grid md:grid-cols place-items-center mb-4'>
+    <div className="flex justify-center">
+      <div className="bg-white w-full max-w-5xl md:my-3 rounded px-4 py-2">
+        <form onSubmit={submitHandler} autoComplete="off">
+          <div className="grid md:grid-cols place-items-center mb-4">
             <AttendanceDropdown
-              title='Attendance'
-              option={['present', 'absent', 'MRM',]}
+              title="Attendance"
+              option={["present", "absent", "MRM"]}
               value={attendance}
               onChange={(e) => setAttendance(e)}
             />
           </div>
 
-          <div className='grid md:grid-cols-2 gap-3 mb-4'>
+          <div className="grid md:grid-cols-2 gap-3 mb-4">
             <TextFeild
               names="tc"
               value={formData.tc}
@@ -90,7 +98,7 @@ const UpdateForm = ({setOpen, editData, setCloseUpdateform}) => {
               placeholder="PC"
             />
           </div>
-          <div className='grid md:grid-cols-3 gap-3 mb-4'>
+          <div className="grid md:grid-cols-3 gap-3 mb-4">
             <TextFeild
               names="sale"
               value={formData.sale}
@@ -104,13 +112,13 @@ const UpdateForm = ({setOpen, editData, setCloseUpdateform}) => {
               placeholder="WORKING HOURS"
             />
             <StockistDropdown
-              title='Stockist'
+              title="Stockist"
               option={state.stockist}
               value={stockistData}
               onChange={(e) => setStockistData(e)}
             />
           </div>
-          <div className='grid md:grid-cols-3 gap-3 mb-4'>
+          <div className="grid md:grid-cols-3 gap-3 mb-4">
             <TextFeild
               names="townMarketWork"
               value={formData.townMarketWork}
@@ -118,46 +126,51 @@ const UpdateForm = ({setOpen, editData, setCloseUpdateform}) => {
               placeholder="TOWN AND MARKET WORKED"
             />
             <TextFeild
-              names="travelSource"
-              value={formData.travelSource}
-              handlerChange={handlerChange}
-              placeholder="TRAVEL FROM"
-            />
-            <TextFeild
-              names="travelDestination"
-              value={formData.travelDestination}
-              handlerChange={handlerChange}
-              placeholder="TRAVEL TO"
-            />
-          </div>
-
-          <div className='grid md:grid-cols-3 gap-3 mb-4'>
-            <ModeDropdown
-              title='Mode of Travel'
-              option={['train', 'bus', 'bike']}
-              value={modeTravel}
-              onChange={(e) => setModeTravel(e)}
-            />
-            <TextFeild
-              names="distance"
-              value={formData.distance}
-              handlerChange={handlerChange}
-              placeholder="ONE SIDE KM"
-            />
-            <TextFeild
               names="dailyConv"
               value={formData.dailyConveyance}
               handlerChange={handlerChange}
-              placeholder="DAILY CONVEYANCE"
+              placeholder="D.A."
             />
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox onChange={(e) => setPjpChange(e.target.checked)} />
+                }
+                label="PJP Change?"
+              />
+            </FormGroup>
           </div>
 
-          <div className='grid mb-4'>
+          <div className="grid mb-4">
             <Accordions
               heading="Travel"
               components={
                 <>
-                  <div className='grid md:grid-cols-3 gap-3'>
+                  <div className="grid md:grid-cols-3 gap-3">
+                    <TextFeild
+                      names="travelSource"
+                      value={formData.travelSource}
+                      handlerChange={handlerChange}
+                      placeholder="TRAVEL FROM"
+                    />
+                    <TextFeild
+                      names="travelDestination"
+                      value={formData.travelDestination}
+                      handlerChange={handlerChange}
+                      placeholder="TRAVEL TO"
+                    />
+                    <ModeDropdown
+                      title="Mode of Travel"
+                      option={["train", "bus", "bike"]}
+                      value={modeTravel}
+                      onChange={(e) => setModeTravel(e)}
+                    />
+                    <TextFeild
+                      names="distance"
+                      value={formData.distance}
+                      handlerChange={handlerChange}
+                      placeholder="ONE SIDE KM"
+                    />
 
                     <TextFeild
                       names="localConv"
@@ -183,12 +196,12 @@ const UpdateForm = ({setOpen, editData, setCloseUpdateform}) => {
             />
           </div>
 
-          <div className='grid mb-4'>
+          <div className="grid mb-4">
             <Accordions
               heading="Food"
               components={
                 <>
-                  <div className='grid md:grid-cols-2 gap-3 '>
+                  <div className="grid md:grid-cols-2 gap-3 ">
                     <TextFeild
                       names="food"
                       value={formData.food}
@@ -207,17 +220,17 @@ const UpdateForm = ({setOpen, editData, setCloseUpdateform}) => {
             />
           </div>
 
-          <div className='grid mb-4'>
+          <div className="grid mb-4">
             <Accordions
               heading="Essentials"
               components={
                 <>
-                  <div className='grid md:grid-cols-3 gap-3 '>
+                  <div className="grid md:grid-cols-3 gap-3 ">
                     <TextFeild
                       names="internet"
                       value={formData.internet}
                       handlerChange={handlerChange}
-                      placeholder="INTERNET"
+                      placeholder="MOBILE BILL"
                     />
                     <TextFeild
                       names="postageCourier"
@@ -237,42 +250,12 @@ const UpdateForm = ({setOpen, editData, setCloseUpdateform}) => {
             />
           </div>
 
-          <div className='grid mb-4'>
-            <Accordions
-              heading="Promotion and Expansion"
-              components={
-                <>
-                  <div className='grid md:grid-cols-2 gap-3 '>
-                    <TextFeild
-                      names="poster"
-                      value={formData.poster}
-                      handlerChange={handlerChange}
-                      placeholder="POSTER ACTIVITY"
-                    />
-                    <TextFeild
-                      names="openOutlet"
-                      value={formData.openOutlet}
-                      handlerChange={handlerChange}
-                      placeholder="OPEN OUTLET"
-                    />
-                    <TextFeild
-                      names="openOutlet"
-                      value={formData.openOutlet}
-                      handlerChange={handlerChange}
-                      placeholder="OPEN OUTLET"
-                    />
-                  </div>
-                </>
-              }
-            />
-          </div>
-
-          <div className='grid mb-4'>
+          <div className="grid mb-4">
             <Accordions
               heading="others"
               components={
                 <>
-                  <div className='grid md:grid-cols-3 gap-3 mb-4'>
+                  <div className="grid md:grid-cols-3 gap-3 mb-4">
                     <TextFeild
                       names="other"
                       value={formData.other}
@@ -297,12 +280,50 @@ const UpdateForm = ({setOpen, editData, setCloseUpdateform}) => {
             />
           </div>
 
-          <button className="block uppercase shadow bg-teal-600 hover:bg-teal-700 focus:shadow-outline focus:outline-none text-white text-xs py-3 px-10 rounded">Submit</button>
+          <div className="grid mb-4">
+            <Accordions
+              heading="Promotion and Acitivity"
+              components={
+                <>
+                  <div className="grid md:grid-cols-2 gap-3 ">
+                    <TextFeild
+                      names="openOutlet"
+                      value={formData.openOutlet}
+                      handlerChange={handlerChange}
+                      placeholder="OPEN OUTLET"
+                    />
+                    <TextFeild
+                      names="openOutlet"
+                      value={formData.openOutlet}
+                      handlerChange={handlerChange}
+                      placeholder="OPEN OUTLET"
+                    />
+                    <TextFeild
+                      names="poster"
+                      value={formData.poster}
+                      handlerChange={handlerChange}
+                      placeholder="POSTER ACTIVITY"
+                    />
+                       <FormGroup>
+                      <FormControlLabel
+                        control={<Checkbox  onChange={(e)=> setPromotionActivity(e.target.checked)}/>}
+                        label="Any Promotion Activity?"
+                      />
+                    </FormGroup>
+                  </div>
+                </>
+              }
+            />
+          </div>
+
+          <button className="block uppercase shadow bg-teal-600 hover:bg-teal-700 focus:shadow-outline focus:outline-none text-white text-xs py-3 px-10 rounded">
+            Submit
+          </button>
         </form>
       </div>
-      <Toaster  position="top-right" />
+      <Toaster position="top-right" />
     </div>
-  )
-}
+  );
+};
 
 export default UpdateForm;
