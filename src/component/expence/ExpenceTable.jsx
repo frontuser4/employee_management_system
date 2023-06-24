@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./style.css";
 import { get, update } from "../../utils/api";
 import EditIcon from "@mui/icons-material/Edit";
@@ -9,9 +9,10 @@ import AddModal from "../addform/AddModal";
 import toast, { Toaster } from "react-hot-toast";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { DownloadTableExcel } from "react-export-table-to-excel";
 
 const ExpenceTable = ({ year, month }) => {
-
+  const tableRef = useRef(null);
   const { state } = useLocation();
   const [tableData, setTableData] = useState(null);
   const [openForm, setOpenForm] = useState(false);
@@ -26,18 +27,14 @@ const ExpenceTable = ({ year, month }) => {
 
   async function fetchData() {
     setLoading(true);
-    const res = await get(
-      "/account/expence",
-      `${state.emp === "emp" ? state.empId : state.data.empId}`,
-      `${state.emp === "emp" ? state.month : month}`,
-      `${state.emp === "emp" ? state.year : year}`
-    );
+    const res = await get("/account/expence", state.data.empId, month, year);
     setTableData(res);
     setLoading(false);
   }
 
   useEffect(() => {
     fetchData();
+    console.log("closeForm called: ");
   }, [month, year, closeUpdateForm, closeForm, checkedRefresh]);
 
   const handleEdit = (data) => {
@@ -58,23 +55,38 @@ const ExpenceTable = ({ year, month }) => {
     const updateRes = await update("/account/expence", { data: approval });
     console.log("Approval updates: ", updateRes);
     toast.success(updateRes.data.message);
-    setCheckedRefresh((prev)=> !prev);
+    setCheckedRefresh((prev) => !prev);
   };
 
   return (
     <>
-      <div>
-        <button
-          className="bg-[#0ea5e9] px-3 py-1 text-xl rounded text-white mb-2 hover:bg-cyan-600"
-          onClick={() => setOpenForm(true)}
+      <div className="flex items-center gap-3">
+        <div>
+          <button
+            className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
+            onClick={() => setOpenForm(true)}
+          >
+            <AddIcon />
+            Add
+          </button>
+        </div>
+        <div>
+        <DownloadTableExcel
+          filename="employee table"
+          sheet="employee"
+          currentTableRef={tableRef.current}
         >
-          <AddIcon />
-          Add
-        </button>
+          <button
+            className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
+          >
+            Export Data
+          </button>
+        </DownloadTableExcel>
+        </div>
       </div>
 
       <div className="container">
-        <table>
+        <table ref={tableRef}>
           <thead>
             <tr>
               <th>Action</th>
@@ -83,6 +95,7 @@ const ExpenceTable = ({ year, month }) => {
               <th>TC</th>
               <th>PC</th>
               <th>SALE</th>
+              <th>STOCKIST</th>
               <th>MODE TRAVEL</th>
               <th>DALY CONV</th>
               <th>TRAVELING LONG</th>
@@ -91,7 +104,6 @@ const ExpenceTable = ({ year, month }) => {
               <th>FOOD</th>
               <th>FOODGST</th>
               <th>INTERNET</th>
-              <th>PAYER</th>
               <th>PRINTING STATIONARY</th>
               <th>POSTAGE COURIER</th>
               <th>LOCAL CONVEY</th>
@@ -102,7 +114,7 @@ const ExpenceTable = ({ year, month }) => {
           </thead>
           <tbody>
             {loading ? (
-              <div style={{width:'100%'}}>
+              <div style={{ width: "100%" }}>
                 <Skeleton count={10} />
               </div>
             ) : (
@@ -119,6 +131,7 @@ const ExpenceTable = ({ year, month }) => {
                     <td className="text-center">{data.tc}</td>
                     <td className="text-center">{data.pc}</td>
                     <td className="text-center">{data.sale}</td>
+                    <td className="text-center">{data.payer__payerId}</td>
                     <td className="text-center">{data.modeTravel}</td>
                     <td className="text-center">{data.dailyConv}</td>
                     <td className="text-center">{data.travelingLong}</td>
@@ -127,7 +140,6 @@ const ExpenceTable = ({ year, month }) => {
                     <td className="text-center">{data.food}</td>
                     <td className="text-center">{data.foodGST}</td>
                     <td className="text-center">{data.internet}</td>
-                    <td className="text-center">{data.payer__payerId}</td>
                     <td className="text-center">{data.printingStationary}</td>
                     <td className="text-center">{data.postageCourier}</td>
                     <td className="text-center">{data.localConv}</td>
@@ -173,7 +185,11 @@ const ExpenceTable = ({ year, month }) => {
         </button>
       </div>
 
-      <AddModal open={openForm} setOpen={setOpenForm} setCloseForm={setCloseForm} />
+      <AddModal
+        open={openForm}
+        setOpen={setOpenForm}
+        setCloseForm={setCloseForm}
+      />
       <UpdateModal
         open={updateForm}
         setOpen={setUpdateForm}
