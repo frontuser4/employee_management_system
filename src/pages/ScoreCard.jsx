@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "../globaltable.css";
+import {TextField, Button } from "@mui/material";
 
 const ScoreCard = () => {
   
@@ -136,6 +137,12 @@ const ScoreCard = () => {
     }
   }
 
+  const handlerClaimGift = (e)=>{
+    e.preventDefault();
+    console.log("claim and gift: ", e.target[0].value);
+    e.target[0].value = '';
+}
+
   useEffect(() => {
     scoreOneGrade(40);
     scoreTwoGrade(20);
@@ -144,7 +151,19 @@ const ScoreCard = () => {
 
   return (
     <>
+        <div>
+          <form className="flex items-center gap-2" onSubmit={handlerClaimGift}>
+            <TextField
+              label="Claim/Gift"
+              id="claim-gift"
+              size="small"
+              autoComplete="off"
+            />
+           <Button type="submit" variant="contained">Submit</Button>
+          </form>
+        </div>
       <div className="container">
+      
         <table>
           <thead>
             <tr>
