@@ -26,6 +26,7 @@ import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const defaultState = {
   attendance: "",
@@ -57,7 +58,7 @@ const defaultState = {
 
 export default function AddForm({ open, setOpen, setCloseForm }) {
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("sx"));
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const { state } = useLocation();
   const [formData, setFormData] = useState(defaultState);
   const [attendance, setAttendance] = useState("present");
@@ -68,9 +69,16 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
   const [date, setDate] = useState(dayjs());
   const [distance, setDistance] = useState(null);
   const [nightAllowance, setNightAllowance] = useState(0);
+  const [selectedFile, setSelectedFile] = useState(null);
+
   const expenceId = `${state.data.empId}${dayjs(date.$d).format("YYYY")}${dayjs(
     date.$d
   ).format("MM")}${dayjs(date.$d).format("DD")}`;
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+  // console.log('files: ', selectedFile.name)
 
   const handleClose = () => {
     setOpen(false);
@@ -236,88 +244,139 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 heading="Travel"
                 components={
                   <>
-                    <div className="grid md:grid-cols-2 gap-3">
-                      <TextField
-                        type="text"
-                        name="travelSource"
-                        value={formData.travelSource}
-                        onChange={handleFormChange}
-                        fullWidth
-                        label="TRAVEL FROM"
-                        size="small"
-                        disabled={attendance === "absent" ? true : false}
-                      />
+                    <div className="grid md:grid-cols-1 gap-3">
+                      <div className="grid md:grid-cols-2 gap-3">
+                        <TextField
+                          type="text"
+                          name="travelSource"
+                          value={formData.travelSource}
+                          onChange={handleFormChange}
+                          fullWidth
+                          label="TRAVEL FROM"
+                          size="small"
+                          disabled={attendance === "absent" ? true : false}
+                        />
 
-                      <TextField
-                        type="text"
-                        name="travelDestination"
-                        value={formData.travelDestination}
-                        onChange={handleFormChange}
-                        fullWidth
-                        label="TRAVEL TO"
-                        size="small"
-                        disabled={attendance === "absent" ? true : false}
-                      />
+                        <TextField
+                          type="text"
+                          name="travelDestination"
+                          value={formData.travelDestination}
+                          onChange={handleFormChange}
+                          fullWidth
+                          label="TRAVEL TO"
+                          size="small"
+                          disabled={attendance === "absent" ? true : false}
+                        />
 
-                      <ModeDropdown
-                        title="Mode of Travel"
-                        option={["train", "bus", "bike"]}
-                        value={modeTravel}
-                        onChange={(e) => setModeTravel(e)}
-                      />
+                        <ModeDropdown
+                          title="Mode of Travel"
+                          option={["train", "bus", "bike"]}
+                          value={modeTravel}
+                          onChange={(e) => setModeTravel(e)}
+                        />
 
-                      <TextField
-                        type="number"
-                        name="distance"
-                        value={distance}
-                        onChange={handleDistanceChange}
-                        fullWidth
-                        label="ONE SIDE KM"
-                        size="small"
-                        disabled={attendance === "absent" ? true : false}
-                      />
+                        <TextField
+                          type="number"
+                          name="localConv"
+                          value={distance * 2 * 2}
+                          onChange={handleDistanceChange}
+                          fullWidth
+                          label="LOCAL CONV"
+                          size="small"
+                          disabled={true}
+                        />
 
-                      <TextField
-                        type="number"
-                        name="localConv"
-                        value={distance * 2 * 2}
-                        fullWidth
-                        label="LOCAL CONV"
-                        size="small"
-                        disabled={true}
-                      />
+                        <TextField
+                          type="number"
+                          name="travelingLong"
+                          value={formData.travelingLong}
+                          onChange={handleFormChange}
+                          fullWidth
+                          label="TRAVEL LONG(GST)"
+                          size="small"
+                          disabled={attendance === "absent" ? true : false}
+                        />
+                        <TextField
+                          type="number"
+                          name="nightAllowance"
+                          value={formData.nightAllowance}
+                          onChange={handleFormChange}
+                          label="NIGHT TRAVEL ALLOWANCE"
+                          size="small"
+                          disabled={attendance === "absent" ? true : false}
+                        />
+                      </div>
 
-                      <TextField
-                        type="number"
-                        name="travelingLong"
-                        value={formData.travelingLong}
-                        onChange={handleFormChange}
-                        fullWidth
-                        label="TRAVEL LONG(GST)"
-                        size="small"
-                        disabled={attendance === "absent" ? true : false}
-                      />
+                      <Box className="flex flex-col md:flex-row gap-2">
+                        <Box className="md:w-3/5">
+                          <TextField
+                            type="number"
+                            name="distance"
+                            value={distance}
+                            onChange={handleDistanceChange}
+                            fullWidth
+                            label="ONE SIDE KM"
+                            size="small"
+                            disabled={attendance === "absent" ? true : false}
+                          />
+                        </Box>
+                        {distance > 100 ? (
+                          <>
+                            {" "}
+                            <input
+                              type="file"
+                              id="upload-button"
+                              style={{ display: "none" }}
+                              onChange={handleFileChange}
+                            />
+                            <label htmlFor="upload-button">
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                component="span"
+                                startIcon={<CloudUploadIcon />}
+                              >
+                                {selectedFile
+                                  ? selectedFile.name
+                                  : "distance BILL"}
+                              </Button>
+                            </label>
+                          </>
+                        ) : (
+                          ""
+                        )}
+                      </Box>
 
-                      <TextField
-                        type="number"
-                        name="lodginBoardig"
-                        value={formData.lodginBoardig}
-                        onChange={handleFormChange}
-                        fullWidth
-                        label="LODGING BILL"
-                        size="small"
-                        disabled={attendance === "absent" ? true : false}
-                      />
-
-                      <TextField
-                        type="number"
-                        name="nightAllowance"
-                        value={formData.nightAllowance}
-                        onChange={handleFormChange}
-                        label="NIGHT TRAVEL ALLOWANCE"
-                        size="small"
-                        disabled={attendance === "absent" ? true : false}
-                      />
+                      <Box className="flex flex-col md:flex-row gap-2">
+                        <Box className="md:w-3/5">
+                          <TextField
+                            type="number"
+                            name="lodginBoardig"
+                            value={formData.lodginBoardig}
+                            onChange={handleFormChange}
+                            fullWidth
+                            label="LODGING BILL"
+                            size="small"
+                            disabled={attendance === "absent" ? true : false}
+                          />
+                        </Box>
+                        <input
+                          type="file"
+                          id="upload-button"
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
+                        />
+                        <label htmlFor="upload-button">
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {selectedFile ? selectedFile.name : "LODGING BILL"}
+                          </Button>
+                        </label>
+                      </Box>
                     </div>
                   </>
                 }
@@ -329,33 +388,72 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 heading="Food"
                 components={
                   <>
-                    <div className="grid md:grid-cols-2 gap-3 ">
-                      <Box>
-                        <TextField
-                          type="number"
-                          name="food"
-                          value={formData.food}
-                          onChange={handleFormChange}
-                          fullWidth
-                          label="FOOD"
-                          size="small"
-                          disabled={attendance === "absent" ? true : false}
+                    <div className="grid md:grid-cols-1 gap-3 ">
+                      <Box className="flex flex-col md:flex-row gap-2">
+                        <Box className="md:w-3/5">
+                          <TextField
+                            type="number"
+                            name="food"
+                            value={formData.food}
+                            fullWidth
+                            onChange={handleFormChange}
+                            label="FOOD"
+                            size="small"
+                            disabled={attendance === "absent" ? true : false}
+                          />
+                        </Box>
+
+                        <input
+                          type="file"
+                          id="upload-button"
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
                         />
-                        <TextField type="file" />
+                        <label htmlFor="upload-button">
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {selectedFile
+                              ? selectedFile.name
+                              : "Upload Food Bill"}
+                          </Button>
+                        </label>
                       </Box>
 
-                      <Box>
-                        <TextField
-                          type="number"
-                          name="foodGST"
-                          value={formData.foodGST}
-                          onChange={handleFormChange}
-                          fullWidth
-                          label="FOOD GST"
-                          size="small"
-                          disabled={attendance === "absent" ? true : false}
+                      <Box className="flex flex-col md:flex-row gap-2">
+                        <Box className="md:w-3/5">
+                          <TextField
+                            type="number"
+                            name="foodGST"
+                            value={formData.foodGST}
+                            onChange={handleFormChange}
+                            fullWidth
+                            label="FOOD GST"
+                            size="small"
+                            disabled={attendance === "absent" ? true : false}
+                          />
+                        </Box>
+                        <input
+                          type="file"
+                          id="upload-button"
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
                         />
-                        <TextField type="file" />
+                        <label htmlFor="upload-button">
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {selectedFile
+                              ? selectedFile.name
+                              : "Upload Food Bill"}
+                          </Button>
+                        </label>
                       </Box>
                     </div>
                   </>
@@ -368,39 +466,101 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 heading="Essentials"
                 components={
                   <>
-                    <div className="grid md:grid-cols-3 gap-3 ">
-                      <TextField
-                        type="number"
-                        name="internet"
-                        value={formData.internet}
-                        onChange={handleFormChange}
-                        fullWidth
-                        label="MOBILE BILL"
-                        size="small"
-                        disabled={attendance === "absent" ? true : false}
-                      />
+                    <div className="grid md:grid-cols-1 gap-3 ">
+                      <Box className="flex flex-col md:flex-row gap-2">
+                        <Box className="md:w-3/5">
+                          <TextField
+                            type="number"
+                            name="internet"
+                            value={formData.internet}
+                            onChange={handleFormChange}
+                            fullWidth
+                            label="MOBILE BILL"
+                            size="small"
+                            disabled={attendance === "absent" ? true : false}
+                          />
+                        </Box>
+                        <input
+                          type="file"
+                          id="upload-button"
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
+                        />
+                        <label htmlFor="upload-button">
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {selectedFile ? selectedFile.name : "MOBILE BILL"}
+                          </Button>
+                        </label>
+                      </Box>
 
-                      <TextField
-                        type="number"
-                        name="postageCourier"
-                        value={formData.postageCourier}
-                        onChange={handleFormChange}
-                        fullWidth
-                        label="COURIER"
-                        size="small"
-                        disabled={attendance === "absent" ? true : false}
-                      />
+                      <Box className="flex flex-col md:flex-row gap-2">
+                        <Box className="md:w-3/5">
+                          <TextField
+                            type="number"
+                            name="postageCourier"
+                            value={formData.postageCourier}
+                            onChange={handleFormChange}
+                            fullWidth
+                            label="COURIER"
+                            size="small"
+                            disabled={attendance === "absent" ? true : false}
+                          />
+                        </Box>
+                        <input
+                          type="file"
+                          id="upload-button"
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
+                        />
+                        <label htmlFor="upload-button">
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {selectedFile ? selectedFile.name : "Courier  Bill"}
+                          </Button>
+                        </label>
+                      </Box>
 
-                      <TextField
-                        type="number"
-                        name="printingStationary"
-                        value={formData.printingStationary}
-                        onChange={handleFormChange}
-                        fullWidth
-                        label="STATIONARY"
-                        size="small"
-                        disabled={attendance === "absent" ? true : false}
-                      />
+                      <Box className="flex flex-col md:flex-row gap-2">
+                        <Box className="md:w-3/5">
+                          <TextField
+                            type="number"
+                            name="printingStationary"
+                            value={formData.printingStationary}
+                            onChange={handleFormChange}
+                            fullWidth
+                            label="STATIONARY"
+                            size="small"
+                            disabled={attendance === "absent" ? true : false}
+                          />
+                        </Box>
+                        <input
+                          type="file"
+                          id="upload-button"
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
+                        />
+                        <label htmlFor="upload-button">
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {selectedFile
+                              ? selectedFile.name
+                              : "STATIONARY Bill"}
+                          </Button>
+                        </label>
+                      </Box>
                     </div>
                   </>
                 }

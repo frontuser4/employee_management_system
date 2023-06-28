@@ -4,7 +4,7 @@ import { get, update } from "../../utils/api";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import { useLocation } from "react-router-dom";
-import UpdateModal from "../updateform/UpdateModal";
+import UpdateForm from "../updateform/UpdateForm";
 import AddForm from "../addform/AddForm";
 import toast, { Toaster } from "react-hot-toast";
 import Skeleton from "react-loading-skeleton";
@@ -199,7 +199,7 @@ const ExpenceTable = ({ year, month }) => {
         setOpen={setOpenForm}
         setCloseForm={setCloseForm}
       />
-      {/* <UpdateModal
+      {/* <UpdateForm
         open={updateForm}
         setOpen={setUpdateForm}
         editData={editData}
