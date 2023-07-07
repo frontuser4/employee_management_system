@@ -1,380 +1,653 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
-import "react-datepicker/dist/react-datepicker.css";
-import TextFeild from "../TextFeild";
+import { useTheme } from "@mui/material/styles";
 import {
-  AttendanceDropdown,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  useMediaQuery,
+  Box,
+  TextField,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  Radio,
+  RadioGroup,
+} from "@mui/material";
+import Accordions from "../Accordions";
+import {
   ModeDropdown,
+  AttendanceDropdown,
   StockistDropdown,
 } from "../Dropdown";
-import Accordions from "../Accordions";
+import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { post } from "../../utils/api";
-import toast, { Toaster } from "react-hot-toast";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const defaultState = {
-  expenceId: "",
+  attendance: "",
   tc: "",
   pc: "",
-  dailyConv: "",
-  attendance: "",
-  dateExp: "",
   sale: "",
   approval: "",
   workingHr: "",
+  townMarketWork: "",
+  dailyConv: "",
+  travelSource: "",
+  travelDestination: "",
+  // distance: "",
   localConv: "",
   travelingLong: "",
   lodginBoardig: "",
+  nightAllowance: "",
   food: "",
   foodGST: "",
-  nightAllowance: "",
   internet: "",
   postageCourier: "",
   printingStationary: "",
   other: "",
   otherGst: "",
+  openOutlet: "",
+  openTown: "",
+  poster: "",
 };
 
-const AddForm = ({ setOpen, setCloseForm }) => {
+export default function AddForm({ open, setOpen, setCloseForm }) {
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const { state } = useLocation();
   const [formData, setFormData] = useState(defaultState);
   const [attendance, setAttendance] = useState("present");
   const [modeTravel, setModeTravel] = useState("");
   const [stockistData, setStockistData] = useState("");
-  const [pjpChnage, setPjpChange] = useState(true);
-  const [promotionActivity, setPromotionActivity] = useState(true);
+  const [pjpChnage, setPjpChange] = useState(false);
+  const [promotionActivity, setPromotionActivity] = useState(false);
   const [date, setDate] = useState(dayjs());
-  const expensID = `${state.data.empId}${dayjs(date.$d).format("YYYY")}${dayjs(
+  const [distance, setDistance] = useState(null);
+  const [nightAllowance, setNightAllowance] = useState(0);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const expenceId = `${state.data.empId}${dayjs(date.$d).format("YYYY")}${dayjs(
     date.$d
   ).format("MM")}${dayjs(date.$d).format("DD")}`;
 
-  const submitData = async () => {
-    const data = {
-      ...formData,
-      expenceId: expensID,
-      emp: state.data.empId,
-      dateExp: dayjs(date.$d).format("YYYY-MM-DD"),
-      payer: stockistData,
-      attendance,
-      modeTravel,
-    };
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+  // console.log('files: ', selectedFile.name)
 
-    console.log("formdatapost: ", data);
-
-    try {
-      const result = await post("/account/expence", data);
-      console.log("form-data: ", result);
-      toast.success(result.data.message);
-      setOpen(false);
-    } catch (error) {
-      console.log("error: ", error);
-    }
+  const handleClose = () => {
+    setOpen(false);
   };
 
-  const handlerChange = (event) => {
+  const handleFormChange = (event) => {
     setFormData((prev) => ({
       ...prev,
       [event.target.name]: event.target.value,
     }));
   };
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-    submitData();
-    setFormData({});
-    setOpen(false);
+  const handleFormSubmit = () => {
+    console.log("formData: ", {
+      ...formData,
+      emp: state.data.empId,
+      attendance,
+      modeTravel,
+      payer: stockistData,
+      dateExp: dayjs(date).format("DD-MM-YYYY"),
+      expenceId,
+      distance,
+      pjpChnage,
+      promotionActivity,
+    });
+    setFormData(defaultState);
+    setAttendance("present");
+    setModeTravel("");
+    setStockistData("");
+    setDistance("");
     setCloseForm((prev) => !prev);
+    setOpen(false);
+  };
+
+  const handleDistanceChange = (e) => {
+    setDistance(e.target.value);
+  };
+
+  const handleNightAllowanceChange = () => {
+    setNightAllowance(200);
   };
 
   return (
-    <div className="flex justify-center">
-      <div className="bg-white w-full max-w-5xl md:my-3 rounded px-4 py-2">
-        <form onSubmit={submitHandler} autoComplete="off">
-          <div className="grid md:grid-cols-2 place-items-center gap-3 mb-4">
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="Select Date"
-                value={date}
-                onChange={(newDate) => setDate(newDate)}
-                slotProps={{ textField: { size: "small" } }}
+    <div>
+      <Dialog
+        fullScreen={fullScreen}
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="responsive-dialog-title"
+      >
+        <DialogTitle id="responsive-dialog-title" className="text-center">
+          Monthly Expenses
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ flexFlow: 1, padding: 1 }}>
+            <div className="grid md:grid-cols-2 place-items-center gap-3 mb-4">
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Select Date"
+                  value={date}
+                  onChange={(newDate) => setDate(newDate)}
+                  slotProps={{ textField: { size: "small" } }}
+                />
+              </LocalizationProvider>
+
+              <AttendanceDropdown
+                title="Attendance"
+                option={["present", "absent", "MRM"]}
+                value={attendance}
+                onChange={(e) => setAttendance(e)}
               />
-            </LocalizationProvider>
-
-            <AttendanceDropdown
-              title="Attendance"
-              option={["present", "absent", "MRM"]}
-              value={attendance}
-              onChange={(e) => setAttendance(e)}
-            />
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-3 mb-4">
-            <TextFeild
-              names="tc"
-              value={formData.tc}
-              handlerChange={handlerChange}
-              placeholder="TC"
-              disable={attendance}
-            />
-            <TextFeild
-              names="pc"
-              value={formData.pc}
-              handlerChange={handlerChange}
-              placeholder="PC"
-              disable={attendance}
-            />
-          </div>
-          <div className="grid md:grid-cols-3 gap-3 mb-4">
-            <TextFeild
-              names="sale"
-              value={formData.sale}
-              handlerChange={handlerChange}
-              placeholder="SALE"
-              disable={attendance}
-            />
-            <TextFeild
-              names="workingHr"
-              value={formData.workingHr}
-              handlerChange={handlerChange}
-              placeholder="WORKING HOURS"
-              disable={attendance}
-            />
-            <StockistDropdown
-              title="Stockist"
-              option={state.stockist}
-              value={stockistData}
-              onChange={(e) => setStockistData(e)}
-              disable={attendance}
-            />
-          </div>
-          <div className="grid md:grid-cols-3 gap-3 mb-4">
-            <TextFeild
-              names="townMarketWork"
-              value={formData.townMarketWork}
-              handlerChange={handlerChange}
-              placeholder="TOWN AND MARKET WORKED"
-              disable={attendance}
-            />
-            <TextFeild
-              names="dailyConv"
-              value={formData.dailyConveyance}
-              handlerChange={handlerChange}
-              placeholder="D.A."
-              disable={attendance}
-            />
-            <FormGroup>
-              <FormControlLabel
-                control={<Checkbox onChange={(e)=> setPjpChange(e.target.checked)} />}
-                label="PJP Change?"
+            </div>
+            <div className="grid md:grid-cols-2 gap-3 mb-4">
+              <TextField
+                type="number"
+                fullWidth
+                name="tc"
+                value={formData.tc}
+                onChange={handleFormChange}
+                label="TC"
+                id="tc"
+                size="small"
+                disabled={attendance === "absent" ? true : false}
               />
-            </FormGroup>
-          </div>
+              <TextField
+                type="number"
+                fullWidth
+                name="pc"
+                value={formData.pc}
+                onChange={handleFormChange}
+                label="PC"
+                id="pc"
+                size="small"
+                disabled={attendance === "absent" ? true : false}
+              />
+            </div>
 
-          <div className="grid mb-4">
-            <Accordions
-              heading="Travel"
-              components={
-                <>
-                  <div className="grid md:grid-cols-3 gap-3">
-                    <TextFeild
-                      names="travelSource"
-                      value={formData.travelSource}
-                      handlerChange={handlerChange}
-                      placeholder="TRAVEL FROM"
-                      disable={attendance}
-                    />
-                    <TextFeild
-                      names="travelDestination"
-                      value={formData.travelDestination}
-                      handlerChange={handlerChange}
-                      placeholder="TRAVEL TO"
-                      disable={attendance}
-                    />
-                    <ModeDropdown
-                      title="Mode of Travel"
-                      option={["train", "bus", "bike"]}
-                      value={modeTravel}
-                      onChange={(e) => setModeTravel(e)}
-                    />
-                    <TextFeild
-                      names="distance"
-                      value={formData.distance}
-                      handlerChange={handlerChange}
-                      placeholder="ONE SIDE KM"
-                      disable={attendance}
-                    />
-                    <TextFeild
-                      names="localConv"
-                      value={formData.localConv}
-                      handlerChange={handlerChange}
-                      placeholder="LOCAL CONV"
-                      disable={attendance}
-                    />
-                    <TextFeild
-                      names="travelingLong"
-                      value={formData.travelingLong}
-                      handlerChange={handlerChange}
-                      placeholder="TRAVEL LONG(GST)"
-                      disable={attendance}
-                    />
-                    <TextFeild
-                      names="lodginBoardig"
-                      value={formData.lodginBoardig}
-                      handlerChange={handlerChange}
-                      placeholder="LODGING BILL"
-                      disable={attendance}
-                    />
-                    <TextFeild
-                      names="nightAllowance"
-                      value={formData.nightAllowance}
-                      handlerChange={handlerChange}
-                      placeholder="NIGHT TRAVEL ALLOWANCE"
-                      disable={attendance}
-                    />
-                  </div>
-                </>
-              }
-            />
-          </div>
+            <div className="grid md:grid-cols-3 gap-3 mb-4">
+              <TextField
+                type="number"
+                fullWidth
+                name="sale"
+                value={formData.sale}
+                onChange={handleFormChange}
+                label="SALE"
+                size="small"
+                disabled={attendance === "absent" ? true : false}
+              />
+              <TextField
+                type="number"
+                fullWidth
+                name="workingHr"
+                value={formData.workingHr}
+                onChange={handleFormChange}
+                label="WORKING HOURS"
+                size="small"
+                disabled={attendance === "absent" ? true : false}
+              />
+              <StockistDropdown
+                title="Stockist"
+                option={state.stockist}
+                value={stockistData}
+                onChange={(e) => setStockistData(e)}
+              />
+            </div>
 
-          <div className="grid mb-4">
-            <Accordions
-              heading="Food"
-              components={
-                <>
-                  <div className="grid md:grid-cols-2 gap-3 ">
-                    <TextFeild
-                      names="food"
-                      value={formData.food}
-                      handlerChange={handlerChange}
-                      placeholder="FOOD"
-                      disable={attendance}
+            <div className="grid md:grid-cols-3 gap-3 mb-4">
+              <TextField
+                type="number"
+                fullWidth
+                name="townMarketWork"
+                value={formData.townMarketWork}
+                onChange={handleFormChange}
+                label="TOWN AND MARKET"
+                size="small"
+                disabled={attendance === "absent" ? true : false}
+              />
+              <TextField
+                type="number"
+                fullWidth
+                name="dailyConv"
+                value={formData.dailyConv}
+                onChange={handleFormChange}
+                label="D.A."
+                size="small"
+                disabled={attendance === "absent" ? true : false}
+              />
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      disabled={attendance === "absent" ? true : false}
+                      onChange={(e) => setPjpChange(e.target.checked)}
                     />
-                    <TextFeild
-                      names="foodGST"
-                      value={formData.foodGST}
-                      handlerChange={handlerChange}
-                      placeholder="FOOD GST"
-                      disable={attendance}
-                    />
-                  </div>
-                </>
-              }
-            />
-          </div>
+                  }
+                  label="PJP Change?"
+                />
+              </FormGroup>
+            </div>
 
-          <div className="grid mb-4">
-            <Accordions
-              heading="Essentials"
-              components={
-                <>
-                  <div className="grid md:grid-cols-3 gap-3 ">
-                    <TextFeild
-                      names="internet"
-                      value={formData.internet}
-                      handlerChange={handlerChange}
-                      placeholder="MOBILE BILL"
-                      disable={attendance}
-                    />
-                    <TextFeild
-                      names="postageCourier"
-                      value={formData.postageCourier}
-                      handlerChange={handlerChange}
-                      placeholder="COURIER"
-                      disable={attendance}
-                    />
-                    <TextFeild
-                      names="printingStationary"
-                      value={formData.printingStationary}
-                      handlerChange={handlerChange}
-                      placeholder="STATIONARY"
-                      disable={attendance}
-                    />
-                  </div>
-                </>
-              }
-            />
-          </div>
+            <div className="grid mb-4">
+              <Accordions
+                heading="Travel"
+                components={
+                  <>
+                    <div className="grid md:grid-cols-1 gap-3">
+                      <div className="grid md:grid-cols-2 gap-3">
+                        <TextField
+                          type="text"
+                          name="travelSource"
+                          value={formData.travelSource}
+                          onChange={handleFormChange}
+                          fullWidth
+                          label="TRAVEL FROM"
+                          size="small"
+                          disabled={attendance === "absent" ? true : false}
+                        />
 
-          <div className="grid mb-4">
-            <Accordions
-              heading="others"
-              components={
-                <>
-                  <div className="grid md:grid-cols-2 gap-3 mb-4">
-                    <TextFeild
-                      names="other"
-                      value={formData.other}
-                      handlerChange={handlerChange}
-                      placeholder="OTHER EXP."
-                      disable={attendance}
-                    />
-                    <TextFeild
-                      names="otherGst"
-                      value={formData.otherGst}
-                      handlerChange={handlerChange}
-                      placeholder="OTHERS GST"
-                      disable={attendance}
-                    />
-                  </div>
-                </>
-              }
-            />
-          </div>
+                        <TextField
+                          type="text"
+                          name="travelDestination"
+                          value={formData.travelDestination}
+                          onChange={handleFormChange}
+                          fullWidth
+                          label="TRAVEL TO"
+                          size="small"
+                          disabled={attendance === "absent" ? true : false}
+                        />
 
-          <div className="grid mb-4">
-            <Accordions
-              heading="Promotion and Activity"
-              components={
-                <>
-                  <div className="grid md:grid-cols-2 gap-3 ">
-                    <TextFeild
-                      names="openOutlet"
-                      value={formData.openOutlet}
-                      handlerChange={handlerChange}
-                      placeholder="NEW OUTLET OPENED"
-                      disable={attendance}
-                    />
-                    <TextFeild
-                      names="openTown"
-                      value={formData.openTown}
-                      handlerChange={handlerChange}
-                      placeholder="NEW TOWN OPENED"
-                      disable={attendance}
-                    />
-                     <TextFeild
-                      names="poster"
-                      value={formData.poster}
-                      handlerChange={handlerChange}
-                      placeholder="POSTER ACTIVITY"
-                      disable={attendance}
-                    />
-                    <FormGroup>
-                      <FormControlLabel
-                        control={<Checkbox  onChange={(e)=> setPromotionActivity(e.target.checked)}/>}
-                        label="Any Promotion Activity?"
+                        <ModeDropdown
+                          title="Mode of Travel"
+                          option={["train", "bus", "bike"]}
+                          value={modeTravel}
+                          onChange={(e) => setModeTravel(e)}
+                        />
+
+                        <TextField
+                          type="number"
+                          name="localConv"
+                          value={distance * 2 * 2}
+                          onChange={handleDistanceChange}
+                          fullWidth
+                          label="LOCAL CONV"
+                          size="small"
+                          disabled={true}
+                        />
+
+                        <TextField
+                          type="number"
+                          name="travelingLong"
+                          value={formData.travelingLong}
+                          onChange={handleFormChange}
+                          fullWidth
+                          label="TRAVEL LONG(GST)"
+                          size="small"
+                          disabled={attendance === "absent" ? true : false}
+                        />
+                        <TextField
+                          type="number"
+                          name="nightAllowance"
+                          value={formData.nightAllowance}
+                          onChange={handleFormChange}
+                          label="NIGHT TRAVEL ALLOWANCE"
+                          size="small"
+                          disabled={attendance === "absent" ? true : false}
+                        />
+                      </div>
+
+                      <Box className="flex flex-col md:flex-row gap-2">
+                        <Box className="md:w-3/5">
+                          <TextField
+                            type="number"
+                            name="distance"
+                            value={distance}
+                            onChange={handleDistanceChange}
+                            fullWidth
+                            label="ONE SIDE KM"
+                            size="small"
+                            disabled={attendance === "absent" ? true : false}
+                          />
+                        </Box>
+                        {distance > 100 ? (
+                          <>
+                            {" "}
+                            <input
+                              type="file"
+                              id="upload-button"
+                              style={{ display: "none" }}
+                              onChange={handleFileChange}
+                            />
+                            <label htmlFor="upload-button">
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                component="span"
+                                startIcon={<CloudUploadIcon />}
+                              >
+                                {selectedFile
+                                  ? selectedFile.name
+                                  : "distance BILL"}
+                              </Button>
+                            </label>
+                          </>
+                        ) : (
+                          ""
+                        )}
+                      </Box>
+
+                      <Box className="flex flex-col md:flex-row gap-2">
+                        <Box className="md:w-3/5">
+                          <TextField
+                            type="number"
+                            name="lodginBoardig"
+                            value={formData.lodginBoardig}
+                            onChange={handleFormChange}
+                            fullWidth
+                            label="LODGING BILL"
+                            size="small"
+                            disabled={attendance === "absent" ? true : false}
+                          />
+                        </Box>
+                        <input
+                          type="file"
+                          id="upload-button"
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
+                        />
+                        <label htmlFor="upload-button">
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {selectedFile ? selectedFile.name : "LODGING BILL"}
+                          </Button>
+                        </label>
+                      </Box>
+                    </div>
+                  </>
+                }
+              />
+            </div>
+
+            <div className="grid mb-4">
+              <Accordions
+                heading="Food"
+                components={
+                  <>
+                    <div className="grid md:grid-cols-1 gap-3 ">
+                      <Box className="flex flex-col md:flex-row gap-2">
+                        <Box className="md:w-3/5">
+                          <TextField
+                            type="number"
+                            name="food"
+                            value={formData.food}
+                            fullWidth
+                            onChange={handleFormChange}
+                            label="FOOD"
+                            size="small"
+                            disabled={attendance === "absent" ? true : false}
+                          />
+                        </Box>
+
+                        <input
+                          type="file"
+                          id="upload-button"
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
+                        />
+                        <label htmlFor="upload-button">
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {selectedFile
+                              ? selectedFile.name
+                              : "Upload Food Bill"}
+                          </Button>
+                        </label>
+                      </Box>
+
+                      <Box className="flex flex-col md:flex-row gap-2">
+                        <Box className="md:w-3/5">
+                          <TextField
+                            type="number"
+                            name="foodGST"
+                            value={formData.foodGST}
+                            onChange={handleFormChange}
+                            fullWidth
+                            label="FOOD GST"
+                            size="small"
+                            disabled={attendance === "absent" ? true : false}
+                          />
+                        </Box>
+                        <input
+                          type="file"
+                          id="upload-button"
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
+                        />
+                        <label htmlFor="upload-button">
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {selectedFile
+                              ? selectedFile.name
+                              : "Upload Food Bill"}
+                          </Button>
+                        </label>
+                      </Box>
+                    </div>
+                  </>
+                }
+              />
+            </div>
+
+            <div className="grid mb-4">
+              <Accordions
+                heading="Essentials"
+                components={
+                  <>
+                    <div className="grid md:grid-cols-1 gap-3 ">
+                      <Box className="flex flex-col md:flex-row gap-2">
+                        <Box className="md:w-3/5">
+                          <TextField
+                            type="number"
+                            name="internet"
+                            value={formData.internet}
+                            onChange={handleFormChange}
+                            fullWidth
+                            label="MOBILE BILL"
+                            size="small"
+                            disabled={attendance === "absent" ? true : false}
+                          />
+                        </Box>
+                        <input
+                          type="file"
+                          id="upload-button"
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
+                        />
+                        <label htmlFor="upload-button">
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {selectedFile ? selectedFile.name : "MOBILE BILL"}
+                          </Button>
+                        </label>
+                      </Box>
+
+                      <Box className="flex flex-col md:flex-row gap-2">
+                        <Box className="md:w-3/5">
+                          <TextField
+                            type="number"
+                            name="postageCourier"
+                            value={formData.postageCourier}
+                            onChange={handleFormChange}
+                            fullWidth
+                            label="COURIER"
+                            size="small"
+                            disabled={attendance === "absent" ? true : false}
+                          />
+                        </Box>
+                        <input
+                          type="file"
+                          id="upload-button"
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
+                        />
+                        <label htmlFor="upload-button">
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {selectedFile ? selectedFile.name : "Courier  Bill"}
+                          </Button>
+                        </label>
+                      </Box>
+
+                      <Box className="flex flex-col md:flex-row gap-2">
+                        <Box className="md:w-3/5">
+                          <TextField
+                            type="number"
+                            name="printingStationary"
+                            value={formData.printingStationary}
+                            onChange={handleFormChange}
+                            fullWidth
+                            label="STATIONARY"
+                            size="small"
+                            disabled={attendance === "absent" ? true : false}
+                          />
+                        </Box>
+                        <input
+                          type="file"
+                          id="upload-button"
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
+                        />
+                        <label htmlFor="upload-button">
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {selectedFile
+                              ? selectedFile.name
+                              : "STATIONARY Bill"}
+                          </Button>
+                        </label>
+                      </Box>
+                    </div>
+                  </>
+                }
+              />
+            </div>
+
+            <div className="grid mb-4">
+              <Accordions
+                heading="others"
+                components={
+                  <>
+                    <div className="grid md:grid-cols-2 gap-3 mb-4">
+                      <TextField
+                        type="number"
+                        fullWidth
+                        label="OTHER EXP."
+                        name="other"
+                        value={formData.other}
+                        onChange={handleFormChange}
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
                       />
-                    </FormGroup>
-                  </div>
-                </>
-              }
-            />
-          </div>
 
-          <button className="block uppercase shadow bg-teal-600 hover:bg-teal-700 focus:shadow-outline       focus:outline-none text-white text-xs py-3 px-10 rounded">
-            Submit
-          </button>
-        </form>
-      </div>
-      <Toaster position="top-right" />
+                      <TextField
+                        type="number"
+                        name="otherGst"
+                        value={formData.otherGst}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="OTHERS GST"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+                    </div>
+                  </>
+                }
+              />
+            </div>
+
+            <div className="grid mb-4">
+              <Accordions
+                heading="Promotion and Activity"
+                components={
+                  <>
+                    <div className="grid md:grid-cols-2 gap-3 ">
+                      <TextField
+                        type="number"
+                        name="poster"
+                        value={formData.poster}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="POSTER ACTIVITY"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+                      <RadioGroup
+                        sx={{ display: "inline" }}
+                        name="use-radio-group"
+                        defaultValue="Yes"
+                      >
+                        <FormControlLabel
+                          value="yes"
+                          label="Yes"
+                          control={<Radio />}
+                        />
+                        <FormControlLabel
+                          value="no"
+                          label="No"
+                          control={<Radio />}
+                        />
+                      </RadioGroup>
+                    </div>
+                  </>
+                }
+              />
+            </div>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" autoFocus onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="contained" onClick={handleFormSubmit} autoFocus>
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
-};
-
-export default AddForm;
+}

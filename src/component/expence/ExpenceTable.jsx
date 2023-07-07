@@ -4,8 +4,8 @@ import { get, update } from "../../utils/api";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import { useLocation } from "react-router-dom";
-import UpdateModal from "../updateform/UpdateModal";
-import AddModal from "../addform/AddModal";
+import UpdateForm from "../updateform/UpdateForm";
+import AddForm from "../addform/AddForm";
 import toast, { Toaster } from "react-hot-toast";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -34,7 +34,6 @@ const ExpenceTable = ({ year, month }) => {
 
   useEffect(() => {
     fetchData();
-    console.log("closeForm called: ");
   }, [month, year, closeUpdateForm, closeForm, checkedRefresh]);
 
   const handleEdit = (data) => {
@@ -57,6 +56,8 @@ const ExpenceTable = ({ year, month }) => {
     toast.success(updateRes.data.message);
     setCheckedRefresh((prev) => !prev);
   };
+  
+  console.log("editData: ", editData);
 
   return (
     <>
@@ -71,45 +72,53 @@ const ExpenceTable = ({ year, month }) => {
           </button>
         </div>
         <div>
-        <DownloadTableExcel
-          filename="employee table"
-          sheet="employee"
-          currentTableRef={tableRef.current}
-        >
-          <button
-            className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
+          <DownloadTableExcel
+            filename="employee table"
+            sheet="employee"
+            currentTableRef={tableRef.current}
           >
-            Export Data
-          </button>
-        </DownloadTableExcel>
+            <button className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600">
+              Export Data
+            </button>
+          </DownloadTableExcel>
         </div>
       </div>
 
       <div className="container">
+       
         <table ref={tableRef}>
+        <thead>
+          <tr>
+            <th>Name: {state.data.name}</th>
+            <th>Designation: {state.data.desig}</th>
+            <th>Emp Code: {state.data.empId}</th>
+            <th>Head/Quarter/Area: {state.data.hq}</th>
+            {/* <th>Date: {}</th> */}
+          </tr>
+        </thead>
           <thead>
             <tr>
-              <th>Action</th>
-              <th>Date</th>
-              <th>Attendence</th>
-              <th>TC</th>
-              <th>PC</th>
-              <th>SALE</th>
-              <th>STOCKIST</th>
-              <th>MODE TRAVEL</th>
-              <th>DALY CONV</th>
-              <th>TRAVELING LONG</th>
-              <th>TRAVELING BOARDING</th>
-              <th>NIGHT ALLOWANCE</th>
-              <th>FOOD</th>
-              <th>FOODGST</th>
-              <th>INTERNET</th>
-              <th>PRINTING STATIONARY</th>
-              <th>POSTAGE COURIER</th>
-              <th>LOCAL CONVEY</th>
-              <th>WORKING HOURS</th>
-              <th>APPROVAL</th>
-              <th>TOTAL</th>
+              <th className="text-center">Action</th>
+              <th className="text-center">Date</th>
+              <th className="text-center">Attendence</th>
+              <th className="text-center">TC</th>
+              <th className="text-center">PC</th>
+              <th className="text-center">SALE</th>
+              <th className="text-center">STOCKIST</th>
+              <th className="text-center">MODE TRAVEL</th>
+              <th className="text-center">DALY CONV</th>
+              <th className="text-center">TRAVELING LONG</th>
+              <th className="text-center">TRAVELING BOARDING</th>
+              <th className="text-center">NIGHT ALLOWANCE</th>
+              <th className="text-center">FOOD</th>
+              <th className="text-center">FOODGST</th>
+              <th className="text-center">INTERNET</th>
+              <th className="text-center">PRINTING STATIONARY</th>
+              <th className="text-center">POSTAGE COURIER</th>
+              <th className="text-center">LOCAL CONVEY</th>
+              <th className="text-center">WORKING HOURS</th>
+              <th className="text-center">APPROVAL</th>
+              <th className="text-center">TOTAL</th>
             </tr>
           </thead>
           <tbody>
@@ -121,7 +130,7 @@ const ExpenceTable = ({ year, month }) => {
               tableData?.map((data, index) => {
                 return (
                   <tr key={index}>
-                    <td>
+                    <td className="text-center">
                       <button onClick={() => handleEdit(data)}>
                         <EditIcon />
                       </button>
@@ -185,17 +194,17 @@ const ExpenceTable = ({ year, month }) => {
         </button>
       </div>
 
-      <AddModal
+      <AddForm
         open={openForm}
         setOpen={setOpenForm}
         setCloseForm={setCloseForm}
       />
-      <UpdateModal
+      {/* <UpdateForm
         open={updateForm}
         setOpen={setUpdateForm}
         editData={editData}
         setCloseUpdateform={setCloseUpdateform}
-      />
+      /> */}
       <Toaster position="top-center" />
     </>
   );

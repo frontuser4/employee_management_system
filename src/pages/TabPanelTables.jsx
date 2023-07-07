@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box } from "@mui/material";
+import { Box, TextField, Button } from "@mui/material";
 import TabPanels from "../component/TabPanels";
 import { MonthDropDown, YearDropDown } from "../component/Dropdown";
 import ExpenceTables from "./ExpenceTables";
@@ -7,8 +7,7 @@ import ScoreCard from "./ScoreCard";
 import Card from "../component/Card";
 import dayjs from "dayjs";
 
-const TabPanelTables = ({empId}) => {
-  
+const TabPanelTables = ({ empId }) => {
   const [date, setDate] = useState(dayjs());
   const [year, setYear] = useState(dayjs(date.$d).format("YYYY"));
   const [month, setMonth] = useState(dayjs(date.$d).format("MM").split("")[1]);

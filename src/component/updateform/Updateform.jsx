@@ -1,329 +1,490 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
-import "react-datepicker/dist/react-datepicker.css";
-import TextFeild from "../TextFeild";
+import { useTheme } from "@mui/material/styles";
 import {
-  AttendanceDropdown,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  useMediaQuery,
+  Box,
+  TextField,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+} from "@mui/material";
+import Accordions from "../Accordions";
+import {
   ModeDropdown,
+  AttendanceDropdown,
   StockistDropdown,
 } from "../Dropdown";
-import Accordions from "../Accordions";
+import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
-import { update } from "../../utils/api";
-import toast, { Toaster } from "react-hot-toast";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-const UpdateForm = ({ setOpen, editData, setCloseUpdateform }) => {
+
+export default function UpdateForm({
+  open,
+  setOpen,
+  editData,
+  setCloseUpdateform,
+}) {
+  console.log("editData: ", editData);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
   const { state } = useLocation();
-  const [formData, setFormData] = useState(editData);
+  const [formData, setFormData] = useState(null);
   const [attendance, setAttendance] = useState(formData.attendance);
   const [modeTravel, setModeTravel] = useState(formData.modeTravel);
   const [stockistData, setStockistData] = useState(formData.payer__payerId);
-  const [pjpChnage, setPjpChange] = useState(true);
-  const [promotionActivity, setPromotionActivity] = useState(true);
-  const [date, setDate] = useState(dayjs(formData.dateExp));
-  const expensID = `${state.data.empId}${dayjs(date.$d).format("YYYY")}${dayjs(
+  const [pjpChnage, setPjpChange] = useState(false);
+  const [promotionActivity, setPromotionActivity] = useState(false);
+  const [date, setDate] = useState(dayjs());
+  const [distance, setDistance] = useState(null);
+
+  const expenceId = `${state.data.empId}${dayjs(date.$d).format("YYYY")}${dayjs(
     date.$d
   ).format("MM")}${dayjs(date.$d).format("DD")}`;
 
-  const submitData = async () => {
-    const data = {
-      ...formData,
-      expenceId: expensID,
-      emp: state.data.empId,
-      payer: stockistData,
-      attendance,
-      modeTravel,
-    };
-
-    console.log("updated: ", data);
-
-    try {
-      const result = await update("/account/expence", data);
-      console.log("form-data: ", result);
-      toast.success(result.data.message);
-      setOpen(false);
-    } catch (error) {
-      console.log("error: ", error);
-    }
+  const handleClose = () => {
+    setOpen(false);
   };
 
-  const handlerChange = (event) => {
+  const handleFormChange = (event) => {
     setFormData((prev) => ({
       ...prev,
-      expenceId: expensID,
-      emp: state.data.empId,
-      dateExp: dayjs(date.$d).format("YYYY-MM-DD"),
-      payer__payerId: stockistData,
-      attendance,
-      modeTravel,
       [event.target.name]: event.target.value,
     }));
   };
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-    submitData();
-    setFormData({});
+  const handleFormSubmit = () => {
+
+    console.log("editData: ", editData);
+    console.log("formData1: ", formData);
+
+    console.log("formData: ", {
+      ...formData,
+      emp: state.data.empId,
+      attendance,
+      modeTravel,
+      payer: stockistData,
+      dateExp: dayjs(date).format("DD-MM-YYYY"),
+      expenceId,
+      distance,
+      pjpChnage,
+      promotionActivity,
+    });
+
     setOpen(false);
+    setFormData(defaultState);
+    setAttendance("present");
+    setModeTravel("");
+    setStockistData("");
+    setDistance("");
     setCloseUpdateform((prev) => !prev);
+
+  };
+
+  const handleDistanceChange = (e) => {
+    setDistance(e.target.value);
   };
 
   return (
-    <div className="flex justify-center">
-      <div className="bg-white w-full max-w-5xl md:my-3 rounded px-4 py-2">
-        <form onSubmit={submitHandler} autoComplete="off">
-          <div className="grid md:grid-cols place-items-center mb-4">
-            <AttendanceDropdown
-              title="Attendance"
-              option={["present", "absent", "MRM"]}
-              value={attendance}
-              onChange={(e) => setAttendance(e)}
-            />
-          </div>
+    <>
+      <Dialog
+        fullScreen={fullScreen}
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="responsive-dialog-title"
+      >
+        
+        <DialogTitle id="responsive-dialog-title" className="text-center">
+          Monthly Expenses
+        </DialogTitle>
 
-          <div className="grid md:grid-cols-2 gap-3 mb-4">
-            <TextFeild
-              names="tc"
-              value={formData.tc}
-              handlerChange={handlerChange}
-              placeholder="TC"
-            />
-            <TextFeild
-              names="pc"
-              value={formData.pc}
-              handlerChange={handlerChange}
-              placeholder="PC"
-            />
-          </div>
-          <div className="grid md:grid-cols-3 gap-3 mb-4">
-            <TextFeild
-              names="sale"
-              value={formData.sale}
-              handlerChange={handlerChange}
-              placeholder="SALE"
-            />
-            <TextFeild
-              names="workingHr"
-              value={formData.workingHr}
-              handlerChange={handlerChange}
-              placeholder="WORKING HOURS"
-            />
-            <StockistDropdown
-              title="Stockist"
-              option={state.stockist}
-              value={stockistData}
-              onChange={(e) => setStockistData(e)}
-            />
-          </div>
-          <div className="grid md:grid-cols-3 gap-3 mb-4">
-            <TextFeild
-              names="townMarketWork"
-              value={formData.townMarketWork}
-              handlerChange={handlerChange}
-              placeholder="TOWN AND MARKET WORKED"
-            />
-            <TextFeild
-              names="dailyConv"
-              value={formData.dailyConveyance}
-              handlerChange={handlerChange}
-              placeholder="D.A."
-            />
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox onChange={(e) => setPjpChange(e.target.checked)} />
-                }
-                label="PJP Change?"
+        <DialogContent>
+          <Box sx={{ flexFlow: 1, padding: 1 }}>
+            <div className="grid md:grid-cols-2 place-items-center gap-3 mb-4">
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Select Date"
+                  value={date}
+                  onChange={(newDate) => setDate(newDate)}
+                  slotProps={{ textField: { size: "small" } }}
+                />
+              </LocalizationProvider>
+
+              <AttendanceDropdown
+                title="Attendance"
+                option={["present", "absent", "MRM"]}
+                value={attendance}
+                onChange={(e) => setAttendance(e)}
               />
-            </FormGroup>
-          </div>
+            </div>
+            <div className="grid md:grid-cols-2 gap-3 mb-4">
+              <TextField
+                type="number"
+                fullWidth
+                name="tc"
+                value={formData.tc}
+                onChange={handleFormChange}
+                label="TC"
+                id="tc"
+                size="small"
+                disabled={attendance === "absent" ? true : false}
+              />
+              <TextField
+                type="number"
+                fullWidth
+                name="pc"
+                value={formData.pc}
+                onChange={handleFormChange}
+                label="PC"
+                id="pc"
+                size="small"
+                disabled={attendance === "absent" ? true : false}
+              />
+            </div>
 
-          <div className="grid mb-4">
-            <Accordions
-              heading="Travel"
-              components={
-                <>
-                  <div className="grid md:grid-cols-3 gap-3">
-                    <TextFeild
-                      names="travelSource"
-                      value={formData.travelSource}
-                      handlerChange={handlerChange}
-                      placeholder="TRAVEL FROM"
-                    />
-                    <TextFeild
-                      names="travelDestination"
-                      value={formData.travelDestination}
-                      handlerChange={handlerChange}
-                      placeholder="TRAVEL TO"
-                    />
-                    <ModeDropdown
-                      title="Mode of Travel"
-                      option={["train", "bus", "bike"]}
-                      value={modeTravel}
-                      onChange={(e) => setModeTravel(e)}
-                    />
-                    <TextFeild
-                      names="distance"
-                      value={formData.distance}
-                      handlerChange={handlerChange}
-                      placeholder="ONE SIDE KM"
-                    />
+            <div className="grid md:grid-cols-3 gap-3 mb-4">
+              <TextField
+                type="number"
+                fullWidth
+                name="sale"
+                value={formData.sale}
+                onChange={handleFormChange}
+                label="SALE"
+                size="small"
+                disabled={attendance === "absent" ? true : false}
+              />
+              <TextField
+                type="number"
+                fullWidth
+                name="workingHr"
+                value={formData.workingHr}
+                onChange={handleFormChange}
+                label="WORKING HOURS"
+                size="small"
+                disabled={attendance === "absent" ? true : false}
+              />
+              <StockistDropdown
+                title="Stockist"
+                option={state.stockist}
+                value={stockistData}
+                onChange={(e) => setStockistData(e)}
+              />
+            </div>
 
-                    <TextFeild
-                      names="localConv"
-                      value={formData.localConv}
-                      handlerChange={handlerChange}
-                      placeholder="LOCAL CONV"
+            <div className="grid md:grid-cols-3 gap-3 mb-4">
+              <TextField
+                type="number"
+                fullWidth
+                name="townMarketWork"
+                value={formData.townMarketWork}
+                onChange={handleFormChange}
+                label="TOWN AND MARKET"
+                size="small"
+                disabled={attendance === "absent" ? true : false}
+              />
+              <TextField
+                type="number"
+                fullWidth
+                name="dailyConv"
+                value={
+                  attendance === "present" || attendance === "MRM" ? 400 : 0
+                }
+                onChange={handleFormChange}
+                label="D.A."
+                size="small"
+                disabled={attendance === "absent" ? true : false}
+              />
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      disabled={attendance === "absent" ? true : false}
+                      onChange={(e) => setPjpChange(e.target.checked)}
                     />
-                    <TextFeild
-                      names="travelingLong"
-                      value={formData.travelingLong}
-                      handlerChange={handlerChange}
-                      placeholder="TRAVELING LONG"
-                    />
-                    <TextFeild
-                      names="lodginBoardig"
-                      value={formData.lodginBoardig}
-                      handlerChange={handlerChange}
-                      placeholder="TRAVELING BOARDING"
-                    />
-                  </div>
-                </>
-              }
-            />
-          </div>
+                  }
+                  label="PJP Change?"
+                />
+              </FormGroup>
+            </div>
 
-          <div className="grid mb-4">
-            <Accordions
-              heading="Food"
-              components={
-                <>
-                  <div className="grid md:grid-cols-2 gap-3 ">
-                    <TextFeild
-                      names="food"
-                      value={formData.food}
-                      handlerChange={handlerChange}
-                      placeholder="FOOD"
-                    />
-                    <TextFeild
-                      names="foodGST"
-                      value={formData.foodGST}
-                      handlerChange={handlerChange}
-                      placeholder="FOOD GST"
-                    />
-                  </div>
-                </>
-              }
-            />
-          </div>
-
-          <div className="grid mb-4">
-            <Accordions
-              heading="Essentials"
-              components={
-                <>
-                  <div className="grid md:grid-cols-3 gap-3 ">
-                    <TextFeild
-                      names="internet"
-                      value={formData.internet}
-                      handlerChange={handlerChange}
-                      placeholder="MOBILE BILL"
-                    />
-                    <TextFeild
-                      names="postageCourier"
-                      value={formData.postageCourier}
-                      handlerChange={handlerChange}
-                      placeholder="COURIER"
-                    />
-                    <TextFeild
-                      names="printingStationary"
-                      value={formData.printingStationary}
-                      handlerChange={handlerChange}
-                      placeholder="STATIONARY"
-                    />
-                  </div>
-                </>
-              }
-            />
-          </div>
-
-          <div className="grid mb-4">
-            <Accordions
-              heading="others"
-              components={
-                <>
-                  <div className="grid md:grid-cols-3 gap-3 mb-4">
-                    <TextFeild
-                      names="other"
-                      value={formData.other}
-                      handlerChange={handlerChange}
-                      placeholder="OTHER"
-                    />
-                    <TextFeild
-                      names="otherGst"
-                      value={formData.otherGst}
-                      handlerChange={handlerChange}
-                      placeholder="OTHERS GST"
-                    />
-                    <TextFeild
-                      names="nightAllowance"
-                      value={formData.nightAllowance}
-                      handlerChange={handlerChange}
-                      placeholder="NIGHT ALLOWANCE"
-                    />
-                  </div>
-                </>
-              }
-            />
-          </div>
-
-          <div className="grid mb-4">
-            <Accordions
-              heading="Promotion and Acitivity"
-              components={
-                <>
-                  <div className="grid md:grid-cols-2 gap-3 ">
-                    <TextFeild
-                      names="openOutlet"
-                      value={formData.openOutlet}
-                      handlerChange={handlerChange}
-                      placeholder="OPEN OUTLET"
-                    />
-                    <TextFeild
-                      names="openOutlet"
-                      value={formData.openOutlet}
-                      handlerChange={handlerChange}
-                      placeholder="OPEN OUTLET"
-                    />
-                    <TextFeild
-                      names="poster"
-                      value={formData.poster}
-                      handlerChange={handlerChange}
-                      placeholder="POSTER ACTIVITY"
-                    />
-                       <FormGroup>
-                      <FormControlLabel
-                        control={<Checkbox  onChange={(e)=> setPromotionActivity(e.target.checked)}/>}
-                        label="Any Promotion Activity?"
+            <div className="grid mb-4">
+              <Accordions
+                heading="Travel"
+                components={
+                  <>
+                    <div className="grid md:grid-cols-2 gap-3">
+                      <TextField
+                        type="number"
+                        name="travelSource"
+                        value={formData.travelSource}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="TRAVEL FROM"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
                       />
-                    </FormGroup>
-                  </div>
-                </>
-              }
-            />
-          </div>
 
-          <button className="block uppercase shadow bg-teal-600 hover:bg-teal-700 focus:shadow-outline focus:outline-none text-white text-xs py-3 px-10 rounded">
-            Submit
-          </button>
-        </form>
-      </div>
-      <Toaster position="top-right" />
-    </div>
+                      <TextField
+                        type="number"
+                        name="travelDestination"
+                        value={formData.travelDestination}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="TRAVEL TO"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+
+                      <ModeDropdown
+                        title="Mode of Travel"
+                        option={["train", "bus", "bike"]}
+                        value={modeTravel}
+                        onChange={(e) => setModeTravel(e)}
+                      />
+
+                      <TextField
+                        type="number"
+                        name="distance"
+                        value={distance}
+                        onChange={handleDistanceChange}
+                        fullWidth
+                        label="ONE SIDE KM"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+
+                      <TextField
+                        type="number"
+                        name="localConv"
+                        value={distance * 2 * 2}
+                        fullWidth
+                        label="LOCAL CONV"
+                        size="small"
+                        disabled={true}
+                      />
+
+                      <TextField
+                        type="number"
+                        name="travelingLong"
+                        value={formData.travelingLong}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="TRAVEL LONG(GST)"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+
+                      <TextField
+                        type="number"
+                        name="lodginBoardig"
+                        value={formData.lodginBoardig}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="LODGING BILL"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+
+                      <TextField
+                        type="number"
+                        name="nightAllowance"
+                        value={formData.nightAllowance}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="NIGHT TRAVEL ALLOWANCE"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+                    </div>
+                  </>
+                }
+              />
+            </div>
+
+            <div className="grid mb-4">
+              <Accordions
+                heading="Food"
+                components={
+                  <>
+                    <div className="grid md:grid-cols-2 gap-3 ">
+                      <TextField
+                        type="number"
+                        name="food"
+                        value={formData.food}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="FOOD"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+
+                      <TextField
+                        type="number"
+                        name="foodGST"
+                        value={formData.foodGST}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="FOOD GST"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+                    </div>
+                  </>
+                }
+              />
+            </div>
+
+            <div className="grid mb-4">
+              <Accordions
+                heading="Essentials"
+                components={
+                  <>
+                    <div className="grid md:grid-cols-3 gap-3 ">
+                      <TextField
+                        type="number"
+                        name="internet"
+                        value={formData.internet}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="MOBILE BILL"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+
+                      <TextField
+                        type="number"
+                        name="postageCourier"
+                        value={formData.postageCourier}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="COURIER"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+
+                      <TextField
+                        type="number"
+                        name="printingStationary"
+                        value={formData.printingStationary}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="STATIONARY"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+                    </div>
+                  </>
+                }
+              />
+            </div>
+
+            <div className="grid mb-4">
+              <Accordions
+                heading="others"
+                components={
+                  <>
+                    <div className="grid md:grid-cols-2 gap-3 mb-4">
+                      <TextField
+                        type="number"
+                        fullWidth
+                        label="OTHER EXP."
+                        name="other"
+                        value={formData.other}
+                        onChange={handleFormChange}
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+
+                      <TextField
+                        type="number"
+                        name="otherGst"
+                        value={formData.otherGst}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="OTHERS GST"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+                    </div>
+                  </>
+                }
+              />
+            </div>
+
+            <div className="grid mb-4">
+              <Accordions
+                heading="Promotion and Activity"
+                components={
+                  <>
+                    <div className="grid md:grid-cols-2 gap-3 ">
+                      <TextField
+                        type="number"
+                        name="openOutlet"
+                        value={formData.openOutlet}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="NEW OUTLET OPENED"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+
+                      <TextField
+                        type="number"
+                        name="openTown"
+                        value={formData.openTown}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="NEW TOWN OPENED"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+
+                      <TextField
+                        type="number"
+                        name="poster"
+                        value={formData.poster}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="POSTER ACTIVITY"
+                        size="small"
+                        disabled={attendance === "absent" ? true : false}
+                      />
+                      <FormGroup>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              disabled={attendance === "absent" ? true : false}
+                              onChange={(e) =>
+                                setPromotionActivity(e.target.checked)
+                              }
+                            />
+                          }
+                          label="Any Promotion Activity?"
+                        />
+                      </FormGroup>
+                    </div>
+                  </>
+                }
+              />
+            </div>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" autoFocus onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="contained" onClick={handleFormSubmit} autoFocus>
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
-};
-
-export default UpdateForm;
+}
