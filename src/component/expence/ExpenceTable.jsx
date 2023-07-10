@@ -12,6 +12,7 @@ import { DownloadTableExcel } from "react-export-table-to-excel";
 import { useSelector } from "react-redux";
 
 const ExpenceTable = ({ year, month }) => {
+
   const navigate = useNavigate();
   const tableRef = useRef(null);
   const [tableData, setTableData] = useState(null);
@@ -19,7 +20,6 @@ const ExpenceTable = ({ year, month }) => {
   const [updateForm, setUpdateForm] = useState(false);
   const [closeForm, setCloseForm] = useState(false);
   const [closeUpdateForm, setCloseUpdateform] = useState(false);
-  const [editData, setEditData] = useState(null);
   const [checked, setChecked] = useState(true);
   const [checkedRefresh, setCheckedRefresh] = useState(false);
   const [approval, setApproval] = useState([]);

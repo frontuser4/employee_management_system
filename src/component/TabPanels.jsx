@@ -8,6 +8,7 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { scoreSummaryGet } from "../utils/api";
+import { useSelector } from 'react-redux';
 
 function TabPanel(props) {
 
@@ -50,9 +51,10 @@ export default function TabPanels({ExpenceTables, ScoreCard, Card, year, month, 
   const [score, setScore] = useState(null);
   const [saleTargetLY, setSaleTargetLY] = useState(null);
   const [saleTargetTY, setSaleTargetTY] = useState(null);
+  const {data} = useSelector((state)=> state.login.data);
 
   const fetchScoreCardData = async () => {
-    const res = await scoreSummaryGet("/account/score", state.data.empId, month, year);
+    const res = await scoreSummaryGet("/account/score", data.empId, month, year);
     setScore(res.score);
     setSaleTargetLY(res.sale_target_LY);
     setSaleTargetTY(res.sale_target_TY);
@@ -95,7 +97,6 @@ export default function TabPanels({ExpenceTables, ScoreCard, Card, year, month, 
           <ExpenceTables 
            year={year}
            month={month}
-           state={state}
           />
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>

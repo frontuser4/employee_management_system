@@ -29,14 +29,17 @@ async function post(url, data) {
 }
 
 async function update(url, id, month, year, data) {
-  console.log({url, id, month, year, data});
-  const config = {
-    headers: {
-      "content-type": "multipart/form-data",
-    },
-  };
+  //  let empId = id;
   try {
-    const result = await axios.put(`${BASE_URL}${url}/${{empId: id}}/${{ month: month}}/${{year: year}}`,data, config);
+    const result = await axios({
+      url: `${BASE_URL}${url}`,
+      method:'put',
+      data: data,
+      headers:{
+        "content-type": "multipart/form-data",
+      },
+      params: { empId: id, month: month, year: year }
+    })
     return result.data;
   } catch (error) {
     console.log("get: ", error);

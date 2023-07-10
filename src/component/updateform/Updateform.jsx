@@ -80,9 +80,16 @@ export default function UpdateForm({ editData, setCloseUpdateform}) {
       attendance,
       modeTravel,
       payer: stockistData,
-      dateExp: dayjs(date).format("DD-MM-YYYY"),
+      dateExp: dayjs(date).format("YYYY-MM-DD"),
       expenseId : expenceId,
       distance,
+      distanceFile,
+      lodgingBillFile,
+      foodFile,
+      foodGstFile,
+      mobileBillFile,
+      courierBillFile,
+      stationaryBillFile
       // pjpChnage,
       // posterActivity,
     }
