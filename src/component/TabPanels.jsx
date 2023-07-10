@@ -43,7 +43,7 @@ function a11yProps(index) {
   };
 }
 
-export default function TabPanels({ExpenceTables, ScoreCard, Card, year, month, empId}) {
+export default function TabPanels({ExpenceTables, ScoreCard, Card, year, month, state}) {
 
   const theme = useTheme();
   const [value, setValue] = useState(0);
@@ -52,12 +52,11 @@ export default function TabPanels({ExpenceTables, ScoreCard, Card, year, month, 
   const [saleTargetTY, setSaleTargetTY] = useState(null);
 
   const fetchScoreCardData = async () => {
-    const res = await scoreSummaryGet("/account/score", empId, month, year);
+    const res = await scoreSummaryGet("/account/score", state.data.empId, month, year);
     setScore(res.score);
     setSaleTargetLY(res.sale_target_LY);
     setSaleTargetTY(res.sale_target_TY);
   };
-
 
   useEffect(() => {
     fetchScoreCardData();
@@ -96,6 +95,7 @@ export default function TabPanels({ExpenceTables, ScoreCard, Card, year, month, 
           <ExpenceTables 
            year={year}
            month={month}
+           state={state}
           />
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>

@@ -5,7 +5,7 @@ import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
-import { useLocation, useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Tooltip,
   IconButton,
@@ -15,19 +15,7 @@ import {
   Button,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import dayjs from "dayjs";
-import TabPanelTables from "./TabPanelTables";
-
-const drawerWidth = 240;
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-}));
+import UpdateForm from "../component/updateform/UpdateForm";
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -47,16 +35,18 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-export default function Dashboard() {
-  
-  const { state } = useLocation();
-  const [anchorElUser, setAnchorElUser] = useState(null);
-  const navigate = useNavigate();
-  const [date, setDate] = useState(dayjs());
-  const [year, setYear] = useState(dayjs(date.$d).format("YYYY"));
-  const [month, setMonth] = useState(dayjs(date.$d).format("MM").split("")[1]);
+const UpdateTable = () => {
 
-  const handleOpenUserMenu = (event) => {
+  const { state } = useLocation();
+  const navigate = useNavigate();
+  const [anchorElUser, setAnchorElUser] = useState(null);
+
+  const handleLogout = ()=> {
+    localStorage.removeItem('token');
+    navigate('/');
+ }
+
+ const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
 
@@ -64,15 +54,8 @@ export default function Dashboard() {
     setAnchorElUser(null);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
-  };
-
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-
+    <>
       <AppBar component="nav">
         <Toolbar>
           <Typography
@@ -111,7 +94,7 @@ export default function Dashboard() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem className="flex flex-col gap-2">
+              {/* <MenuItem className="flex flex-col gap-2">
                 <Typography textAlign="center">
                   Name : {state.data.name}
                 </Typography>
@@ -122,16 +105,14 @@ export default function Dashboard() {
                   Designation : {state.data.desig}
                 </Typography>
                 <Typography textAlign="center">Hq : {state.data.hq}</Typography>
-              </MenuItem>
+              </MenuItem> */}
             </Menu>
           </Box>
         </Toolbar>
       </AppBar>
-
-      <Box component="main" sx={{ flexGrow: 1, p: 3, overflowX: "auto" }}>
-        <DrawerHeader />
-        <TabPanelTables />
-      </Box>
-    </Box>
+      <UpdateForm editData={state} />
+    </>
   );
-}
+};
+
+export default UpdateTable;

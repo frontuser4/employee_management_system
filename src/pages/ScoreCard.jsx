@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "../globaltable.css";
+import "./scoreCard.css";
 import {TextField, Button } from "@mui/material";
 
 const ScoreCard = () => {
@@ -164,7 +164,7 @@ const ScoreCard = () => {
         </div>
       <div className="container">
       
-        <table>
+        <table style={{width:'100%'}}>
           <thead>
             <tr>
               <th>PARAMETERS</th>

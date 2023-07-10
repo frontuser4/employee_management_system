@@ -11,6 +11,8 @@ import {
   TextField,
   FormGroup,
   FormControlLabel,
+  FormControl,
+  FormLabel,
   Checkbox,
   Radio,
   RadioGroup,
@@ -21,12 +23,14 @@ import {
   AttendanceDropdown,
   StockistDropdown,
 } from "../Dropdown";
-import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { post } from "../../utils/api";
+import toast, { Toaster } from "react-hot-toast";
+import { useSelector } from 'react-redux';
 
 const defaultState = {
   attendance: "",
@@ -51,34 +55,42 @@ const defaultState = {
   printingStationary: "",
   other: "",
   otherGst: "",
-  openOutlet: "",
-  openTown: "",
   poster: "",
 };
 
 export default function AddForm({ open, setOpen, setCloseForm }) {
+
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-  const { state } = useLocation();
+  const {data} = useSelector((state)=> state.login.data);
   const [formData, setFormData] = useState(defaultState);
   const [attendance, setAttendance] = useState("present");
   const [modeTravel, setModeTravel] = useState("");
   const [stockistData, setStockistData] = useState("");
   const [pjpChnage, setPjpChange] = useState(false);
-  const [promotionActivity, setPromotionActivity] = useState(false);
+  const [posterActivity, setPosterActivity] = useState(false);
   const [date, setDate] = useState(dayjs());
   const [distance, setDistance] = useState(null);
-  const [nightAllowance, setNightAllowance] = useState(0);
-  const [selectedFile, setSelectedFile] = useState(null);
 
-  const expenceId = `${state.data.empId}${dayjs(date.$d).format("YYYY")}${dayjs(
+  const [distanceFile, setDistanceFile] = useState(null);
+  const [lodgingBillFile, setLodgingBillFile] = useState(null);
+  const [foodFile, setFoodFile] = useState(null);
+  const [foodGstFile, setFoodGstFile] = useState(null);
+  const [mobileBillFile, setMobileBillFile] = useState(null);
+  const [courierBillFile, setCourierBillFile] = useState(null);
+  const [stationaryBillFile, setStationaryBillFile] = useState(null);
+
+  const [distancePreview, setDistancePreview] = useState(null);
+  const [lodgingPreview, setLodgingPreview] = useState(null);
+  const [foodPreview, setFoodPreview] = useState(null);
+  const [foodGstPreview, setFoodGstPreview] = useState(null);
+  const [mobileBillPreview, setMobileBillPreview] = useState(null);
+  const [courierBillPreview, setCourierBillPreview] = useState(null);
+  const [stationaryBillPreview, setStationaryBillPreview] = useState(null);
+
+  const expenceId = `${data.empId}${dayjs(date.$d).format("YYYY")}${dayjs(
     date.$d
   ).format("MM")}${dayjs(date.$d).format("DD")}`;
-
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-  };
-  // console.log('files: ', selectedFile.name)
 
   const handleClose = () => {
     setOpen(false);
@@ -91,19 +103,35 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
     }));
   };
 
+  const submitFormDataHandler = async (addData) => {
+    try {
+      const result = await post("/post", addData);
+      console.log("form-data: ", result);
+      toast.success(result.data.message);
+      setOpen(false);
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  };
+
   const handleFormSubmit = () => {
-    console.log("formData: ", {
+
+    const addData = {
       ...formData,
-      emp: state.data.empId,
+      empId: data.empId,
       attendance,
       modeTravel,
       payer: stockistData,
-      dateExp: dayjs(date).format("DD-MM-YYYY"),
-      expenceId,
+      dateExp: dayjs(date).format("YYYY-MM-DD"),
+      expenseId: expenceId,
       distance,
-      pjpChnage,
-      promotionActivity,
-    });
+      // pjpChnage,
+      // promotionActivity,
+      distanceFile,
+      approval: "not approval",
+    };
+
+    submitFormDataHandler(addData);
     setFormData(defaultState);
     setAttendance("present");
     setModeTravel("");
@@ -115,10 +143,6 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
 
   const handleDistanceChange = (e) => {
     setDistance(e.target.value);
-  };
-
-  const handleNightAllowanceChange = () => {
-    setNightAllowance(200);
   };
 
   return (
@@ -151,6 +175,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 onChange={(e) => setAttendance(e)}
               />
             </div>
+
             <div className="grid md:grid-cols-2 gap-3 mb-4">
               <TextField
                 type="number"
@@ -199,7 +224,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
               />
               <StockistDropdown
                 title="Stockist"
-                option={state.stockist}
+                option={data.stockist}
                 value={stockistData}
                 onChange={(e) => setStockistData(e)}
               />
@@ -307,8 +332,8 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                         />
                       </div>
 
-                      <Box className="flex flex-col md:flex-row gap-2">
-                        <Box className="md:w-3/5">
+                      <Box className="flex flex-col items-center md:flex-row gap-2">
+                        <Box className="md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="distance"
@@ -321,34 +346,54 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           />
                         </Box>
                         {distance > 100 ? (
-                          <>
+                          <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                            <img
+                              src={distancePreview}
+                              alt="distance km"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                        {distance > 100 ? (
+                          <div className="flex-1">
                             {" "}
                             <input
                               type="file"
-                              id="upload-button"
+                              name="distanceBill"
+                              id="upload-distance"
                               style={{ display: "none" }}
-                              onChange={handleFileChange}
+                              accept=".png, .jpeg, .jpg"
+                              onChange={(e) => {
+                                setDistanceFile(e.target.files[0]);
+                                const reader = new FileReader();
+                                reader.onloadend = () => {
+                                  setDistancePreview(reader.result);
+                                };
+                                reader.readAsDataURL(e.target.files[0]);
+                              }}
                             />
-                            <label htmlFor="upload-button">
+                            <label htmlFor="upload-distance">
                               <Button
                                 variant="contained"
                                 color="primary"
                                 component="span"
                                 startIcon={<CloudUploadIcon />}
                               >
-                                {selectedFile
-                                  ? selectedFile.name
+                                {distanceFile
+                                  ? distanceFile.name
                                   : "distance BILL"}
                               </Button>
                             </label>
-                          </>
+                          </div>
                         ) : (
                           ""
                         )}
                       </Box>
 
-                      <Box className="flex flex-col md:flex-row gap-2">
-                        <Box className="md:w-3/5">
+                      <Box className="flex flex-col md:flex-row gap-2 items-center">
+                        <Box className="md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="lodginBoardig"
@@ -360,22 +405,44 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             disabled={attendance === "absent" ? true : false}
                           />
                         </Box>
-                        <input
-                          type="file"
-                          id="upload-button"
-                          style={{ display: "none" }}
-                          onChange={handleFileChange}
-                        />
-                        <label htmlFor="upload-button">
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            component="span"
-                            startIcon={<CloudUploadIcon />}
-                          >
-                            {selectedFile ? selectedFile.name : "LODGING BILL"}
-                          </Button>
-                        </label>
+
+                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <img
+                            src={lodgingPreview}
+                            alt="lodging preview"
+                            className="w-full h-full"
+                          />
+                        </div>
+
+                        <div className="flex-1">
+                          <input
+                            type="file"
+                            name="lodgingBill"
+                            id="upload-lodging"
+                            style={{ display: "none" }}
+                            accept=".png, .jpeg, .jpg"
+                            onChange={(e) => {
+                              setLodgingBillFile(e.target.files[0]);
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setLodgingPreview(reader.result);
+                              };
+                              reader.readAsDataURL(e.target.files[0]);
+                            }}
+                          />
+                          <label htmlFor="upload-lodging">
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              component="span"
+                              startIcon={<CloudUploadIcon />}
+                            >
+                              {lodgingBillFile
+                                ? lodgingBillFile.name
+                                : "LODGING BILL"}
+                            </Button>
+                          </label>
+                        </div>
                       </Box>
                     </div>
                   </>
@@ -389,8 +456,8 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 components={
                   <>
                     <div className="grid md:grid-cols-1 gap-3 ">
-                      <Box className="flex flex-col md:flex-row gap-2">
-                        <Box className="md:w-3/5">
+                      <Box className="flex flex-col md:flex-row gap-2 items-center">
+                        <Box className="md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="food"
@@ -403,28 +470,45 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           />
                         </Box>
 
-                        <input
-                          type="file"
-                          id="upload-button"
-                          style={{ display: "none" }}
-                          onChange={handleFileChange}
-                        />
-                        <label htmlFor="upload-button">
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            component="span"
-                            startIcon={<CloudUploadIcon />}
-                          >
-                            {selectedFile
-                              ? selectedFile.name
-                              : "Upload Food Bill"}
-                          </Button>
-                        </label>
+                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <img
+                            src={foodPreview}
+                            alt="foodPreview"
+                            className="w-full h-full"
+                          />
+                        </div>
+
+                        <div className="flex-1">
+                          <input
+                            type="file"
+                            name="foodBill"
+                            id="upload-foodBill"
+                            style={{ display: "none" }}
+                            accept=".png, .jpeg, .jpg"
+                            onChange={(e) => {
+                              setFoodFile(e.target.files[0]);
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setFoodPreview(reader.result);
+                              };
+                              reader.readAsDataURL(e.target.files[0]);
+                            }}
+                          />
+                          <label htmlFor="upload-foodBill">
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              component="span"
+                              startIcon={<CloudUploadIcon />}
+                            >
+                              {foodFile ? foodFile.name : "Upload Food Bill"}
+                            </Button>
+                          </label>
+                        </div>
                       </Box>
 
-                      <Box className="flex flex-col md:flex-row gap-2">
-                        <Box className="md:w-3/5">
+                      <Box className="flex flex-col md:flex-row gap-2 items-center">
+                        <Box className="md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="foodGST"
@@ -436,24 +520,44 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             disabled={attendance === "absent" ? true : false}
                           />
                         </Box>
-                        <input
-                          type="file"
-                          id="upload-button"
-                          style={{ display: "none" }}
-                          onChange={handleFileChange}
-                        />
-                        <label htmlFor="upload-button">
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            component="span"
-                            startIcon={<CloudUploadIcon />}
-                          >
-                            {selectedFile
-                              ? selectedFile.name
-                              : "Upload Food Bill"}
-                          </Button>
-                        </label>
+
+                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <img
+                            src={foodGstPreview}
+                            alt="foodPreview"
+                            className="w-full h-full"
+                          />
+                        </div>
+
+                        <div className="flex-1">
+                          <input
+                            type="file"
+                            name="foodGstBill"
+                            id="upload-foodGstBill"
+                            style={{ display: "none" }}
+                            accept=".png, .jpeg, .jpg"
+                            onChange={(e) => {
+                              setFoodGstFile(e.target.files[0]);
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setFoodGstPreview(reader.result);
+                              };
+                              reader.readAsDataURL(e.target.files[0]);
+                            }}
+                          />
+                          <label htmlFor="upload-foodGstBill">
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              component="span"
+                              startIcon={<CloudUploadIcon />}
+                            >
+                              {foodGstFile
+                                ? foodGstFile.name
+                                : "Upload Food Bill"}
+                            </Button>
+                          </label>
+                        </div>
                       </Box>
                     </div>
                   </>
@@ -467,8 +571,8 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 components={
                   <>
                     <div className="grid md:grid-cols-1 gap-3 ">
-                      <Box className="flex flex-col md:flex-row gap-2">
-                        <Box className="md:w-3/5">
+                      <Box className="flex flex-col md:flex-row gap-2 items-center">
+                        <Box className="md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="internet"
@@ -480,26 +584,48 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             disabled={attendance === "absent" ? true : false}
                           />
                         </Box>
-                        <input
-                          type="file"
-                          id="upload-button"
-                          style={{ display: "none" }}
-                          onChange={handleFileChange}
-                        />
-                        <label htmlFor="upload-button">
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            component="span"
-                            startIcon={<CloudUploadIcon />}
-                          >
-                            {selectedFile ? selectedFile.name : "MOBILE BILL"}
-                          </Button>
-                        </label>
+
+                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <img
+                            src={mobileBillPreview}
+                            alt="mobileBillPreview"
+                            className="w-full h-full"
+                          />
+                        </div>
+
+                        <div className="flex-1">
+                          <input
+                            type="file"
+                            name="internetBill"
+                            id="upload-internetBill"
+                            style={{ display: "none" }}
+                            accept=".png, .jpeg, .jpg"
+                            onChange={(e) => {
+                              setMobileBillFile(e.target.files[0]);
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setMobileBillPreview(reader.result);
+                              };
+                              reader.readAsDataURL(e.target.files[0]);
+                            }}
+                          />
+                          <label htmlFor="upload-internetBill">
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              component="span"
+                              startIcon={<CloudUploadIcon />}
+                            >
+                              {mobileBillFile
+                                ? mobileBillFile.name
+                                : "MOBILE BILL"}
+                            </Button>
+                          </label>
+                        </div>
                       </Box>
 
-                      <Box className="flex flex-col md:flex-row gap-2">
-                        <Box className="md:w-3/5">
+                      <Box className="flex flex-col md:flex-row gap-2 items-center">
+                        <Box className="md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="postageCourier"
@@ -511,26 +637,48 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             disabled={attendance === "absent" ? true : false}
                           />
                         </Box>
-                        <input
-                          type="file"
-                          id="upload-button"
-                          style={{ display: "none" }}
-                          onChange={handleFileChange}
-                        />
-                        <label htmlFor="upload-button">
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            component="span"
-                            startIcon={<CloudUploadIcon />}
-                          >
-                            {selectedFile ? selectedFile.name : "Courier  Bill"}
-                          </Button>
-                        </label>
+
+                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <img
+                            src={courierBillPreview}
+                            alt="courierBillPreview"
+                            className="w-full h-full"
+                          />
+                        </div>
+
+                        <div className="flex-1">
+                          <input
+                            type="file"
+                            name="postageCourierBill"
+                            id="upload-postageCourierBill"
+                            style={{ display: "none" }}
+                            accept=".png, .jpeg, .jpg"
+                            onChange={(e) => {
+                              setCourierBillFile(e.target.files[0]);
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setCourierBillPreview(reader.result);
+                              };
+                              reader.readAsDataURL(e.target.files[0]);
+                            }}
+                          />
+                          <label htmlFor="upload-postageCourierBill">
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              component="span"
+                              startIcon={<CloudUploadIcon />}
+                            >
+                              {courierBillFile
+                                ? courierBillFile.name
+                                : "Courier  Bill"}
+                            </Button>
+                          </label>
+                        </div>
                       </Box>
 
-                      <Box className="flex flex-col md:flex-row gap-2">
-                        <Box className="md:w-3/5">
+                      <Box className="flex flex-col md:flex-row gap-2 items-center">
+                        <Box className="md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="printingStationary"
@@ -542,24 +690,44 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             disabled={attendance === "absent" ? true : false}
                           />
                         </Box>
-                        <input
-                          type="file"
-                          id="upload-button"
-                          style={{ display: "none" }}
-                          onChange={handleFileChange}
-                        />
-                        <label htmlFor="upload-button">
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            component="span"
-                            startIcon={<CloudUploadIcon />}
-                          >
-                            {selectedFile
-                              ? selectedFile.name
-                              : "STATIONARY Bill"}
-                          </Button>
-                        </label>
+
+                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <img
+                            src={stationaryBillPreview}
+                            alt="stationaryBillPreview"
+                            className="w-full h-full"
+                          />
+                        </div>
+
+                        <div className="flex-1">
+                          <input
+                            type="file"
+                            name="stationaryBill"
+                            id="upload-stationaryBill"
+                            accept=".png, .jpeg, .jpg"
+                            style={{ display: "none" }}
+                            onChange={(e) => {
+                              setStationaryBillFile(e.target.files[0]);
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setStationaryBillPreview(reader.result);
+                              };
+                              reader.readAsDataURL(e.target.files[0]);
+                            }}
+                          />
+                          <label htmlFor="upload-stationaryBill">
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              component="span"
+                              startIcon={<CloudUploadIcon />}
+                            >
+                              {stationaryBillFile
+                                ? stationaryBillFile.name
+                                : "STATIONARY Bill"}
+                            </Button>
+                          </label>
+                        </div>
                       </Box>
                     </div>
                   </>
@@ -605,33 +773,27 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 heading="Promotion and Activity"
                 components={
                   <>
-                    <div className="grid md:grid-cols-2 gap-3 ">
-                      <TextField
-                        type="number"
-                        name="poster"
-                        value={formData.poster}
-                        onChange={handleFormChange}
-                        fullWidth
-                        label="POSTER ACTIVITY"
-                        size="small"
-                        disabled={attendance === "absent" ? true : false}
-                      />
-                      <RadioGroup
-                        sx={{ display: "inline" }}
-                        name="use-radio-group"
-                        defaultValue="Yes"
-                      >
-                        <FormControlLabel
-                          value="yes"
-                          label="Yes"
-                          control={<Radio />}
-                        />
-                        <FormControlLabel
-                          value="no"
-                          label="No"
-                          control={<Radio />}
-                        />
-                      </RadioGroup>
+                    <div className="grid md:grid-cols-1 gap-3 ">
+                      <FormControl>
+                        <FormLabel>Poster Activity</FormLabel>
+                        <RadioGroup
+                          sx={{ display: "inline" }}
+                          name="use-radio-group"
+                          value={posterActivity}
+                          onChange={(e)=> setPosterActivity(e.target.value)}
+                        >
+                          <FormControlLabel
+                            value="yes"
+                            label="Yes"
+                            control={<Radio />}
+                          />
+                          <FormControlLabel
+                            value="no"
+                            label="No"
+                            control={<Radio />}
+                          />
+                        </RadioGroup>
+                      </FormControl>
                     </div>
                   </>
                 }
@@ -648,6 +810,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
           </Button>
         </DialogActions>
       </Dialog>
+      <Toaster position="top-center" />
     </div>
   );
 }
