@@ -1,6 +1,6 @@
 import axios from "axios";
 axios.defaults.headers.common["Authorization"] = `jhsajdkhsakdjhsdjakjdhsajdsd`;
-// const BASE_URL = "http://142.93.208.119:80";
+const SALES_TG_URL = "http://142.93.208.119:80";
 const BASE_URL = "http://13.126.67.127:8080";
 
 async function get(url, id, month, year) {
@@ -59,7 +59,7 @@ async function getEmp(url, month, year) {
 
 async function scoreSummaryGet(url, id, month, year) {
   try {
-    const result = await axios.get(`${BASE_URL}${url}`, {
+    const result = await axios.get(`${SALES_TG_URL}${url}`, {
       params: { empId: id, month: month, year: year },
     });
     return result.data;

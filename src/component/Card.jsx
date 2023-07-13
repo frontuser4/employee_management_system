@@ -1,6 +1,6 @@
 import { Typography, Paper, Box } from "@mui/material";
+
 const Card = ({ score, saleTargetLY, saleTargetTY }) => {
- 
   return (
     <Box
       sx={{
@@ -91,7 +91,6 @@ const Card = ({ score, saleTargetLY, saleTargetTY }) => {
         </Box>
       </Paper>
     </Box>
-
   );
 };
 
