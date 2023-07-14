@@ -63,10 +63,11 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const {data} = useSelector((state)=> state.login.data);
+  const {stockist} = useSelector((state)=> state.login.data);
   const [formData, setFormData] = useState(defaultState);
   const [attendance, setAttendance] = useState("present");
   const [modeTravel, setModeTravel] = useState("");
-  const [stockistData, setStockistData] = useState("");
+  const [stockistData, setStockistData] = useState(null);
   const [pjpChnage, setPjpChange] = useState(false);
   const [posterActivity, setPosterActivity] = useState(false);
   const [date, setDate] = useState(dayjs());
@@ -115,7 +116,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
   };
 
   const handleFormSubmit = () => {
-
+   
     const addData = {
       ...formData,
       empId: data.empId,
@@ -125,9 +126,10 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
       dateExp: dayjs(date).format("YYYY-MM-DD"),
       expenseId: expenceId,
       distance,
-      // pjpChnage,
-      // promotionActivity,
+      pjp : pjpChnage,
+      poster : posterActivity,
       distanceFile,
+      desig : data.desig,
       approval: "not approval",
     };
 
@@ -138,7 +140,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
     setStockistData("");
     setDistance("");
     setCloseForm((prev) => !prev);
-    setOpen(false);
+
   };
 
   const handleDistanceChange = (e) => {
@@ -224,7 +226,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
               />
               <StockistDropdown
                 title="Stockist"
-                option={data.stockist}
+                option={stockist}
                 value={stockistData}
                 onChange={(e) => setStockistData(e)}
               />

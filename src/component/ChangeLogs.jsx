@@ -9,6 +9,7 @@ const ChangeLogs = ({month, year}) => {
   
   async function fetchData() {
     const res = await get("/getput", data.empId, month, year);
+    console.log("changesLogs: ", res);
     setChangeLogs(res);
   }
 

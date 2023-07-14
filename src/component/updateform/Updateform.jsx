@@ -30,7 +30,8 @@ export default function UpdateForm({ editData, setCloseUpdateform}) {
 
   const navigate = useNavigate();
   const { state } = useLocation();
-  const {data} = useSelector((state)=> state.login.data)
+  const {data} = useSelector((state)=> state.login.data);
+  const {stockist} = useSelector((state)=> state.login.data);
   const [formData, setFormData] = useState(editData);
   const [attendance, setAttendance] = useState(formData.attendance);
   const [modeTravel, setModeTravel] = useState(formData.modeTravel);
@@ -193,7 +194,7 @@ export default function UpdateForm({ editData, setCloseUpdateform}) {
               />
               <StockistDropdown
                 title="Stockist"
-                option={state.stockist}
+                option={stockist}
                 value={stockistData}
                 onChange={(e) => setStockistData(e)}
               />
