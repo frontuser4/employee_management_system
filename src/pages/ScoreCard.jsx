@@ -190,7 +190,7 @@ const ScoreCard = () => {
               <td>POP VISELITY</td>
               <td>15</td>
               <td>10</td>
-              <td className="flex gap-2">{marksThree} <p className="bg-[green] p-1 rounded text-white">{scoreGradeThree}</p></td>
+              <td >{marksThree} {scoreGradeThree}</td>
             </tr>
             <tr>
               <td>MONTHLY TARGET</td>

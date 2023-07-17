@@ -126,6 +126,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
       dateExp: dayjs(date).format("YYYY-MM-DD"),
       expenseId: expenceId,
       distance,
+      localConv : distance * 2 * 2,
       pjp : pjpChnage,
       poster : posterActivity,
       distanceFile,
@@ -141,10 +142,6 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
     setDistance("");
     setCloseForm((prev) => !prev);
 
-  };
-
-  const handleDistanceChange = (e) => {
-    setDistance(e.target.value);
   };
 
   return (
@@ -172,7 +169,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
 
               <AttendanceDropdown
                 title="Attendance"
-                option={["present", "absent", "MRM"]}
+                option={["present", "absent", "MRM", "Joining Date", "Weekly Off", "leave"]}
                 value={attendance}
                 onChange={(e) => setAttendance(e)}
               />
@@ -306,7 +303,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           type="number"
                           name="localConv"
                           value={distance * 2 * 2}
-                          onChange={handleDistanceChange}
+                          // onChange={()=> setLocalConv()}
                           fullWidth
                           label="LOCAL CONV"
                           size="small"
@@ -323,6 +320,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           size="small"
                           disabled={attendance === "absent" ? true : false}
                         />
+
                         <TextField
                           type="number"
                           name="nightAllowance"
@@ -340,7 +338,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             type="number"
                             name="distance"
                             value={distance}
-                            onChange={handleDistanceChange}
+                            onChange={(e)=> setDistance(e.target.value)}
                             fullWidth
                             label="ONE SIDE KM"
                             size="small"

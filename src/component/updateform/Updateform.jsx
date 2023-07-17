@@ -108,9 +108,8 @@ export default function UpdateForm({ editData, setCloseUpdateform}) {
       posterActivity,
     });
 
-    UpdateData(updatedata)
-    navigate('/dashboard')
-    setOpen(false);
+    UpdateData(updatedata);
+    navigate('/dashboard');
     setFormData(defaultState);
     setAttendance("present");
     setModeTravel("");
@@ -291,6 +290,7 @@ export default function UpdateForm({ editData, setCloseUpdateform}) {
                           size="small"
                           disabled={attendance === "absent" ? true : false}
                         />
+
                         <TextField
                           type="number"
                           name="nightAllowance"
@@ -300,6 +300,7 @@ export default function UpdateForm({ editData, setCloseUpdateform}) {
                           size="small"
                           disabled={attendance === "absent" ? true : false}
                         />
+                        
                       </div>
 
                       <Box className="flex flex-col items-center md:flex-row gap-2">

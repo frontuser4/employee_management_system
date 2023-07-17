@@ -5,14 +5,15 @@ import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import AddForm from "../addform/AddForm";
-import toast, { Toaster } from "react-hot-toast";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { DownloadTableExcel } from "react-export-table-to-excel";
 import { useSelector } from "react-redux";
 import ImagePreview from "../ImagePreview";
 
+
 const ExpenceTable = ({ year, month }) => {
+  
   const navigate = useNavigate();
   const tableRef = useRef(null);
   const [tableData, setTableData] = useState(null);
@@ -28,8 +29,7 @@ const ExpenceTable = ({ year, month }) => {
     setLoading(true);
     const res = await get("/getput", data.empId, month, year);
     setTableData(res.data);
-    console.log(res.data_log.S166120230701);
-    setChangeLogsData(res.data_log.S166120230701);
+    setChangeLogsData(res.data_log);
     setLoading(false);
   }
 
@@ -74,6 +74,9 @@ const ExpenceTable = ({ year, month }) => {
       <table ref={tableRef}>
         <thead>
           <tr>
+            <th colSpan={10}>Sapat International Pvt. Ltd.</th>
+          </tr>
+          <tr>
             <th colSpan={4}>Name: {data.name}</th>
             <th colSpan={4}>Designation: {data.desig}</th>
             <th colSpan={4}>Emp Code: {data.empId}</th>
@@ -86,6 +89,7 @@ const ExpenceTable = ({ year, month }) => {
             <th className="text-center">TC</th>
             <th className="text-center">PC</th>
             <th className="text-center">SALE</th>
+            <th className="text-center">KM</th>
             <th className="text-center">STOCKIST</th>
             <th className="text-center">MODE TRAVEL</th>
             <th className="text-center">DALY CONV</th>
@@ -124,7 +128,8 @@ const ExpenceTable = ({ year, month }) => {
                   <td className="text-center">{data.tc}</td>
                   <td className="text-center">{data.pc}</td>
                   <td className="text-center">{data.sale}</td>
-                  <td className="text-center">{data.payer__payerId}</td>
+                  <td className="text-center">{data.distance}</td>
+                  <td className="text-center">{data.payer}</td>
                   <td className="text-center">{data.modeTravel}</td>
                   <td className="text-center">{data.dailyConv}</td>
                   <td className="text-center">{data.travelingLong}</td>
@@ -148,9 +153,33 @@ const ExpenceTable = ({ year, month }) => {
                       preview
                     </button>
                   </td>
-                  <td className="text-center">{data.internet}</td>
-                  <td className="text-center">{data.printingStationary}</td>
-                  <td className="text-center">{data.postageCourier}</td>
+                  <td className="text-center">
+                    {data.internet}
+                    <button
+                      className="bg-cyan-500 mt-2 p-1 rounded"
+                      onClick={() => handlePreviewImage(data.mobileBillFile)}
+                    >
+                      preview
+                    </button>
+                  </td>
+                  <td className="text-center">
+                    {data.printingStationary}
+                    <button
+                      className="bg-cyan-500 mt-2 p-1 rounded"
+                      onClick={() => handlePreviewImage(data.stationaryBillFile)}
+                    >
+                      preview
+                    </button>
+                  </td>
+                  <td className="text-center">
+                    {data.postageCourier}
+                    <button
+                      className="bg-cyan-500 mt-2 p-1 rounded"
+                      onClick={() => handlePreviewImage(data.courierBillFile)}
+                    >
+                      preview
+                    </button>
+                  </td>
                   <td className="text-center">{data.localConv}</td>
                   <td className="text-center">{data.workingHr}</td>
                   <td>{data.approval}</td>
@@ -174,25 +203,28 @@ const ExpenceTable = ({ year, month }) => {
       </table>
 
       <div className="flex bg-slate-800 p-4 gap-4 my-8">
-        <div className="bg-teal-600 p-2 rounded text-white flex flex-col">
-          <p>{changeLogsData?.dateExp}</p>
-          <span>{changeLogsData?.changedBy}</span>
-          {
-            changeLogsData?.changes?.map((data, index)=>{
-              return (
-                <div className="bg-pink-500" key={index}>
-                 <span>{data?.item}</span>
-                 <span className="mx-1">|</span>
-                 <span>{data?.oldPara}</span>
-                <span className="mx-1">|</span>
-                <span>{data?.newPara}</span>
-                <span className="mx-1">|</span>
-                <span>{data?.desig}</span>
+        <div className=" p-2 rounded text-white flex gap-3 flex-wrap">
+          {changeLogsData?.map((data, index) => {
+            return (
+              <div className="bg-teal-600 p-2 rounded">
+                <p>Date : {data?.dateExp}</p>
+                <span>ChangeBy: {data?.changedBy}</span>
+                {data?.changes?.map((data) => {
+                  return (
+                    <div className="bg-pink-500 p-1 rounded" key={index}>
+                      <span>{data?.item}</span>
+                      <span className="mx-1">|</span>
+                      <span>{data?.oldPara}</span>
+                      <span className="mx-1">|</span>
+                      <span>{data?.newPara}</span>
+                      <span className="mx-1">|</span>
+                      <span>{data?.desig}</span>
+                    </div>
+                  );
+                })}
               </div>
-              )
-            })
-          }
-         
+            );
+          })}
         </div>
       </div>
 
@@ -208,7 +240,6 @@ const ExpenceTable = ({ year, month }) => {
         imageurl={previewImageFile}
       />
 
-      <Toaster position="top-center" />
     </>
   );
 };
