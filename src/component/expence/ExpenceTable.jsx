@@ -206,10 +206,10 @@ const ExpenceTable = ({ year, month }) => {
         <div className=" p-2 rounded text-white flex gap-3 flex-wrap">
           {changeLogsData?.map((data, index) => {
             return (
-              <div className="bg-teal-600 p-2 rounded">
+              <div key={index} className="bg-teal-600 p-2 rounded">
                 <p>Date : {data?.dateExp}</p>
                 <span>ChangeBy: {data?.changedBy}</span>
-                {data?.changes?.map((data) => {
+                {data?.changes?.map((data, index) => {
                   return (
                     <div className="bg-pink-500 p-1 rounded" key={index}>
                       <span>{data?.item}</span>

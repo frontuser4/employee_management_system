@@ -105,6 +105,8 @@ export default function TabPanels({ExpenceTables, ScoreCard, Card, year, month, 
             score={score}
             saleTargetLY={saleTargetLY}
             saleTargetTY={saleTargetTY}
+            month={month}
+            year={year}
           />
         </TabPanel>
       </SwipeableViews>
