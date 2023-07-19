@@ -74,7 +74,7 @@ const ExpenceTable = ({ year, month }) => {
       <table ref={tableRef}>
         <thead>
           <tr>
-            <th colSpan={10}>Sapat International Pvt. Ltd.</th>
+            <th colSpan={16}>Sapat International Pvt. Ltd.</th>
           </tr>
           <tr>
             <th colSpan={4}>Name: {data.name}</th>
@@ -109,8 +109,8 @@ const ExpenceTable = ({ year, month }) => {
         </thead>
         <tbody>
           {loading ? (
-            <div style={{ width: "100%" }}>
-              <Skeleton count={10} />
+            <div>
+              <Skeleton count={10} width={1200} />
             </div>
           ) : (
             tableData?.map((data, index) => {
@@ -209,6 +209,7 @@ const ExpenceTable = ({ year, month }) => {
               <div key={index} className="bg-teal-600 p-2 rounded">
                 <p>Date : {data?.dateExp}</p>
                 <span>ChangeBy: {data?.changedBy}</span>
+                <p>{data.message}</p>
                 {data?.changes?.map((data, index) => {
                   return (
                     <div className="bg-pink-500 p-1 rounded" key={index}>

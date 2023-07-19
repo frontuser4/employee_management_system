@@ -111,7 +111,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
       toast.success(result.data.message);
       setOpen(false);
     } catch (error) {
-      console.log("error: ", error);
+      console.log("addForm error: ", error);
     }
   };
 
@@ -158,12 +158,13 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
         <DialogContent>
           <Box sx={{ flexFlow: 1, padding: 1 }}>
             <div className="grid md:grid-cols-2 place-items-center gap-3 mb-4">
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <LocalizationProvider dateAdapter={AdapterDayjs} >
                 <DatePicker
                   label="Select Date"
                   value={date}
                   onChange={(newDate) => setDate(newDate)}
                   slotProps={{ textField: { size: "small" } }}
+                  sx={{width:'100%'}}
                 />
               </LocalizationProvider>
 

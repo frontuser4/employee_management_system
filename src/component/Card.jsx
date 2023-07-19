@@ -75,37 +75,37 @@ const Card = ({ score, saleTargetLY, saleTargetTY, month, year }) => {
 
         <Box className="flex items-center flex-col justify-center w-40 bg-fuchsia-500 p-3 rounded">
           <Typography>MTH ACH</Typography>
-          <Typography>{Math.round(saleTargetTY?.kgsum)}</Typography>
+          <Typography>{Math.round(saleTargetTY?.kgsum).toFixed(2)}</Typography>
         </Box>
 
         <Box className="flex items-center flex-col justify-center w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
           <Typography>LY ACH</Typography>
-          <Typography>{Math.round(saleTargetLY?.kgsum)}</Typography>
+          <Typography>{Math.round(saleTargetLY?.kgsum).toFixed(2)}</Typography>
         </Box>
 
         <Box className="flex items-center flex-col justify-center  bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
           <Typography>AVERAGES HOURS</Typography>
-          <Typography>{scoreData?.wHr_sum/scoreData?.workingDays}</Typography>
+          <Typography>{Math.round(scoreData?.wHr_sum/scoreData?.workingDays).toFixed(2)}</Typography>
         </Box>
 
         <Box className="flex items-center justify-center  flex-col w-40 bg-teal-700 p-3 rounded">
           <Typography>AVG TC</Typography>
-          <Typography>{scoreData?.tc_sum/scoreData?.workingDays}</Typography>
+          <Typography>{Math.round(scoreData?.tc_sum/scoreData?.workingDays).toFixed(2)}</Typography>
         </Box>
 
         <Box className="flex items-center justify-center flex-col w-40 bg-purple-500 p-3 rounded">
           <Typography>AVG PC</Typography>
-          <Typography>{Math.round(scoreData?.pc_sum/scoreData?.workingDays)}</Typography>
+          <Typography>{Math.round(scoreData?.pc_sum/scoreData?.workingDays).toFixed(2)}</Typography>
         </Box>
 
         <Box className="flex items-center justify-center flex-col w-40 bg-rose-500 p-3 rounded">
           <Typography>POSTER</Typography>
-          <Typography>{scoreData?.poster_sum}</Typography>
+          <Typography>{scoreData?.poster}</Typography>
         </Box>
         
         <Box className="flex items-center justify-center flex-col w-40 bg-rose-500 p-3 rounded">
           <Typography>AVG POSTER</Typography>
-          <Typography>{scoreData?.poster_sum / scoreData?.workingDays}</Typography>
+          <Typography>{Math.round(scoreData?.poster / scoreData?.workingDays).toFixed(2)}</Typography>
         </Box>
        
         <Box className="flex items-center justify-center flex-col w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
