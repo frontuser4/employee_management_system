@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
-import "../globaltable.css";
-import {TextField, Button } from "@mui/material";
+import "./scoreCard.css";
+import { TextField, Button } from "@mui/material";
+import { post } from "../utils/api";
+import toast, { Toaster } from "react-hot-toast";
 
-const ScoreCard = () => {
-  
+const ScoreCard = ({ empId, month, year }) => {
+
+  const [claimGift, setClaimGift ] = useState(null);
   const [marksOne, setMarksOne] = useState(0);
   const [marksTwo, setMarksTwo] = useState(0);
   const [marksThree, setMarksThree] = useState(0);
@@ -39,10 +42,9 @@ const ScoreCard = () => {
       setMarksOne(0);
       setScoreGradeOne("worst");
     }
-
   }
 
-  function scoreTwoGrade(score){
+  function scoreTwoGrade(score) {
     if (score >= 25) {
       setMarksTwo(10);
       setScoreGradeTwo("excellent");
@@ -61,7 +63,7 @@ const ScoreCard = () => {
     }
   }
 
-  function scoreThreeGrade(score){
+  function scoreThreeGrade(score) {
     if (score >= 15) {
       setMarksThree(10);
       setScoreGradeThree("excellent");
@@ -80,68 +82,23 @@ const ScoreCard = () => {
     }
   }
 
-  function scoreFourGrade(score){
-    if (score >= 15) {
-      setMarksThree(10);
-      setScoreGradeThree("excellent");
-    } else if (score >= 11 && score <= 14) {
-      setMarksThree(8);
-      setScoreGradeThree("good");
-    } else if (score >= 10 && score <= 12) {
-      setMarksThree(5);
-      setScoreGradeThree("average");
-    } else if (score >= 5 && score <= 9) {
-      setMarksThree(3);
-      setScoreGradeThree("poor");
-    } else if (score < 5) {
-      setMarksThree(0);
-      setScoreGradeThree("worst");
-    }
-  }
-
-  function scoreFiveGrade(score){
-    if (score >= 15) {
-      setMarksThree(10);
-      setScoreGradeThree("excellent");
-    } else if (score >= 11 && score <= 14) {
-      setMarksThree(8);
-      setScoreGradeThree("good");
-    } else if (score >= 10 && score <= 12) {
-      setMarksThree(5);
-      setScoreGradeThree("average");
-    } else if (score >= 5 && score <= 9) {
-      setMarksThree(3);
-      setScoreGradeThree("poor");
-    } else if (score < 5) {
-      setMarksThree(0);
-      setScoreGradeThree("worst");
-    }
-  }
-
-  function scoreSixGrade(score){
-    if (score >= 15) {
-      setMarksThree(10);
-      setScoreGradeThree("excellent");
-    } else if (score >= 11 && score <= 14) {
-      setMarksThree(8);
-      setScoreGradeThree("good");
-    } else if (score >= 10 && score <= 12) {
-      setMarksThree(5);
-      setScoreGradeThree("average");
-    } else if (score >= 5 && score <= 9) {
-      setMarksThree(3);
-      setScoreGradeThree("poor");
-    } else if (score < 5) {
-      setMarksThree(0);
-      setScoreGradeThree("worst");
-    }
-  }
-
-  const handlerClaimGift = (e)=>{
+  const handlerClaimGift = async (e) => {
     e.preventDefault();
-    console.log("claim and gift: ", e.target[0].value);
-    e.target[0].value = '';
-}
+    // console.log("claim and gift: ", e.target[0].value);
+    if(!e.target[0].value){
+      return;
+    }
+    const res = await post("/claimgift", {
+      claimGift: e.target[0].value,
+      empId,
+      month,
+      year,
+    });
+    setClaimGift( e.target[0].value);
+    console.log("res claim: ", res.data.Details);
+    toast.success(res.data.Details);
+    e.target[0].value = "";
+  };
 
   useEffect(() => {
     scoreOneGrade(40);
@@ -151,20 +108,23 @@ const ScoreCard = () => {
 
   return (
     <>
-        <div>
-          <form className="flex items-center gap-2" onSubmit={handlerClaimGift}>
-            <TextField
-              label="Claim/Gift"
-              id="claim-gift"
-              size="small"
-              autoComplete="off"
-            />
-           <Button type="submit" variant="contained">Submit</Button>
-          </form>
-        </div>
+      <div className="mb-3">
+        <form className="flex items-center gap-2" onSubmit={handlerClaimGift}>
+          <TextField
+            label="Claim/Gift"
+            id="claim-gift"
+            size="small"
+            autoComplete="off"
+            type="number"
+
+          />
+          <Button type="submit" variant="contained">
+            Submit
+          </Button>
+        </form>
+      </div>
       <div className="container">
-      
-        <table>
+        <table style={{ width: "100%" }}>
           <thead>
             <tr>
               <th>PARAMETERS</th>
@@ -176,49 +136,63 @@ const ScoreCard = () => {
           <tbody>
             <tr>
               <td>TOTAL CALLS(TC)</td>
-              <td>40</td>
-              <td>10</td>
-              <td>{marksOne} {scoreGradeOne}</td>
+              <td className="text-center">40</td>
+              <td className="text-center">10</td>
+              <td className="text-center">
+                {marksOne} {scoreGradeOne}
+              </td>
             </tr>
             <tr>
               <td>PRODUCTIVE CALLS(PC)</td>
-              <td>25</td>
-              <td>10</td>
-              <td>{marksTwo} {scoreGradeTwo}</td>
+              <td className="text-center">25</td>
+              <td className="text-center">10</td>
+              <td className="text-center">
+                {marksTwo} {scoreGradeTwo}
+              </td>
             </tr>
             <tr>
               <td>POP VISELITY</td>
-              <td>15</td>
-              <td>10</td>
-              <td className="flex gap-2">{marksThree} <p className="bg-[green] p-1 rounded text-white">{scoreGradeThree}</p></td>
+              <td className="text-center">15</td>
+              <td className="text-center">10</td>
+              <td className="text-center">
+                {marksThree} {scoreGradeThree}
+              </td>
             </tr>
             <tr>
               <td>MONTHLY TARGET</td>
-              <td>100%</td>
-              <td>50</td>
-              <td>{totalScore.scoreFour}</td>
+              <td className="text-center">100</td>
+              <td className="text-center">50</td>
+              <td className="text-center">{totalScore.scoreFour}</td>
             </tr>
             <tr>
               <td>PROMOTION ACTIVITY</td>
-              <td>100</td>
-              <td>10</td>
-              <td>{totalScore.scoreFive}</td>
+              <td className="text-center">100</td>
+              <td className="text-center">10</td>
+              <td className="text-center">{totalScore.scoreFive}</td>
             </tr>
             <tr>
               <td>PJP CHANGE</td>
-              <td>100</td>
-              <td>10</td>
-              <td>{totalScore.scoreFive}</td>
+              <td className="text-center">100</td>
+              <td className="text-center">10</td>
+              <td className="text-center">{totalScore.scoreFive}</td>
             </tr>
             <tr>
               <td>CLAIM/GIFT SUBMISSIONS</td>
-              <td>0</td>
-              <td>5</td>
-              <td>{totalScore.scoreSeven}</td>
+              <td className="text-center">0</td>
+              <td className="text-center">5</td>
+              <td className="text-center">{totalScore.scoreSeven}</td>
+            </tr>
+            <tr>
+              <td colSpan={2} className="text-center font-bold">
+                TOTAL
+              </td>
+              <td className="text-center">105</td>
+              <td className="text-center">0</td>
             </tr>
           </tbody>
         </table>
       </div>
+      <Toaster position="top-center" />
     </>
   );
 };

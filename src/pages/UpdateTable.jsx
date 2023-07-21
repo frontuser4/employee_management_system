@@ -3,31 +3,20 @@ import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
-import { useLocation, useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Tooltip,
   IconButton,
   Avatar,
   Menu,
-  MenuItem,
   Button,
+  MenuItem
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import dayjs from "dayjs";
-import TabPanelTables from "./TabPanelTables";
+import UpdateForm from "../component/updateform/UpdateForm";
+import { useSelector } from 'react-redux';
 
-const drawerWidth = 240;
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-}));
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -47,16 +36,19 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-export default function Dashboard() {
-  
-  const { state } = useLocation();
-  const [anchorElUser, setAnchorElUser] = useState(null);
-  const navigate = useNavigate();
-  const [date, setDate] = useState(dayjs());
-  const [year, setYear] = useState(dayjs(date.$d).format("YYYY"));
-  const [month, setMonth] = useState(dayjs(date.$d).format("MM").split("")[1]);
+const UpdateTable = () => {
 
-  const handleOpenUserMenu = (event) => {
+  const { state } = useLocation();
+  const navigate = useNavigate();
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const {data} = useSelector((state)=> state.login.data);
+
+  const handleLogout = ()=> {
+    localStorage.removeItem('token');
+    navigate('/');
+ }
+
+ const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
 
@@ -64,21 +56,14 @@ export default function Dashboard() {
     setAnchorElUser(null);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
-  };
-
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-
+    <>
       <AppBar component="nav">
         <Toolbar>
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+            sx={{ flexGrow: 1 }}
           >
             ESM
           </Typography>
@@ -111,27 +96,19 @@ export default function Dashboard() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem className="flex flex-col gap-2">
-                <Typography textAlign="center">
-                  Name : {state.data.name}
-                </Typography>
-                <Typography textAlign="center">
-                  Id : {state.data.empId}
-                </Typography>
-                <Typography textAlign="center">
-                  Designation : {state.data.desig}
-                </Typography>
-                <Typography textAlign="center">Hq : {state.data.hq}</Typography>
-              </MenuItem>
+              <MenuItem className='flex flex-col gap-2'>
+                  <Typography textAlign="center">Name : {data.name}</Typography>
+                  <Typography textAlign="center">Id : {data.empId}</Typography>
+                  <Typography textAlign="center">Designation : {data.desig}</Typography>
+                  <Typography textAlign="center">Hq : {data.hq}</Typography>
+                </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
       </AppBar>
-
-      <Box component="main" sx={{ flexGrow: 1, p: 3, overflowX: "auto" }}>
-        <DrawerHeader />
-        <TabPanelTables />
-      </Box>
-    </Box>
+      <UpdateForm editData={state} />
+    </>
   );
-}
+};
+
+export default UpdateTable;

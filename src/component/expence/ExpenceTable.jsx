@@ -1,63 +1,50 @@
 import { useEffect, useState, useRef } from "react";
 import "./style.css";
-import { get, update } from "../../utils/api";
+import { get } from "../../utils/api";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
-import { useLocation } from "react-router-dom";
-import UpdateForm from "../updateform/UpdateForm";
+import { useNavigate } from "react-router-dom";
 import AddForm from "../addform/AddForm";
-import toast, { Toaster } from "react-hot-toast";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { DownloadTableExcel } from "react-export-table-to-excel";
+import { useSelector } from "react-redux";
+import ImagePreview from "../ImagePreview";
+
 
 const ExpenceTable = ({ year, month }) => {
+  
+  const navigate = useNavigate();
   const tableRef = useRef(null);
-  const { state } = useLocation();
   const [tableData, setTableData] = useState(null);
+  const [previewImage, setPreviewImage] = useState(false);
+  const [previewImageFile, setPreviewImageFile] = useState(false);
+  const [changeLogsData, setChangeLogsData] = useState(null);
   const [openForm, setOpenForm] = useState(false);
-  const [updateForm, setUpdateForm] = useState(false);
   const [closeForm, setCloseForm] = useState(false);
-  const [closeUpdateForm, setCloseUpdateform] = useState(false);
-  const [editData, setEditData] = useState(null);
-  const [checked, setChecked] = useState(true);
-  const [checkedRefresh, setCheckedRefresh] = useState(false);
-  const [approval, setApproval] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { data } = useSelector((state) => state.login.data);
 
   async function fetchData() {
     setLoading(true);
-    const res = await get("/account/expence", state.data.empId, month, year);
-    setTableData(res);
+    const res = await get("/getput", data.empId, month, year);
+    setTableData(res.data);
+    setChangeLogsData(res.data_log);
     setLoading(false);
   }
 
   useEffect(() => {
     fetchData();
-  }, [month, year, closeUpdateForm, closeForm, checkedRefresh]);
+  }, [month, year, closeForm]);
 
-  const handleEdit = (data) => {
-    setEditData(data);
-    setUpdateForm(true);
+  const handleEdit = (mydata) => {
+    navigate("/updatetable", { state: { ...data, ...mydata } });
   };
 
-  const handleClick = (expenceId) => {
-    if (checked) {
-      setApproval([
-        ...approval,
-        { expenceId: expenceId, approval: "approved" },
-      ]);
-    }
+  const handlePreviewImage = (imgpath) => {
+    setPreviewImage(true);
+    setPreviewImageFile(`${imgpath}`);
   };
-
-  const handleSubmit = async () => {
-    const updateRes = await update("/account/expence", { data: approval });
-    console.log("Approval updates: ", updateRes);
-    toast.success(updateRes.data.message);
-    setCheckedRefresh((prev) => !prev);
-  };
-  
-  console.log("editData: ", editData);
 
   return (
     <>
@@ -84,114 +71,162 @@ const ExpenceTable = ({ year, month }) => {
         </div>
       </div>
 
-      <div className="container">
-       
-        <table ref={tableRef}>
+      <table ref={tableRef}>
         <thead>
           <tr>
-            <th>Name: {state.data.name}</th>
-            <th>Designation: {state.data.desig}</th>
-            <th>Emp Code: {state.data.empId}</th>
-            <th>Head/Quarter/Area: {state.data.hq}</th>
-            {/* <th>Date: {}</th> */}
+            <th colSpan={16}>Sapat International Pvt. Ltd.</th>
+          </tr>
+          <tr>
+            <th colSpan={4}>Name: {data.name}</th>
+            <th colSpan={4}>Designation: {data.desig}</th>
+            <th colSpan={4}>Emp Code: {data.empId}</th>
+            <th colSpan={4}>Head/Quarter/Area: {data.hq}</th>
+          </tr>
+          <tr>
+            <th className="text-center">Action</th>
+            <th className="text-center">Date</th>
+            <th className="text-center">Attendence</th>
+            <th className="text-center">TC</th>
+            <th className="text-center">PC</th>
+            <th className="text-center">SALE</th>
+            <th className="text-center">KM</th>
+            <th className="text-center">STOCKIST</th>
+            <th className="text-center">MODE TRAVEL</th>
+            <th className="text-center">DALY CONV</th>
+            <th className="text-center">TRAVELING LONG</th>
+            <th className="text-center">TRAVELING BOARDING</th>
+            <th className="text-center">NIGHT ALLOWANCE</th>
+            <th className="text-center">FOOD</th>
+            <th className="text-center">FOODGST</th>
+            <th className="text-center">INTERNET</th>
+            <th className="text-center">PRINTING STATIONARY</th>
+            <th className="text-center">POSTAGE COURIER</th>
+            <th className="text-center">LOCAL CONVEY</th>
+            <th className="text-center">WORKING HOURS</th>
+            <th className="text-center">APPROVAL</th>
+            <th className="text-center">TOTAL</th>
           </tr>
         </thead>
-          <thead>
-            <tr>
-              <th className="text-center">Action</th>
-              <th className="text-center">Date</th>
-              <th className="text-center">Attendence</th>
-              <th className="text-center">TC</th>
-              <th className="text-center">PC</th>
-              <th className="text-center">SALE</th>
-              <th className="text-center">STOCKIST</th>
-              <th className="text-center">MODE TRAVEL</th>
-              <th className="text-center">DALY CONV</th>
-              <th className="text-center">TRAVELING LONG</th>
-              <th className="text-center">TRAVELING BOARDING</th>
-              <th className="text-center">NIGHT ALLOWANCE</th>
-              <th className="text-center">FOOD</th>
-              <th className="text-center">FOODGST</th>
-              <th className="text-center">INTERNET</th>
-              <th className="text-center">PRINTING STATIONARY</th>
-              <th className="text-center">POSTAGE COURIER</th>
-              <th className="text-center">LOCAL CONVEY</th>
-              <th className="text-center">WORKING HOURS</th>
-              <th className="text-center">APPROVAL</th>
-              <th className="text-center">TOTAL</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <div style={{ width: "100%" }}>
-                <Skeleton count={10} />
-              </div>
-            ) : (
-              tableData?.map((data, index) => {
-                return (
-                  <tr key={index}>
-                    <td className="text-center">
-                      <button onClick={() => handleEdit(data)}>
-                        <EditIcon />
-                      </button>
-                    </td>
-                    <td className="text-center">{data.dateExp}</td>
-                    <td className="text-center">{data.attendance}</td>
-                    <td className="text-center">{data.tc}</td>
-                    <td className="text-center">{data.pc}</td>
-                    <td className="text-center">{data.sale}</td>
-                    <td className="text-center">{data.payer__payerId}</td>
-                    <td className="text-center">{data.modeTravel}</td>
-                    <td className="text-center">{data.dailyConv}</td>
-                    <td className="text-center">{data.travelingLong}</td>
-                    <td className="text-center">{data.lodginBoardig}</td>
-                    <td className="text-center">{data.nightAllowance}</td>
-                    <td className="text-center">{data.food}</td>
-                    <td className="text-center">{data.foodGST}</td>
-                    <td className="text-center">{data.internet}</td>
-                    <td className="text-center">{data.printingStationary}</td>
-                    <td className="text-center">{data.postageCourier}</td>
-                    <td className="text-center">{data.localConv}</td>
-                    <td className="text-center">{data.workingHr}</td>
-                    <td className="flex items-center gap-2">
-                      {data.approval}
-                      <div>
-                        <input
-                          type="checkbox"
-                          value={checked}
-                          className="w-4"
-                          onChange={(e) => setChecked(e.target.checked)}
-                          onClick={() => handleClick(data.expenceId)}
-                        />
-                      </div>
-                    </td>
-                    <td className="text-center">{`${
-                      data.dailyConv +
-                      data.travelingLong +
-                      data.lodginBoardig +
-                      data.nightAllowance +
-                      data.food +
-                      data.foodGST +
-                      data.internet +
-                      data.printingStationary +
-                      data.postageCourier +
-                      data.localConv
-                    }`}</td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
-      </div>
+        <tbody>
+          {loading ? (
+            <div>
+              <Skeleton count={10} width={1200} />
+            </div>
+          ) : (
+            tableData?.map((data, index) => {
+              return (
+                <tr key={index}>
+                  <td className="text-center">
+                    <button onClick={() => handleEdit(data)}>
+                      <EditIcon />
+                    </button>
+                  </td>
+                  <td className="text-center" style={{ fontSize: "14px" }}>
+                    {data.dateExp}
+                  </td>
+                  <td className="text-center">{data.attendance}</td>
+                  <td className="text-center">{data.tc}</td>
+                  <td className="text-center">{data.pc}</td>
+                  <td className="text-center">{data.sale}</td>
+                  <td className="text-center">{data.distance}</td>
+                  <td className="text-center">{data.payer}</td>
+                  <td className="text-center">{data.modeTravel}</td>
+                  <td className="text-center">{data.dailyConv}</td>
+                  <td className="text-center">{data.travelingLong}</td>
+                  <td className="text-center">{data.lodginBoardig}</td>
+                  <td className="text-center">{data.nightAllowance}</td>
+                  <td className="text-center">
+                    {data.food}
+                    <button
+                      className="bg-cyan-500 mt-2 p-1 rounded"
+                      onClick={() => handlePreviewImage(data.foodFile)}
+                    >
+                      preview
+                    </button>
+                  </td>
+                  <td className="text-center">
+                    {data.foodGST}
+                    <button
+                      className="bg-cyan-500 mt-2 p-1 rounded"
+                      onClick={() => handlePreviewImage(data.foodGstFile)}
+                    >
+                      preview
+                    </button>
+                  </td>
+                  <td className="text-center">
+                    {data.internet}
+                    <button
+                      className="bg-cyan-500 mt-2 p-1 rounded"
+                      onClick={() => handlePreviewImage(data.mobileBillFile)}
+                    >
+                      preview
+                    </button>
+                  </td>
+                  <td className="text-center">
+                    {data.printingStationary}
+                    <button
+                      className="bg-cyan-500 mt-2 p-1 rounded"
+                      onClick={() => handlePreviewImage(data.stationaryBillFile)}
+                    >
+                      preview
+                    </button>
+                  </td>
+                  <td className="text-center">
+                    {data.postageCourier}
+                    <button
+                      className="bg-cyan-500 mt-2 p-1 rounded"
+                      onClick={() => handlePreviewImage(data.courierBillFile)}
+                    >
+                      preview
+                    </button>
+                  </td>
+                  <td className="text-center">{data.localConv}</td>
+                  <td className="text-center">{data.workingHr}</td>
+                  <td>{data.approval}</td>
+                  <td className="text-center">{`${
+                    data.dailyConv +
+                    data.travelingLong +
+                    data.lodginBoardig +
+                    data.nightAllowance +
+                    data.food +
+                    data.foodGST +
+                    data.internet +
+                    data.printingStationary +
+                    data.postageCourier +
+                    data.localConv
+                  }`}</td>
+                </tr>
+              );
+            })
+          )}
+        </tbody>
+      </table>
 
-      <div className="flex justify-end mt-4 text-white">
-        <button
-          className="bg-cyan-500 px-3 py-1 rounded"
-          onClick={handleSubmit}
-        >
-          submit
-        </button>
+      <div className="flex bg-slate-800 p-4 gap-4 my-8">
+        <div className=" p-2 rounded text-white flex gap-3 flex-wrap">
+          {changeLogsData?.map((data, index) => {
+            return (
+              <div key={index} className="bg-teal-600 p-2 rounded">
+                <p>Date : {data?.dateExp}</p>
+                <span>ChangeBy: {data?.changedBy}</span>
+                <p>{data.message}</p>
+                {data?.changes?.map((data, index) => {
+                  return (
+                    <div className="bg-pink-500 p-1 rounded" key={index}>
+                      <span>{data?.item}</span>
+                      <span className="mx-1">|</span>
+                      <span>{data?.oldPara}</span>
+                      <span className="mx-1">|</span>
+                      <span>{data?.newPara}</span>
+                      <span className="mx-1">|</span>
+                      <span>{data?.desig}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       <AddForm
@@ -199,13 +234,13 @@ const ExpenceTable = ({ year, month }) => {
         setOpen={setOpenForm}
         setCloseForm={setCloseForm}
       />
-      {/* <UpdateForm
-        open={updateForm}
-        setOpen={setUpdateForm}
-        editData={editData}
-        setCloseUpdateform={setCloseUpdateform}
-      /> */}
-      <Toaster position="top-center" />
+
+      <ImagePreview
+        open={previewImage}
+        setOpen={setPreviewImage}
+        imageurl={previewImageFile}
+      />
+
     </>
   );
 };

@@ -34,7 +34,7 @@ const StockistDropdown = ({title, option, value, onChange})=>{
           onChange={handleChange}
           size='small'
         >
-         {
+        {
           option?.map((data, index)=>{
            return <MenuItem key={index} value={data.payerId}>[{data.payerId}] {data.stokist_name}</MenuItem>
           })
