@@ -10,6 +10,7 @@ import {
   FormLabel,
   RadioGroup,
   Radio,
+  IconButton,
 } from "@mui/material";
 import Accordions from "../Accordions";
 import {
@@ -25,8 +26,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useSelector } from "react-redux";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { update } from "../../utils/api";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 export default function UpdateForm({ editData, setCloseUpdateform }) {
+  
+  const BASE_URL = "http://13.126.67.127:8080";
   const navigate = useNavigate();
   const { state } = useLocation();
   const { data } = useSelector((state) => state.login.data);
@@ -48,13 +52,27 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   const [courierBillFile, setCourierBillFile] = useState(null);
   const [stationaryBillFile, setStationaryBillFile] = useState(null);
 
-  const [distancePreview, setDistancePreview] = useState(null);
-  const [lodgingPreview, setLodgingPreview] = useState(null);
-  const [foodPreview, setFoodPreview] = useState(null);
-  const [foodGstPreview, setFoodGstPreview] = useState(null);
-  const [mobileBillPreview, setMobileBillPreview] = useState(null);
-  const [courierBillPreview, setCourierBillPreview] = useState(null);
-  const [stationaryBillPreview, setStationaryBillPreview] = useState(null);
+  const [distancePreview, setDistancePreview] = useState(
+    `${BASE_URL}${editData.distanceFile}`
+  );
+  const [lodgingPreview, setLodgingPreview] = useState(
+    `${BASE_URL}${editData.lodgingBillFile}`
+  );
+  const [foodPreview, setFoodPreview] = useState(
+    `${BASE_URL}${editData.foodFile}`
+  );
+  const [foodGstPreview, setFoodGstPreview] = useState(
+    `${BASE_URL}${editData.foodGstFile}`
+  );
+  const [mobileBillPreview, setMobileBillPreview] = useState(
+    `${BASE_URL}${editData.mobileBillFile}`
+  );
+  const [courierBillPreview, setCourierBillPreview] = useState(
+    `${BASE_URL}${editData.courierBillFile}`
+  );
+  const [stationaryBillPreview, setStationaryBillPreview] = useState(
+    `${BASE_URL}${editData.stationaryBillFile}`
+  );
 
   const expenceId = `${data.empId}${dayjs(date.$d).format("YYYY")}${dayjs(
     date.$d
@@ -79,6 +97,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   }
 
   const handleFormSubmit = () => {
+
     const updatedata = {
       ...formData,
       empId: data.empId,
@@ -95,8 +114,8 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
       mobileBillFile,
       courierBillFile,
       stationaryBillFile,
-      // pjpChnage,
-      // posterActivity,
+      pjpChnage,
+      posterActivity,
     };
 
     UpdateData(updatedata);
@@ -107,6 +126,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
     setStockistData("");
     setDistance("");
     setCloseUpdateform((prev) => !prev);
+    
   };
 
   const handleDistanceChange = (e) => {
@@ -307,16 +327,26 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                     </Box>
                     {distance > 100 ? (
-                      <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                        <img
-                          src={distancePreview}
-                          alt="distance km"
-                          className="w-full h-full"
-                        />
-                      </div>
+                      <>
+                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <img
+                            src={distancePreview}
+                            alt="distance km"
+                            className="w-full h-full"
+                          />
+                        </div>
+                        <IconButton
+                          color="primary"
+                          size="medium"
+                          onClick={() => setDistancePreview(null)}
+                        >
+                          <CancelIcon />
+                        </IconButton>
+                      </>
                     ) : (
                       ""
                     )}
+
                     {distance > 100 ? (
                       <div className="flex-1">
                         {" "}
@@ -372,6 +402,14 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         className="w-full h-full"
                       />
                     </div>
+
+                    <IconButton
+                      color="primary"
+                      size="medium"
+                      onClick={() => setLodgingPreview(null)}
+                    >
+                      <CancelIcon />
+                    </IconButton>
 
                     <div className="flex-1">
                       <input
@@ -437,6 +475,14 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                     </div>
 
+                    <IconButton
+                      color="primary"
+                      size="medium"
+                      onClick={() => setFoodPreview(null)}
+                    >
+                      <CancelIcon />
+                    </IconButton>
+
                     <div className="flex-1">
                       <input
                         type="file"
@@ -487,6 +533,14 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         className="w-full h-full"
                       />
                     </div>
+
+                    <IconButton
+                      color="primary"
+                      size="medium"
+                      onClick={() => setFoodGstPreview(null)}
+                    >
+                      <CancelIcon />
+                    </IconButton>
 
                     <div className="flex-1">
                       <input
@@ -550,6 +604,14 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                     </div>
 
+                    <IconButton
+                      color="primary"
+                      size="medium"
+                      onClick={() => setMobileBillPreview(null)}
+                    >
+                      <CancelIcon />
+                    </IconButton>
+
                     <div className="flex-1">
                       <input
                         type="file"
@@ -600,6 +662,14 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         className="w-full h-full"
                       />
                     </div>
+
+                    <IconButton
+                      color="primary"
+                      size="medium"
+                      onClick={() => setCourierBillPreview(null)}
+                    >
+                      <CancelIcon />
+                    </IconButton>
 
                     <div className="flex-1">
                       <input
@@ -653,6 +723,14 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         className="w-full h-full"
                       />
                     </div>
+
+                    <IconButton
+                      color="primary"
+                      size="medium"
+                      onClick={() => setStationaryBillPreview(null)}
+                    >
+                      <CancelIcon />
+                    </IconButton>
 
                     <div className="flex-1">
                       <input

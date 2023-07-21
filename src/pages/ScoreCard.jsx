@@ -82,63 +82,6 @@ const ScoreCard = ({ empId, month, year }) => {
     }
   }
 
-  function scoreFourGrade(score) {
-    if (score >= 15) {
-      setMarksThree(10);
-      setScoreGradeThree("excellent");
-    } else if (score >= 11 && score <= 14) {
-      setMarksThree(8);
-      setScoreGradeThree("good");
-    } else if (score >= 10 && score <= 12) {
-      setMarksThree(5);
-      setScoreGradeThree("average");
-    } else if (score >= 5 && score <= 9) {
-      setMarksThree(3);
-      setScoreGradeThree("poor");
-    } else if (score < 5) {
-      setMarksThree(0);
-      setScoreGradeThree("worst");
-    }
-  }
-
-  function scoreFiveGrade(score) {
-    if (score >= 15) {
-      setMarksThree(10);
-      setScoreGradeThree("excellent");
-    } else if (score >= 11 && score <= 14) {
-      setMarksThree(8);
-      setScoreGradeThree("good");
-    } else if (score >= 10 && score <= 12) {
-      setMarksThree(5);
-      setScoreGradeThree("average");
-    } else if (score >= 5 && score <= 9) {
-      setMarksThree(3);
-      setScoreGradeThree("poor");
-    } else if (score < 5) {
-      setMarksThree(0);
-      setScoreGradeThree("worst");
-    }
-  }
-
-  function scoreSixGrade(score) {
-    if (score >= 15) {
-      setMarksThree(10);
-      setScoreGradeThree("excellent");
-    } else if (score >= 11 && score <= 14) {
-      setMarksThree(8);
-      setScoreGradeThree("good");
-    } else if (score >= 10 && score <= 12) {
-      setMarksThree(5);
-      setScoreGradeThree("average");
-    } else if (score >= 5 && score <= 9) {
-      setMarksThree(3);
-      setScoreGradeThree("poor");
-    } else if (score < 5) {
-      setMarksThree(0);
-      setScoreGradeThree("worst");
-    }
-  }
-
   const handlerClaimGift = async (e) => {
     e.preventDefault();
     // console.log("claim and gift: ", e.target[0].value);
@@ -168,13 +111,12 @@ const ScoreCard = ({ empId, month, year }) => {
       <div className="mb-3">
         <form className="flex items-center gap-2" onSubmit={handlerClaimGift}>
           <TextField
-            error={ claimGift == null ? true : false}
             label="Claim/Gift"
             id="claim-gift"
             size="small"
             autoComplete="off"
             type="number"
-            helperText={claimGift == null ? 'please enter value' : ''}
+
           />
           <Button type="submit" variant="contained">
             Submit

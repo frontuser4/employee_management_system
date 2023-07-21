@@ -72,6 +72,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
   const [posterActivity, setPosterActivity] = useState(false);
   const [date, setDate] = useState(dayjs());
   const [distance, setDistance] = useState(null);
+  const [dateError, setDateError] = useState(null);
 
   const [distanceFile, setDistanceFile] = useState(null);
   const [lodgingBillFile, setLodgingBillFile] = useState(null);
@@ -111,7 +112,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
       toast.success(result.data.message);
       setOpen(false);
     } catch (error) {
-      console.log("addForm error: ", error);
+      setDateError(400);
     }
   };
 
@@ -162,8 +163,11 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 <DatePicker
                   label="Select Date"
                   value={date}
-                  onChange={(newDate) => setDate(newDate)}
-                  slotProps={{ textField: { size: "small" } }}
+                  onChange={(newDate) =>{
+                    setDate(newDate);
+                    setDateError(null);
+                  } }
+                  slotProps={dateError === 400 ? { textField: { helperText:'Date Already Exists, please select another date', size:'small' }} : {textField:{size:'small'}}}
                   sx={{width:'100%'}}
                 />
               </LocalizationProvider>
