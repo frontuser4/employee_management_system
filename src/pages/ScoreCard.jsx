@@ -3,6 +3,7 @@ import "./scoreCard.css";
 import { TextField, Button } from "@mui/material";
 import { post } from "../utils/api";
 import toast, { Toaster } from "react-hot-toast";
+import { get } from '../utils/api';
 
 const ScoreCard = ({ empId, month, year }) => {
 
@@ -10,6 +11,7 @@ const ScoreCard = ({ empId, month, year }) => {
   const [marksOne, setMarksOne] = useState(0);
   const [marksTwo, setMarksTwo] = useState(0);
   const [marksThree, setMarksThree] = useState(0);
+  const [scores, setScores] = useState(null);
 
   const [scoreGradeOne, setScoreGradeOne] = useState("");
   const [scoreGradeTwo, setScoreGradeTwo] = useState("");
@@ -84,7 +86,6 @@ const ScoreCard = ({ empId, month, year }) => {
 
   const handlerClaimGift = async (e) => {
     e.preventDefault();
-    // console.log("claim and gift: ", e.target[0].value);
     if(!e.target[0].value){
       return;
     }
@@ -95,16 +96,21 @@ const ScoreCard = ({ empId, month, year }) => {
       year,
     });
     setClaimGift( e.target[0].value);
-    console.log("res claim: ", res.data.Details);
     toast.success(res.data.Details);
     e.target[0].value = "";
   };
+
+  const fetchScore = async()=>{
+     const res = await get('/score', empId, month, year);
+     setScores(res.data_score.claimGift);
+  }
 
   useEffect(() => {
     scoreOneGrade(40);
     scoreTwoGrade(20);
     scoreThreeGrade(15);
-  }, []);
+    fetchScore();
+  }, [claimGift]);
 
   return (
     <>
@@ -116,7 +122,6 @@ const ScoreCard = ({ empId, month, year }) => {
             size="small"
             autoComplete="off"
             type="number"
-
           />
           <Button type="submit" variant="contained">
             Submit
@@ -178,7 +183,7 @@ const ScoreCard = ({ empId, month, year }) => {
             </tr>
             <tr>
               <td>CLAIM/GIFT SUBMISSIONS</td>
-              <td className="text-center">0</td>
+              <td className="text-center">{scores}</td>
               <td className="text-center">5</td>
               <td className="text-center">{totalScore.scoreSeven}</td>
             </tr>

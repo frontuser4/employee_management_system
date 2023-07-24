@@ -101,7 +101,7 @@ const UpdateTable = () => {
                   <Typography textAlign="center">Id : {data.empId}</Typography>
                   <Typography textAlign="center">Designation : {data.desig}</Typography>
                   <Typography textAlign="center">Hq : {data.hq}</Typography>
-                </MenuItem>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
