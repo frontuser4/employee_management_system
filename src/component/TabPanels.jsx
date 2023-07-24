@@ -48,8 +48,7 @@ export default function TabPanels({
   ScoreCard,
   Card,
   year,
-  month,
-  state,
+  month
 }) {
   const theme = useTheme();
   const [value, setValue] = useState(0);
@@ -57,7 +56,7 @@ export default function TabPanels({
   const [saleTargetLY, setSaleTargetLY] = useState(null);
   const [saleTargetTY, setSaleTargetTY] = useState(null);
   const { data } = useSelector((state) => state.login.data);
-
+  const expence = useSelector((state) => state.login.expence);
   const fetchScoreCardData = async () => {
     const res = await scoreSummaryGet(
       "/account/score",
@@ -107,14 +106,20 @@ export default function TabPanels({
           <ExpenceTables year={year} month={month} />
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-          <ScoreCard empId={data.empId} month={month} year={year} />
-          <Card
-            score={score}
-            saleTargetLY={saleTargetLY}
-            saleTargetTY={saleTargetTY}
-            month={month}
-            year={year}
-          />
+          {expence?.length <= 0 ? (
+            <></>
+          ) : (
+            <>
+              <ScoreCard empId={data.empId} month={month} year={year} />
+              <Card
+                score={score}
+                saleTargetLY={saleTargetLY}
+                saleTargetTY={saleTargetTY}
+                month={month}
+                year={year}
+              />
+            </>
+          )}
         </TabPanel>
       </SwipeableViews>
     </Box>

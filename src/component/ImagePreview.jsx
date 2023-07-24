@@ -2,7 +2,7 @@ import { Dialog, DialogTitle, DialogContent } from '@material-ui/core';
 
 const ImagePreview = ({open, setOpen, imageurl}) => {
     
-  let baseurls = 'http://13.126.67.127:8080';
+  let baseurls = 'http://64.227.141.209:8080';
   const handleClose = ()=>{
      setOpen(false);
   }

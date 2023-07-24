@@ -8,13 +8,13 @@ import AddForm from "../addform/AddForm";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { DownloadTableExcel } from "react-export-table-to-excel";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import ImagePreview from "../ImagePreview";
-
+import { expenceData } from '../../store/loginSlice';
 
 const ExpenceTable = ({ year, month }) => {
-  
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const tableRef = useRef(null);
   const [tableData, setTableData] = useState(null);
   const [previewImage, setPreviewImage] = useState(false);
@@ -29,6 +29,7 @@ const ExpenceTable = ({ year, month }) => {
     setLoading(true);
     const res = await get("/getput", data.empId, month, year);
     setTableData(res.data);
+    dispatch(expenceData(res.data));
     setChangeLogsData(res.data_log);
     setLoading(false);
   }
@@ -137,48 +138,70 @@ const ExpenceTable = ({ year, month }) => {
                   <td className="text-center">{data.nightAllowance}</td>
                   <td className="text-center">
                     {data.food}
-                    <button
-                      className="bg-cyan-500 mt-2 p-1 rounded"
-                      onClick={() => handlePreviewImage(data.foodFile)}
-                    >
-                      preview
-                    </button>
+                    {data.foodFile !== null ? (
+                      <button
+                        className="bg-cyan-500 mt-2 p-1 rounded"
+                        onClick={() => handlePreviewImage(data.foodFile)}
+                      >
+                        preview
+                      </button>
+                    ) : (
+                      <></>
+                    )}
                   </td>
                   <td className="text-center">
                     {data.foodGST}
-                    <button
-                      className="bg-cyan-500 mt-2 p-1 rounded"
-                      onClick={() => handlePreviewImage(data.foodGstFile)}
-                    >
-                      preview
-                    </button>
+                    {data.foodGstFile !== null ? (
+                      <button
+                        className="bg-cyan-500 mt-2 p-1 rounded"
+                        onClick={() => handlePreviewImage(data.foodGstFile)}
+                      >
+                        preview
+                      </button>
+                    ) : (
+                      <></>
+                    )}
                   </td>
                   <td className="text-center">
                     {data.internet}
-                    <button
-                      className="bg-cyan-500 mt-2 p-1 rounded"
-                      onClick={() => handlePreviewImage(data.mobileBillFile)}
-                    >
-                      preview
-                    </button>
+                    {data.mobileBillFile !== null ? (
+                      <button
+                        className="bg-cyan-500 mt-2 p-1 rounded"
+                        onClick={() => handlePreviewImage(data.mobileBillFile)}
+                      >
+                        preview
+                      </button>
+                    ) : (
+                      <></>
+                    )}
                   </td>
                   <td className="text-center">
                     {data.printingStationary}
-                    <button
-                      className="bg-cyan-500 mt-2 p-1 rounded"
-                      onClick={() => handlePreviewImage(data.stationaryBillFile)}
-                    >
-                      preview
-                    </button>
+                    {data.stationaryBillFile !== null ? (
+                      <button
+                        className="bg-cyan-500 mt-2 p-1 rounded"
+                        onClick={() =>
+                          handlePreviewImage(data.stationaryBillFile)
+                        }
+                      >
+                        preview
+                      </button>
+                    ) : (
+                      <></>
+                    )}
                   </td>
                   <td className="text-center">
                     {data.postageCourier}
-                    <button
-                      className="bg-cyan-500 mt-2 p-1 rounded"
-                      onClick={() => handlePreviewImage(data.courierBillFile)}
-                    >
-                      preview
-                    </button>
+                    {data.courierBillFile !== null ? (
+                      <button
+                        className="bg-cyan-500 mt-2 p-1 rounded"
+                        onClick={() => handlePreviewImage(data.courierBillFile)}
+                      >
+                        preview
+                      </button>
+                    ) : (
+                      <></>
+                    )}
                   </td>
                   <td className="text-center">{data.localConv}</td>
                   <td className="text-center">{data.workingHr}</td>
@@ -202,32 +225,42 @@ const ExpenceTable = ({ year, month }) => {
         </tbody>
       </table>
 
-      <div className="flex bg-slate-800 p-4 gap-4 my-8">
-        <div className=" p-2 rounded text-white flex gap-3 flex-wrap">
-          {changeLogsData?.map((data, index) => {
-            return (
-              <div key={index} className="bg-teal-600 p-2 rounded">
-                <p>Date : {data?.dateExp}</p>
-                <span>ChangeBy: {data?.changedBy}</span>
-                <p>{data.message}</p>
-                {data?.changes?.map((data, index) => {
-                  return (
-                    <div className="bg-pink-500 p-1 rounded" key={index}>
-                      <span>{data?.item}</span>
-                      <span className="mx-1">|</span>
-                      <span>{data?.oldPara}</span>
-                      <span className="mx-1">|</span>
-                      <span>{data?.newPara}</span>
-                      <span className="mx-1">|</span>
-                      <span>{data?.desig}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          })}
+      {tableData?.length <= 0 ? (
+        <p className="text-center bg-slate-500 w-full h-3/4 text-white text-3xl p-24">data not found</p>
+      ) : (
+        <></>
+      )}
+
+      {tableData?.length <= 0 ? (
+        <></>
+      ) : (
+        <div className="flex bg-slate-800 p-4 gap-4 my-8">
+          <div className=" p-2 rounded text-white flex gap-3 flex-wrap">
+            {changeLogsData?.map((data, index) => {
+              return (
+                <div key={index} className="bg-teal-600 p-2 rounded">
+                  <p>Date : {data?.dateExp}</p>
+                  <span>ChangeBy: {data?.changedBy}</span>
+                  <p>{data.message}</p>
+                  {data?.changes?.map((data, index) => {
+                    return (
+                      <div className="bg-pink-500 p-1 rounded" key={index}>
+                        <span>{data?.item}</span>
+                        <span className="mx-1">|</span>
+                        <span>{data?.oldPara}</span>
+                        <span className="mx-1">|</span>
+                        <span>{data?.newPara}</span>
+                        <span className="mx-1">|</span>
+                        <span>{data?.desig}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       <AddForm
         open={openForm}
@@ -240,7 +273,6 @@ const ExpenceTable = ({ year, month }) => {
         setOpen={setPreviewImage}
         imageurl={previewImageFile}
       />
-
     </>
   );
 };

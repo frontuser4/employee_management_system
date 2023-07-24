@@ -30,7 +30,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 
 export default function UpdateForm({ editData, setCloseUpdateform }) {
   
-  const BASE_URL = "http://13.126.67.127:8080";
+  const BASE_URL = "http://64.227.141.209:8080";
   const navigate = useNavigate();
   const { state } = useLocation();
   const { data } = useSelector((state) => state.login.data);
