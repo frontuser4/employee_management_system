@@ -10,10 +10,9 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { DownloadTableExcel } from "react-export-table-to-excel";
 import { useSelector, useDispatch } from "react-redux";
 import ImagePreview from "../ImagePreview";
-import { expenceData } from '../../store/loginSlice';
+import { expenceData } from "../../store/loginSlice";
 
 const ExpenceTable = ({ year, month }) => {
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const tableRef = useRef(null);
@@ -24,6 +23,7 @@ const ExpenceTable = ({ year, month }) => {
   const [openForm, setOpenForm] = useState(false);
   const [closeForm, setCloseForm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [grandTotal, setGrandTotal] = useState(null);
   const { data } = useSelector((state) => state.login.data);
 
   async function fetchData() {
@@ -32,6 +32,7 @@ const ExpenceTable = ({ year, month }) => {
     setTableData(res.data);
     dispatch(expenceData(res.data));
     setChangeLogsData(res.data_log);
+    setGrandTotal(res.grand_total);
     setLoading(false);
   }
 
@@ -52,13 +53,17 @@ const ExpenceTable = ({ year, month }) => {
     <>
       <div className="flex items-center gap-3">
         <div>
-          <button
-            className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
-            onClick={() => setOpenForm(true)}
-          >
-            <AddIcon />
-            Add
-          </button>
+          {data.desig === "TSO" ? (
+            <button
+              className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
+              onClick={() => setOpenForm(true)}
+            >
+              <AddIcon />
+              Add
+            </button>
+          ) : (
+            <></>
+          )}
         </div>
         <div>
           <DownloadTableExcel
@@ -107,7 +112,9 @@ const ExpenceTable = ({ year, month }) => {
             <th className="text-center">WORKING HOURS</th>
             <th className="text-center">
               APPROVAL
-              <button className="bg-cyan-500 px-3 rounded text-white">submit</button>
+              <button className="bg-cyan-500 px-3 rounded text-white">
+                submit
+              </button>
             </th>
             <th className="text-center">TOTAL</th>
           </tr>
@@ -216,14 +223,18 @@ const ExpenceTable = ({ year, month }) => {
             })
           )}
           <tr>
-            <td colSpan={21} className="font-bold">Grand Total</td>
-            <td className="text-center">1245</td>
+            <td colSpan={21} className="font-bold">
+              Grand Total
+            </td>
+            <td className="text-center">{grandTotal}</td>
           </tr>
         </tbody>
       </table>
 
       {tableData?.length <= 0 ? (
-        <p className="text-center bg-slate-500 w-full h-3/4 text-white text-3xl p-24">data not found</p>
+        <p className="text-center bg-slate-500 w-full h-3/4 text-white text-3xl p-24">
+          data not found
+        </p>
       ) : (
         <></>
       )}

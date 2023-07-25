@@ -133,6 +133,8 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
     setDistance(e.target.value);
   };
 
+  console.log("foodPreview: ", editData.foodFile);
+
   return (
     <>
       <Box sx={{ flexFlow: 1, padding: 1 }} m={{ sm: 4, md: 10 }}>
@@ -372,7 +374,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                             component="span"
                             startIcon={<CloudUploadIcon />}
                           >
-                            {distanceFile ? distanceFile.name : "distance BILL"}
+                            {editData.distanceFile}
                           </Button>
                         </label>
                       </div>
@@ -434,9 +436,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {lodgingBillFile
-                            ? lodgingBillFile.name
-                            : "LODGING BILL"}
+                          {editData.lodgingBillFile}
                         </Button>
                       </label>
                     </div>
@@ -506,7 +506,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {foodFile ? foodFile.name : "Upload Food Bill"}
+                          {editData.foodFile}
                         </Button>
                       </label>
                     </div>
@@ -565,7 +565,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {foodGstFile ? foodGstFile.name : "Upload Food Bill"}
+                          {editData.foodGstFile}
                         </Button>
                       </label>
                     </div>
@@ -635,7 +635,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {mobileBillFile ? mobileBillFile.name : "MOBILE BILL"}
+                          {editData.mobileBillFile}
                         </Button>
                       </label>
                     </div>
@@ -694,9 +694,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {courierBillFile
-                            ? courierBillFile.name
-                            : "Courier  Bill"}
+                          {editData.courierBillFile}
                         </Button>
                       </label>
                     </div>
@@ -755,9 +753,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {stationaryBillFile
-                            ? stationaryBillFile.name
-                            : "STATIONARY Bill"}
+                          {editData.stationaryBillFile}
                         </Button>
                       </label>
                     </div>
