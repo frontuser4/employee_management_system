@@ -13,6 +13,7 @@ import ImagePreview from "../ImagePreview";
 import { expenceData } from '../../store/loginSlice';
 
 const ExpenceTable = ({ year, month }) => {
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const tableRef = useRef(null);
@@ -104,7 +105,10 @@ const ExpenceTable = ({ year, month }) => {
             <th className="text-center">POSTAGE COURIER</th>
             <th className="text-center">LOCAL CONVEY</th>
             <th className="text-center">WORKING HOURS</th>
-            <th className="text-center">APPROVAL</th>
+            <th className="text-center">
+              APPROVAL
+              <button className="bg-cyan-500 px-3 rounded text-white">submit</button>
+            </th>
             <th className="text-center">TOTAL</th>
           </tr>
         </thead>
@@ -206,22 +210,15 @@ const ExpenceTable = ({ year, month }) => {
                   <td className="text-center">{data.localConv}</td>
                   <td className="text-center">{data.workingHr}</td>
                   <td>{data.approval}</td>
-                  <td className="text-center">{`${
-                    data.dailyConv +
-                    data.travelingLong +
-                    data.lodginBoardig +
-                    data.nightAllowance +
-                    data.food +
-                    data.foodGST +
-                    data.internet +
-                    data.printingStationary +
-                    data.postageCourier +
-                    data.localConv
-                  }`}</td>
+                  <td className="text-center">{data.total}</td>
                 </tr>
               );
             })
           )}
+          <tr>
+            <td colSpan={21} className="font-bold">Grand Total</td>
+            <td className="text-center">1245</td>
+          </tr>
         </tbody>
       </table>
 
