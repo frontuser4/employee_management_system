@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import "./style.css";
-import { get } from "../../utils/api";
+import { get, post } from "../../utils/api";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +11,7 @@ import { DownloadTableExcel } from "react-export-table-to-excel";
 import { useSelector, useDispatch } from "react-redux";
 import ImagePreview from "../ImagePreview";
 import { expenceData } from "../../store/loginSlice";
+import toast, { Toaster } from "react-hot-toast";
 
 const ExpenceTable = ({ year, month }) => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const ExpenceTable = ({ year, month }) => {
   const [closeForm, setCloseForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [grandTotal, setGrandTotal] = useState(null);
+  const [btnFlag, setBtnFlag] = useState(null);
   const { data } = useSelector((state) => state.login.data);
 
   async function fetchData() {
@@ -33,6 +35,7 @@ const ExpenceTable = ({ year, month }) => {
     dispatch(expenceData(res.data));
     setChangeLogsData(res.data_log);
     setGrandTotal(res.grand_total);
+    setBtnFlag(res.buttonFlag);
     setLoading(false);
   }
 
@@ -47,6 +50,21 @@ const ExpenceTable = ({ year, month }) => {
   const handlePreviewImage = (imgpath) => {
     setPreviewImage(true);
     setPreviewImageFile(`${imgpath}`);
+  };
+
+  const approveHandler = async () => {
+    console.log("btnFlag: ", btnFlag)
+    let approvedata = {
+      empId: data.empId,
+      month,
+      year,
+      submitby: data.desig,
+    };
+    const res = await post("/approval", approvedata);
+    if (res.data.status === "200") {
+      toast.success(res.data.data);
+      setCloseForm((prev) => !prev);
+    }
   };
 
   return (
@@ -96,25 +114,44 @@ const ExpenceTable = ({ year, month }) => {
             <th className="text-center">TC</th>
             <th className="text-center">PC</th>
             <th className="text-center">SALE</th>
-            <th className="text-center">KM</th>
             <th className="text-center">STOCKIST</th>
+            <th className="text-center">TOWN MARKET WORKED</th>
+            <th className="text-center">TRAVEL FROM</th>
+            <th className="text-center">TRAVEL TO</th>
             <th className="text-center">MODE TRAVEL</th>
+            <th className="text-center">KM</th>
             <th className="text-center">DALY CONV</th>
-            <th className="text-center">TRAVELING LONG</th>
-            <th className="text-center">TRAVELING BOARDING</th>
-            <th className="text-center">NIGHT ALLOWANCE</th>
-            <th className="text-center">FOOD</th>
-            <th className="text-center">FOODGST</th>
-            <th className="text-center">INTERNET</th>
-            <th className="text-center">PRINTING STATIONARY</th>
-            <th className="text-center">POSTAGE COURIER</th>
             <th className="text-center">LOCAL CONVEY</th>
+            <th className="text-center">TRAVELING LONG</th>
+            <th className="text-center">LODGIN BOARDING</th>
+            <th className="text-center">FOOD</th>
+            <th className="text-center">FOOD GST</th>
+            <th className="text-center">NIGHT ALLOWANCE</th>
+            <th className="text-center">INTERNET</th>
+            <th className="text-center">POSTAGE COURIER</th>
+            <th className="text-center">PRINTING STATIONARY</th>
+            <th className="text-center">OTHER</th>
+            <th className="text-center">OTHER GST</th>
             <th className="text-center">WORKING HOURS</th>
             <th className="text-center">
               APPROVAL
-              <button className="bg-cyan-500 px-3 rounded text-white">
-                submit
-              </button>
+              { btnFlag === false  ? (
+                <button
+                  className="bg-rose-500 px-3 rounded text-white"
+                  disabled={true}
+                >
+                  Already submit
+                </button>
+              ) : (
+                <>
+                 <button
+                  className="bg-cyan-500 px-3 rounded text-white"
+                  onClick={approveHandler}
+                >
+                 submit
+                </button>
+                </>
+              )}
             </th>
             <th className="text-center">TOTAL</th>
           </tr>
@@ -129,7 +166,10 @@ const ExpenceTable = ({ year, month }) => {
               return (
                 <tr key={index}>
                   <td className="text-center">
-                    <button onClick={() => handleEdit(data)}>
+                    <button
+                      onClick={() => handleEdit(data)}
+                      disabled={data.approval === "pending" ? true : false}
+                    >
                       <EditIcon />
                     </button>
                   </td>
@@ -140,13 +180,41 @@ const ExpenceTable = ({ year, month }) => {
                   <td className="text-center">{data.tc}</td>
                   <td className="text-center">{data.pc}</td>
                   <td className="text-center">{data.sale}</td>
-                  <td className="text-center">{data.distance}</td>
                   <td className="text-center">{data.payer}</td>
+                  <td className="text-center">{data.townMarketWork}</td>
+                  <td className="text-center">{data.travelSource}</td>
+                  <td className="text-center">{data.travelDestination}</td>
                   <td className="text-center">{data.modeTravel}</td>
+                  <td className="text-center">
+                    {data.distance}
+                    {data.distanceFile !== null ? (
+                      <button
+                        className="bg-cyan-500 mt-2 p-1 rounded"
+                        onClick={() => handlePreviewImage(data.distanceFile)}
+                      >
+                        preview
+                      </button>
+                    ) : (
+                      <></>
+                    )}
+                  </td>
                   <td className="text-center">{data.dailyConv}</td>
+                  <td className="text-center">{data.localConv}</td>
                   <td className="text-center">{data.travelingLong}</td>
-                  <td className="text-center">{data.lodginBoardig}</td>
-                  <td className="text-center">{data.nightAllowance}</td>
+                  <td className="text-center">
+                    {data.lodginBoardig}
+                    
+                    {data.lodgingBillFile !== null ? (
+                      <button
+                        className="bg-cyan-500 mt-2 p-1 rounded"
+                        onClick={() => handlePreviewImage(data.lodgingBillFile)}
+                      >
+                        preview
+                      </button>
+                    ) : (
+                      <></>
+                    )}
+                  </td>
                   <td className="text-center">
                     {data.food}
                     {data.foodFile !== null ? (
@@ -173,12 +241,26 @@ const ExpenceTable = ({ year, month }) => {
                       <></>
                     )}
                   </td>
+                  <td className="text-center">{data.nightAllowance}</td>
                   <td className="text-center">
                     {data.internet}
                     {data.mobileBillFile !== null ? (
                       <button
                         className="bg-cyan-500 mt-2 p-1 rounded"
                         onClick={() => handlePreviewImage(data.mobileBillFile)}
+                      >
+                        preview
+                      </button>
+                    ) : (
+                      <></>
+                    )}
+                  </td>
+                  <td className="text-center">
+                    {data.postageCourier}
+                    {data.courierBillFile !== null ? (
+                      <button
+                        className="bg-cyan-500 mt-2 p-1 rounded"
+                        onClick={() => handlePreviewImage(data.courierBillFile)}
                       >
                         preview
                       </button>
@@ -201,20 +283,8 @@ const ExpenceTable = ({ year, month }) => {
                       <></>
                     )}
                   </td>
-                  <td className="text-center">
-                    {data.postageCourier}
-                    {data.courierBillFile !== null ? (
-                      <button
-                        className="bg-cyan-500 mt-2 p-1 rounded"
-                        onClick={() => handlePreviewImage(data.courierBillFile)}
-                      >
-                        preview
-                      </button>
-                    ) : (
-                      <></>
-                    )}
-                  </td>
-                  <td className="text-center">{data.localConv}</td>
+                  <td className="text-center">{data.other}</td>
+                  <td className="text-center">{data.otherGst}</td>
                   <td className="text-center">{data.workingHr}</td>
                   <td>{data.approval}</td>
                   <td className="text-center">{data.total}</td>
@@ -223,7 +293,7 @@ const ExpenceTable = ({ year, month }) => {
             })
           )}
           <tr>
-            <td colSpan={21} className="font-bold">
+            <td colSpan={26} className="font-bold">
               Grand Total
             </td>
             <td className="text-center">{grandTotal}</td>
@@ -281,6 +351,8 @@ const ExpenceTable = ({ year, month }) => {
         setOpen={setPreviewImage}
         imageurl={previewImageFile}
       />
+
+      <Toaster position="top-center" reverseOrder={false} />
     </>
   );
 };

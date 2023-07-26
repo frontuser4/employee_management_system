@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Box,
   TextField,
@@ -44,20 +44,22 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   const [date, setDate] = useState(dayjs(state.dateExp));
   const [distance, setDistance] = useState(null);
 
-  const [distanceFile, setDistanceFile] = useState(null);
-  const [lodgingBillFile, setLodgingBillFile] = useState(null);
-  const [foodFile, setFoodFile] = useState(null);
-  const [foodGstFile, setFoodGstFile] = useState(null);
-  const [mobileBillFile, setMobileBillFile] = useState(null);
-  const [courierBillFile, setCourierBillFile] = useState(null);
-  const [stationaryBillFile, setStationaryBillFile] = useState(null);
+  const [distanceFile, setDistanceFile] = useState(`${BASE_URL}${editData.distanceFile}`);
+  const [lodgingBillFile, setLodgingBillFile] = useState(`${BASE_URL}${editData.lodgingBillFile}`);
+  const [foodFile, setFoodFile] = useState(`${BASE_URL}${editData.foodFile}`);
+  const [foodGstFile, setFoodGstFile] = useState( `${BASE_URL}${editData.foodGstFile}`);
+  const [mobileBillFile, setMobileBillFile] = useState(`${BASE_URL}${editData.mobileBillFile}`);
+  const [courierBillFile, setCourierBillFile] = useState(`${BASE_URL}${editData.courierBillFile}`);
+  const [stationaryBillFile, setStationaryBillFile] = useState(`${BASE_URL}${editData.stationaryBillFile}`);
 
   const [distancePreview, setDistancePreview] = useState(
     `${BASE_URL}${editData.distanceFile}`
   );
+
   const [lodgingPreview, setLodgingPreview] = useState(
     `${BASE_URL}${editData.lodgingBillFile}`
   );
+
   const [foodPreview, setFoodPreview] = useState(
     `${BASE_URL}${editData.foodFile}`
   );
@@ -73,6 +75,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   const [stationaryBillPreview, setStationaryBillPreview] = useState(
     `${BASE_URL}${editData.stationaryBillFile}`
   );
+
 
   const expenceId = `${data.empId}${dayjs(date.$d).format("YYYY")}${dayjs(
     date.$d
@@ -118,6 +121,8 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
       posterActivity,
     };
 
+    console.log("updatedata: ", updatedata)
+
     UpdateData(updatedata);
     navigate("/dashboard");
     setFormData(defaultState);
@@ -132,8 +137,6 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   const handleDistanceChange = (e) => {
     setDistance(e.target.value);
   };
-
-  console.log("foodPreview: ", editData.foodFile);
 
   return (
     <>
