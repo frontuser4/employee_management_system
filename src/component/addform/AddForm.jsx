@@ -131,8 +131,13 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
       pjp : pjpChnage,
       poster : posterActivity,
       distanceFile,
+      lodgingBillFile,
+      foodFile,
+      foodGstFile,
+      mobileBillFile,
+      courierBillFile,
+      stationaryBillFile,
       desig : data.desig,
-      approval: "not approval",
     };
 
     submitFormDataHandler(addData);

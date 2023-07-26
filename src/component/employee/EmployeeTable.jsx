@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { getEmp } from '../../utils/api';
 import { MonthDropDown, YearDropDown } from '../Dropdown';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 export const EmployeeTable = () => {
    
@@ -13,9 +14,11 @@ export const EmployeeTable = () => {
     const [date, setDate] = useState(dayjs());
     const [year, setYear] = useState(dayjs(date.$d).format('YYYY'));
     const [month, setMonth] = useState(dayjs(date.$d).format('MM').split('')[1]);
+    const { data } = useSelector((state) => state.login.data);
 
     const getEmployeData = async () => {
-        const result = await getEmp('/account/emplist',  month, year);
+        const result = await getEmp('/account/emplist', data.empId, data.desig);
+        console.log("result: ", result)
         setEmpData(result);
     }
 
@@ -29,22 +32,22 @@ export const EmployeeTable = () => {
 
     const columns = [
             {
-                accessorKey: 'emp__empId',
+                accessorKey: 'empId__empId',
                 header: 'EmpId',
                 Cell: ({ cell }) => {
                     return <button onClick={()=> navigate(`/expence`, {state: {...state , emp:'emp', empId:cell.row.original.emp__empId, month, year}}) }  className='bg-cyan-400 px-2 py-1 rounded'>{cell.getValue()}</button>;
                 },
             },
             {
-                accessorKey: 'emp__name',
+                accessorKey: 'empId__name',
                 header: 'Emp Name',
             },
             {
-                accessorKey: 'emp__desig',
+                accessorKey: 'empId__desig',
                 header: 'Emp Designation',
             },
             {
-                accessorKey: 'emp__hq',
+                accessorKey: 'empId__hq',
                 header: 'Emp HQ',
             },
         ]

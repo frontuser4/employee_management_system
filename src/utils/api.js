@@ -46,12 +46,12 @@ async function update(url, id, month, year, data) {
   }
 }
 
-async function getEmp(url, month, year) {
+async function getEmp(url, empId, desig) {
   try {
-    const result = await axios.get(`${BASE_URL}${url}`, {
-      params: { month: month, year: year },
+    const result = await axios.get(`${SALES_TG_URL}${url}`, {
+      params: {empId: empId, desig: desig },
     });
-    return result.data.excpences;
+    return result.data.empList;
   } catch (error) {
     console.log("get: ", error);
   }
@@ -67,5 +67,7 @@ async function scoreSummaryGet(url, id, month, year) {
     console.log("get: ", error);
   }
 }
+
+
 
 export { get, post, update, getEmp, scoreSummaryGet };

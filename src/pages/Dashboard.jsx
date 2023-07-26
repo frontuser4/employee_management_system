@@ -116,7 +116,7 @@ export default function Dashboard() {
       <Box component="main" sx={{ flexGrow: 1, p: 3, overflowX:'auto' }}>
         <DrawerHeader />
         {
-          data.desig != 'SM' ? <EmployeeTables/> :   (<TabPanelTables />)
+          data.desig !== 'TSO' ? <EmployeeTables/> :   (<TabPanelTables />)
         }
       </Box>  
     </Box>   
