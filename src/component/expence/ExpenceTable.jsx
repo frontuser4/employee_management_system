@@ -89,7 +89,7 @@ const ExpenceTable = ({ year, month }) => {
     <>
       <div className="flex items-center gap-3">
         <div>
-          {data.desig === "TSO" ? (
+          {data.desig === "TSO" || state?.empDesig === 'TSO' ? (
             <button
               className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
               onClick={() => setOpenForm(true)}
@@ -196,7 +196,7 @@ const ExpenceTable = ({ year, month }) => {
                   <td className="text-center">
                     <button
                       onClick={() => handleEdit(data)}
-                      disabled={data.approval === "pending" ? true : false}
+                      disabled={data.approval === "TSO" ? true : false}
                     >
                       <EditIcon />
                     </button>
