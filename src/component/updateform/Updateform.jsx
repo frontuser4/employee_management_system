@@ -25,7 +25,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useSelector } from "react-redux";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { update } from "../../utils/api";
+import { update, imageDelete } from "../../utils/api";
 import CancelIcon from "@mui/icons-material/Cancel";
 
 export default function UpdateForm({ editData, setCloseUpdateform }) {
@@ -44,13 +44,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   const [date, setDate] = useState(dayjs(state.dateExp));
   const [distance, setDistance] = useState(null);
 
-  const [distanceFile, setDistanceFile] = useState(`${BASE_URL}${editData.distanceFile}`);
-  const [lodgingBillFile, setLodgingBillFile] = useState(`${BASE_URL}${editData.lodgingBillFile}`);
-  const [foodFile, setFoodFile] = useState(`${BASE_URL}${editData.foodFile}`);
-  const [foodGstFile, setFoodGstFile] = useState( `${BASE_URL}${editData.foodGstFile}`);
-  const [mobileBillFile, setMobileBillFile] = useState(`${BASE_URL}${editData.mobileBillFile}`);
-  const [courierBillFile, setCourierBillFile] = useState(`${BASE_URL}${editData.courierBillFile}`);
-  const [stationaryBillFile, setStationaryBillFile] = useState(`${BASE_URL}${editData.stationaryBillFile}`);
+  const [distanceFile, setDistanceFile] = useState(null);
+  const [lodgingBillFile, setLodgingBillFile] = useState(null);
+  const [foodFile, setFoodFile] = useState(null);
+  const [foodGstFile, setFoodGstFile] = useState(null);
+  const [mobileBillFile, setMobileBillFile] = useState(null);
+  const [courierBillFile, setCourierBillFile] = useState(null);
+  const [stationaryBillFile, setStationaryBillFile] = useState(null);
 
   const [distancePreview, setDistancePreview] = useState(
     `${BASE_URL}${editData.distanceFile}`
@@ -120,8 +120,6 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
       pjpChnage,
       posterActivity,
     };
-
-    console.log("updatedata: ", updatedata)
 
     UpdateData(updatedata);
     navigate("/dashboard");
@@ -217,7 +215,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
 
         <div className="grid md:grid-cols-3 gap-3 mb-4">
           <TextField
-            type="number"
+            type="text"
             fullWidth
             name="townMarketWork"
             value={formData.townMarketWork}
@@ -343,7 +341,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         <IconButton
                           color="primary"
                           size="medium"
-                          onClick={() => setDistancePreview(null)}
+                          onClick={ async () =>{
+                            setDistancePreview(null)
+                            const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'distanceFile' );
+                            console.log("delete Distance File: ", res)
+                          } }
                         >
                           <CancelIcon />
                         </IconButton>
@@ -377,7 +379,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                             component="span"
                             startIcon={<CloudUploadIcon />}
                           >
-                            {editData.distanceFile}
+                            {distancePreview === null ? 'upload Files' : editData.distanceFile}
                           </Button>
                         </label>
                       </div>
@@ -411,7 +413,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     <IconButton
                       color="primary"
                       size="medium"
-                      onClick={() => setLodgingPreview(null)}
+                      onClick={ async() => {
+                        setLodgingPreview(null)
+                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'lodgingBillFile' );
+                        console.log("delete loadging File: ", res)
+                      }  }
                     >
                       <CancelIcon />
                     </IconButton>
@@ -439,7 +445,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {editData.lodgingBillFile}
+                          {lodgingPreview === null ? 'upload file' : editData.lodgingBillFile}
                         </Button>
                       </label>
                     </div>
@@ -481,7 +487,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     <IconButton
                       color="primary"
                       size="medium"
-                      onClick={() => setFoodPreview(null)}
+                      onClick={async() =>{
+                        setFoodPreview(null)
+                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'foodFile' );
+                        console.log("delete Food File: ", res)
+                      } }
                     >
                       <CancelIcon />
                     </IconButton>
@@ -509,7 +519,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {editData.foodFile}
+                          { foodPreview === null ? 'upload files' : editData.foodFile}
                         </Button>
                       </label>
                     </div>
@@ -540,7 +550,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     <IconButton
                       color="primary"
                       size="medium"
-                      onClick={() => setFoodGstPreview(null)}
+                      onClick={ async() => {
+                        setFoodGstPreview(null)
+                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'foodGstFile' );
+                        console.log("delete FoodGst File: ", res)
+                      }}
                     >
                       <CancelIcon />
                     </IconButton>
@@ -568,7 +582,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {editData.foodGstFile}
+                          {foodGstPreview === null ? 'upload files' :  editData.foodGstFile}
                         </Button>
                       </label>
                     </div>
@@ -610,7 +624,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     <IconButton
                       color="primary"
                       size="medium"
-                      onClick={() => setMobileBillPreview(null)}
+                      onClick={ async() => {
+                        setMobileBillPreview(null)
+                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'mobileBillFile' );
+                        console.log("delete mobileBillFile File: ", res)
+                      } }
                     >
                       <CancelIcon />
                     </IconButton>
@@ -638,7 +656,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {editData.mobileBillFile}
+                          { mobileBillPreview === null ? 'upload files' : editData.mobileBillFile}
                         </Button>
                       </label>
                     </div>
@@ -669,7 +687,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     <IconButton
                       color="primary"
                       size="medium"
-                      onClick={() => setCourierBillPreview(null)}
+                      onClick={ async() => {
+                        setCourierBillPreview(null)
+                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'courierBillFile' );
+                        console.log("delete courierBillFile File: ", res)
+                      } }
                     >
                       <CancelIcon />
                     </IconButton>
@@ -697,7 +719,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {editData.courierBillFile}
+                          { courierBillPreview === null ? 'upload files' : editData.courierBillFile}
                         </Button>
                       </label>
                     </div>
@@ -728,7 +750,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     <IconButton
                       color="primary"
                       size="medium"
-                      onClick={() => setStationaryBillPreview(null)}
+                      onClick={ async() => {
+                        setStationaryBillPreview(null)
+                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'stationaryBillFile' );
+                        console.log("delete stationaryBillFile File: ", res)
+                      } }
                     >
                       <CancelIcon />
                     </IconButton>
@@ -756,7 +782,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {editData.stationaryBillFile}
+                          { stationaryBillPreview === null ? 'upload file' : editData.stationaryBillFile}
                         </Button>
                       </label>
                     </div>
