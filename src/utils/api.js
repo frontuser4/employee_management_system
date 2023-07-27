@@ -68,6 +68,19 @@ async function scoreSummaryGet(url, id, month, year) {
   }
 }
 
+async function imageDelete(url, empId, date, imageFile){
+  const res = await axios({
+    url: `${BASE_URL}${url}`,
+    method:'delete',
+    headers:{
+      "content-type": "multipart/form-data",
+    },
+    params: { empId: empId, date: date, field: imageFile}
+  })
+  return res.data;
+
+} 
 
 
-export { get, post, update, getEmp, scoreSummaryGet };
+
+export { get, post, update, getEmp, scoreSummaryGet, imageDelete };

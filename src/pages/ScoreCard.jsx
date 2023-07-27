@@ -178,7 +178,7 @@ const ScoreCard = ({ empId, month, year }) => {
             <tr>
               <td>PJP CHANGE</td>
               <td className="text-center">100</td>
-              <td className="text-center">10</td>
+              <td className="text-center">5</td>
               <td className="text-center">{totalScore.scoreFive}</td>
             </tr>
             <tr>
@@ -191,7 +191,7 @@ const ScoreCard = ({ empId, month, year }) => {
               <td colSpan={2} className="text-center font-bold">
                 TOTAL
               </td>
-              <td className="text-center">105</td>
+              <td className="text-center">100</td>
               <td className="text-center">0</td>
             </tr>
           </tbody>

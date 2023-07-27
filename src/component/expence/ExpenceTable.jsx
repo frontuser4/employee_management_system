@@ -3,7 +3,7 @@ import "./style.css";
 import { get, post } from "../../utils/api";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import AddForm from "../addform/AddForm";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -17,6 +17,7 @@ const ExpenceTable = ({ year, month }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const tableRef = useRef(null);
+  const { state } = useLocation();
   const [tableData, setTableData] = useState(null);
   const [previewImage, setPreviewImage] = useState(false);
   const [previewImageFile, setPreviewImageFile] = useState(false);
@@ -29,8 +30,25 @@ const ExpenceTable = ({ year, month }) => {
   const { data } = useSelector((state) => state.login.data);
 
   async function fetchData() {
+
     setLoading(true);
-    const res = await get("/getput", data.empId, month, year);
+
+    const expData = {};
+
+    if(state?.emp === 'emp'){
+       
+       expData.empId = state.empId
+       expData.month = state.month
+       expData.year = state.year
+    }else{
+     
+      expData.empId = data.empId
+      expData.month = month
+      expData.year = year
+    }
+
+    const res = await get("/getput", expData.empId, expData.month, expData.year);
+
     setTableData(res.data);
     dispatch(expenceData(res.data));
     setChangeLogsData(res.data_log);
@@ -53,7 +71,7 @@ const ExpenceTable = ({ year, month }) => {
   };
 
   const approveHandler = async () => {
-    console.log("btnFlag: ", btnFlag)
+    console.log("btnFlag: ", btnFlag);
     let approvedata = {
       empId: data.empId,
       month,
@@ -71,7 +89,7 @@ const ExpenceTable = ({ year, month }) => {
     <>
       <div className="flex items-center gap-3">
         <div>
-          {data.desig === "TSO" ? (
+          {data.desig === "TSO" || state?.empDesig === 'TSO' ? (
             <button
               className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
               onClick={() => setOpenForm(true)}
@@ -101,12 +119,22 @@ const ExpenceTable = ({ year, month }) => {
           <tr>
             <th colSpan={16}>Sapat International Pvt. Ltd.</th>
           </tr>
-          <tr>
-            <th colSpan={4}>Name: {data.name}</th>
-            <th colSpan={4}>Designation: {data.desig}</th>
-            <th colSpan={4}>Emp Code: {data.empId}</th>
-            <th colSpan={4}>Head/Quarter/Area: {data.hq}</th>
-          </tr>
+          {state?.emp === "emp" ? (
+            <tr>
+              <th colSpan={4}>Name: {state.empName}</th>
+              <th colSpan={4}>Designation: {state.empDesig}</th>
+              <th colSpan={4}>Emp Code: {state.empId}</th>
+              <th colSpan={4}>Head/Quarter/Area: {state.empHq}</th>
+            </tr>
+          ) : (
+            <tr>
+              <th colSpan={4}>Name: {data.name}</th>
+              <th colSpan={4}>Designation: {data.desig}</th>
+              <th colSpan={4}>Emp Code: {data.empId}</th>
+              <th colSpan={4}>Head/Quarter/Area: {data.hq}</th>
+            </tr>
+          )}
+
           <tr>
             <th className="text-center">Action</th>
             <th className="text-center">Date</th>
@@ -135,7 +163,7 @@ const ExpenceTable = ({ year, month }) => {
             <th className="text-center">WORKING HOURS</th>
             <th className="text-center">
               APPROVAL
-              { btnFlag === false  ? (
+              {btnFlag === false ? (
                 <button
                   className="bg-rose-500 px-3 rounded text-white"
                   disabled={true}
@@ -144,12 +172,12 @@ const ExpenceTable = ({ year, month }) => {
                 </button>
               ) : (
                 <>
-                 <button
-                  className="bg-cyan-500 px-3 rounded text-white"
-                  onClick={approveHandler}
-                >
-                 submit
-                </button>
+                  <button
+                    className="bg-cyan-500 px-3 rounded text-white"
+                    onClick={approveHandler}
+                  >
+                    submit
+                  </button>
                 </>
               )}
             </th>
@@ -168,7 +196,7 @@ const ExpenceTable = ({ year, month }) => {
                   <td className="text-center">
                     <button
                       onClick={() => handleEdit(data)}
-                      disabled={data.approval === "pending" ? true : false}
+                      disabled={data.approval === "TSO" ? true : false}
                     >
                       <EditIcon />
                     </button>
@@ -203,7 +231,7 @@ const ExpenceTable = ({ year, month }) => {
                   <td className="text-center">{data.travelingLong}</td>
                   <td className="text-center">
                     {data.lodginBoardig}
-                    
+
                     {data.lodgingBillFile !== null ? (
                       <button
                         className="bg-cyan-500 mt-2 p-1 rounded"

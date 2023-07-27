@@ -241,7 +241,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
 
             <div className="grid md:grid-cols-3 gap-3 mb-4">
               <TextField
-                type="number"
+                type="text"
                 fullWidth
                 name="townMarketWork"
                 value={formData.townMarketWork}
