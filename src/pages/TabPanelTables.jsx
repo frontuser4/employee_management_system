@@ -27,7 +27,7 @@ const TabPanelTables = () => {
         value={0}
         index={0}
         ExpenceTables={ExpenceTables}
-        ScoreCard={ScoreCard}
+        // ScoreCard={ScoreCard}
         Card={Card}
         year={year}
         month={month}

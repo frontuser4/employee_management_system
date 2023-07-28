@@ -13,29 +13,8 @@ import ImagePreview from "../ImagePreview";
 import { expenceData } from "../../store/loginSlice";
 import toast, { Toaster } from "react-hot-toast";
 
-const expenceDataEmp = {
-    tc : 0,
-    pc : 0,
-    sale: 0,
-    km : 0,
-    dailyConv : 0,
-    localConv : 0,
-    travelingLong : 0,
-    lodginBoardig: 0,
-    food: 0,
-    foodGST : 0,
-    nightAllowance: 0,
-    internet: 0,
-    postageCourier: 0,
-    printingStationary: 0,
-    other: 0,
-    otherGst: 0,
-    workingHr: 0, 
-    approval: null
-}
-
 const ExpenceTable = ({ year, month }) => {
-
+  
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const tableRef = useRef(null);
@@ -49,58 +28,41 @@ const ExpenceTable = ({ year, month }) => {
   const [loading, setLoading] = useState(false);
   const [grandTotal, setGrandTotal] = useState(null);
   const [btnFlag, setBtnFlag] = useState(null);
+  const [totalExpData, setTotalExpData] = useState(null);
   const { data } = useSelector((state) => state.login.data);
 
   async function fetchData() {
-
     setLoading(true);
 
     const expData = {};
 
-    if(state?.emp === 'emp'){
-       
-       expData.empId = state.empId
-       expData.month = state.month
-       expData.year = state.year
-    }else{
-     
-      expData.empId = data.empId
-      expData.month = month
-      expData.year = year
+    if (state?.emp === "emp") {
+      expData.empId = state.empId;
+      expData.month = state.month;
+      expData.year = state.year;
+      expData.user = state.desig;
+    } else {
+      expData.empId = data.empId;
+      expData.month = month;
+      expData.year = year;
+      expData.user = data.desig;
     }
 
-    const res = await get("/getput", expData.empId, expData.month, expData.year);
+    const res = await get(
+      "/getput",
+      expData.empId,
+      expData.month,
+      expData.year,
+      expData.user
+    );
 
     setTableData(res.data);
     dispatch(expenceData(res.data));
     setChangeLogsData(res.data_log);
     setGrandTotal(res.grand_total);
     setBtnFlag(res.buttonFlag);
-    grandTotalEmp();
+    setTotalExpData(res);
     setLoading(false);
-  }
-
-  function grandTotalEmp(){
-      tableData?.forEach(element => {
-        expenceDataEmp.tc += element.tc;
-        expenceDataEmp.pc += element.pc;
-        expenceDataEmp.sale += element.sale;
-        expenceDataEmp.km += element.distance;
-        expenceDataEmp.dailyConv += element.dailyConv;
-        expenceDataEmp.localConv += element.localConv;
-        expenceDataEmp.travelingLong += element.travelingLong;
-        expenceDataEmp.lodginBoardig += element.lodginBoardig;
-        expenceDataEmp.food += element.food;
-        expenceDataEmp.foodGST += element.foodGST;
-        expenceDataEmp.nightAllowance += element.nightAllowance;
-        expenceDataEmp.internet += element.internet;
-        expenceDataEmp.postageCourier += element.postageCourier;
-        expenceDataEmp.printingStationary += element.printingStationary;
-        expenceDataEmp.other += element.other;
-        expenceDataEmp.otherGst += element.otherGst;
-        expenceDataEmp.workingHr += element.workingHr;
-        expenceData.approval = element.approval;
-      });
   }
 
   useEffect(() => {
@@ -135,7 +97,7 @@ const ExpenceTable = ({ year, month }) => {
     <>
       <div className="flex items-center gap-3">
         <div>
-          {data.desig === "TSO" || expenceDataEmp.approval === 'TSO' ? (
+          {["TSO", "SSR", "ST", "ASE", "AASM", "ASM", "Sr.ASM"].includes(data.desig) ? (
             <button
               className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
               onClick={() => setOpenForm(true)}
@@ -370,24 +332,44 @@ const ExpenceTable = ({ year, month }) => {
             <td colSpan={3} className="font-bold">
               Grand Total
             </td>
-            <td className="text-center font-bold">{expenceDataEmp?.tc}</td>
-            <td className="text-center font-bold">{expenceDataEmp?.pc}</td>
-            <td className="text-center font-bold">{expenceDataEmp?.sale}</td>
+            <td className="text-center font-bold"></td>
+            <td className="text-center font-bold"></td>
+            <td className="text-center font-bold"></td>
             <td colSpan={5}></td>
-            <td className="text-center font-bold">{expenceDataEmp?.km}</td>
-            <td className="text-center font-bold">{expenceDataEmp?.dailyConv}</td>
-            <td className="text-center font-bold">{expenceDataEmp?.localConv}</td>
-            <td className="text-center font-bold">{expenceDataEmp?.travelingLong}</td>
-            <td className="text-center font-bold">{expenceDataEmp?.lodginBoardig}</td>
-            <td className="text-center font-bold">{expenceDataEmp?.food}</td>
-            <td className="text-center font-bold">{expenceDataEmp?.foodGST}</td>
-            <td className="text-center font-bold">{expenceDataEmp?.nightAllowance}</td>
-            <td className="text-center font-bold">{expenceDataEmp?.internet}</td>
-            <td className="text-center font-bold">{expenceDataEmp?.postageCourier}</td>
-            <td className="text-center font-bold">{expenceDataEmp?.printingStationary}</td>
-            <td className="text-center font-bold">{expenceDataEmp?.other}</td>
-            <td className="text-center font-bold">{expenceDataEmp?.otherGst}</td>
-            <td className="text-center font-bold">{expenceDataEmp?.workingHr}</td>
+            <td className="text-center font-bold"></td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_dailyConv}
+            </td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_localConv}
+            </td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_travelingLong}
+            </td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_lodginBoardig}
+            </td>
+            <td className="text-center font-bold">{totalExpData?.sum_food}</td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_foodGst}
+            </td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_nightAllowance}
+            </td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_internet}
+            </td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_postageCourier}
+            </td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_printingStationary}
+            </td>
+            <td className="text-center font-bold">{totalExpData?.sum_other}</td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_otherGst}
+            </td>
+            <td className="text-center font-bold"></td>
             <td colSpan={1}></td>
             <td className="text-center font-bold">{grandTotal}</td>
           </tr>

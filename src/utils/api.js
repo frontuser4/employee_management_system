@@ -3,10 +3,10 @@ axios.defaults.headers.common["Authorization"] = `jhsajdkhsakdjhsdjakjdhsajdsd`;
 const SALES_TG_URL = "http://142.93.208.119:80";
 const BASE_URL = "http://64.227.141.209:8080";
 
-async function get(url, id, month, year) {
+async function get(url, id, month, year, users) {
   try {
     const result = await axios.get(`${BASE_URL}${url}`, {
-      params: { empId: id, month: month, year: year },
+      params: { empId: id, month: month, year: year, user : users },
     });
     return result.data;
   } catch (error) {

@@ -119,6 +119,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
       stationaryBillFile,
       pjpChnage,
       posterActivity,
+      user: data.data
     };
 
     UpdateData(updatedata);
