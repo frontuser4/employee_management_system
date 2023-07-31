@@ -21,7 +21,6 @@ async function post(url, data) {
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log("res: ", res);
     return res;
   } catch (error) {
     console.log("get: ", error);
@@ -80,7 +79,5 @@ async function imageDelete(url, empId, date, imageFile){
   return res.data;
 
 } 
-
-
 
 export { get, post, update, getEmp, scoreSummaryGet, imageDelete };

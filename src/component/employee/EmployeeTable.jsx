@@ -7,6 +7,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export const EmployeeTable = () => {
+
   const navigate = useNavigate();
   const { state } = useLocation();
   const [empData, setEmpData] = useState([]);
@@ -92,7 +93,7 @@ export const EmployeeTable = () => {
             </div>
             {["ASM", "Sr. ASM"].includes(data.desig) ? (
               <button
-                onClick={() => navigate("/expence")}
+                onClick={() => navigate("/expence", {state: {designation: data.desig}})}
                 className="bg-cyan-500 p-2 rounded text-white"
               >
                 Add Expence

@@ -14,7 +14,6 @@ import { expenceData } from "../../store/loginSlice";
 import toast, { Toaster } from "react-hot-toast";
 
 const ExpenceTable = ({ year, month }) => {
-  
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const tableRef = useRef(null);
@@ -55,8 +54,6 @@ const ExpenceTable = ({ year, month }) => {
       expData.year,
       expData?.user
     );
-
-    console.log("expData?.user: ", {state, data});
 
     setTableData(res.data);
     dispatch(expenceData(res.data));
@@ -99,7 +96,19 @@ const ExpenceTable = ({ year, month }) => {
     <>
       <div className="flex items-center gap-3">
         <div>
-          {["TSO", "SSR", "ST", "ASE", "AASM", "ASM", "Sr.ASM"].includes(data.desig) ? (
+          {["TSO", "SSR", "ST", "ASE", "AASM"].includes(data.desig) ? (
+            <button
+              className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
+              onClick={() => setOpenForm(true)}
+            >
+              <AddIcon />
+              Add
+            </button>
+          ) : (
+            <></>
+          )}
+
+          { ['ASM', 'Sr. ASM'].includes(state.designation) ? (
             <button
               className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
               onClick={() => setOpenForm(true)}

@@ -30,7 +30,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { post } from "../../utils/api";
 import toast, { Toaster } from "react-hot-toast";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
 const defaultState = {
   attendance: "",
@@ -59,11 +59,10 @@ const defaultState = {
 };
 
 export default function AddForm({ open, setOpen, setCloseForm }) {
-
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-  const {data} = useSelector((state)=> state.login.data);
-  const {stockist} = useSelector((state)=> state.login.data);
+  const { data } = useSelector((state) => state.login.data);
+  const { stockist } = useSelector((state) => state.login.data);
   const [formData, setFormData] = useState(defaultState);
   const [attendance, setAttendance] = useState("present");
   const [modeTravel, setModeTravel] = useState("");
@@ -117,7 +116,6 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
   };
 
   const handleFormSubmit = () => {
-   
     const addData = {
       ...formData,
       empId: data.empId,
@@ -127,9 +125,9 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
       dateExp: dayjs(date).format("YYYY-MM-DD"),
       expenseId: expenceId,
       distance,
-      localConv : distance * 2 * 2,
-      pjp : pjpChnage,
-      poster : posterActivity,
+      localConv: distance * 2 * 2,
+      pjp: pjpChnage,
+      poster: posterActivity,
       distanceFile,
       lodgingBillFile,
       foodFile,
@@ -137,7 +135,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
       mobileBillFile,
       courierBillFile,
       stationaryBillFile,
-      desig : data.desig,
+      desig: data.desig,
     };
 
     submitFormDataHandler(addData);
@@ -147,7 +145,6 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
     setStockistData("");
     setDistance("");
     setCloseForm((prev) => !prev);
-
   };
 
   return (
@@ -164,22 +161,39 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
         <DialogContent>
           <Box sx={{ flexFlow: 1, padding: 1 }}>
             <div className="grid md:grid-cols-2 place-items-center gap-3 mb-4">
-              <LocalizationProvider dateAdapter={AdapterDayjs} >
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label="Select Date"
                   value={date}
-                  onChange={(newDate) =>{
+                  onChange={(newDate) => {
                     setDate(newDate);
                     setDateError(null);
-                  } }
-                  slotProps={dateError === 400 ? { textField: { helperText:'Date Already Exists, please select another date', size:'small' }} : {textField:{size:'small'}}}
-                  sx={{width:'100%'}}
+                  }}
+                  slotProps={
+                    dateError === 400
+                      ? {
+                          textField: {
+                            helperText:
+                              "Date Already Exists, please select another date",
+                            size: "small",
+                          },
+                        }
+                      : { textField: { size: "small" } }
+                  }
+                  sx={{ width: "100%" }}
                 />
               </LocalizationProvider>
 
               <AttendanceDropdown
                 title="Attendance"
-                option={["present", "absent", "MRM", "Joining Date", "Weekly Off", "leave"]}
+                option={[
+                  "present",
+                  "absent",
+                  "MRM",
+                  "Joining Date",
+                  "Weekly Off",
+                  "leave",
+                ]}
                 value={attendance}
                 onChange={(e) => setAttendance(e)}
               />
@@ -343,12 +357,12 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                       </div>
 
                       <Box className="flex flex-col items-center md:flex-row gap-2">
-                        <Box className="md:w-3/5 flex-1">
+                        <Box className="w-full md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="distance"
                             value={distance}
-                            onChange={(e)=> setDistance(e.target.value)}
+                            onChange={(e) => setDistance(e.target.value)}
                             fullWidth
                             label="ONE SIDE KM"
                             size="small"
@@ -356,13 +370,19 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           />
                         </Box>
                         {distance > 100 ? (
-                          <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                            <img
-                              src={distancePreview}
-                              alt="distance km"
-                              className="w-full h-full"
-                            />
-                          </div>
+                          <>
+                            {distancePreview !== null ? (
+                              <div className=" w-full md:w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                                <img
+                                  src={distancePreview}
+                                  alt="distance km"
+                                  className="w-full h-full"
+                                />
+                              </div>
+                            ) : (
+                              <></>
+                            )}
+                          </>
                         ) : (
                           ""
                         )}
@@ -383,9 +403,11 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                                 };
                                 reader.readAsDataURL(e.target.files[0]);
                               }}
+                              required
                             />
                             <label htmlFor="upload-distance">
                               <Button
+                                className="w-full"
                                 variant="contained"
                                 color="primary"
                                 component="span"
@@ -403,7 +425,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                       </Box>
 
                       <Box className="flex flex-col md:flex-row gap-2 items-center">
-                        <Box className="md:w-3/5 flex-1">
+                        <Box className="w-full md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="lodginBoardig"
@@ -416,13 +438,17 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           />
                         </Box>
 
-                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                          <img
-                            src={lodgingPreview}
-                            alt="lodging preview"
-                            className="w-full h-full"
-                          />
-                        </div>
+                        {lodgingPreview !== null ? (
+                          <div className="w-full md:w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                            <img
+                              src={lodgingPreview}
+                              alt="lodging preview"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          <></>
+                        )}
 
                         <div className="flex-1">
                           <input
@@ -439,9 +465,11 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                               };
                               reader.readAsDataURL(e.target.files[0]);
                             }}
+                            required
                           />
                           <label htmlFor="upload-lodging">
                             <Button
+                              className="w-full"
                               variant="contained"
                               color="primary"
                               component="span"
@@ -467,7 +495,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                   <>
                     <div className="grid md:grid-cols-1 gap-3 ">
                       <Box className="flex flex-col md:flex-row gap-2 items-center">
-                        <Box className="md:w-3/5 flex-1">
+                        <Box className="w-full md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="food"
@@ -480,13 +508,17 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           />
                         </Box>
 
-                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                          <img
-                            src={foodPreview}
-                            alt="foodPreview"
-                            className="w-full h-full"
-                          />
-                        </div>
+                        {foodPreview !== null ? (
+                          <div className="w-full md:w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                            <img
+                              src={foodPreview}
+                              alt="foodPreview"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          <></>
+                        )}
 
                         <div className="flex-1">
                           <input
@@ -503,10 +535,11 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                               };
                               reader.readAsDataURL(e.target.files[0]);
                             }}
-                          
+                            required
                           />
                           <label htmlFor="upload-foodBill">
                             <Button
+                              className="w-full"
                               variant="contained"
                               color="primary"
                               component="span"
@@ -519,7 +552,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                       </Box>
 
                       <Box className="flex flex-col md:flex-row gap-2 items-center">
-                        <Box className="md:w-3/5 flex-1">
+                        <Box className="w-full md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="foodGST"
@@ -532,13 +565,17 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           />
                         </Box>
 
-                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                          <img
-                            src={foodGstPreview}
-                            alt="foodPreview"
-                            className="w-full h-full"
-                          />
-                        </div>
+                        {foodGstPreview !== null ? (
+                          <div className="w-full md:w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                            <img
+                              src={foodGstPreview}
+                              alt="foodPreview"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          <></>
+                        )}
 
                         <div className="flex-1">
                           <input
@@ -555,9 +592,11 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                               };
                               reader.readAsDataURL(e.target.files[0]);
                             }}
+                            required
                           />
                           <label htmlFor="upload-foodGstBill">
                             <Button
+                              className="w-full"
                               variant="contained"
                               color="primary"
                               component="span"
@@ -583,7 +622,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                   <>
                     <div className="grid md:grid-cols-1 gap-3 ">
                       <Box className="flex flex-col md:flex-row gap-2 items-center">
-                        <Box className="md:w-3/5 flex-1">
+                        <Box className="w-full md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="internet"
@@ -595,14 +634,17 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             disabled={attendance === "absent" ? true : false}
                           />
                         </Box>
-
-                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                          <img
-                            src={mobileBillPreview}
-                            alt="mobileBillPreview"
-                            className="w-full h-full"
-                          />
-                        </div>
+                        {mobileBillPreview !== null ? (
+                          <div className=" w-full md:w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                            <img
+                              src={mobileBillPreview}
+                              alt="mobileBillPreview"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          <></>
+                        )}
 
                         <div className="flex-1">
                           <input
@@ -619,9 +661,11 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                               };
                               reader.readAsDataURL(e.target.files[0]);
                             }}
+                            required
                           />
                           <label htmlFor="upload-internetBill">
                             <Button
+                              className="w-full"
                               variant="contained"
                               color="primary"
                               component="span"
@@ -636,7 +680,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                       </Box>
 
                       <Box className="flex flex-col md:flex-row gap-2 items-center">
-                        <Box className="md:w-3/5 flex-1">
+                        <Box className="w-full md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="postageCourier"
@@ -649,13 +693,17 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           />
                         </Box>
 
-                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                          <img
-                            src={courierBillPreview}
-                            alt="courierBillPreview"
-                            className="w-full h-full"
-                          />
-                        </div>
+                        {courierBillPreview !== null ? (
+                          <div className=" w-full md:w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                            <img
+                              src={courierBillPreview}
+                              alt="courierBillPreview"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          <></>
+                        )}
 
                         <div className="flex-1">
                           <input
@@ -672,9 +720,11 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                               };
                               reader.readAsDataURL(e.target.files[0]);
                             }}
+                            required
                           />
                           <label htmlFor="upload-postageCourierBill">
                             <Button
+                              className="w-full"
                               variant="contained"
                               color="primary"
                               component="span"
@@ -689,7 +739,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                       </Box>
 
                       <Box className="flex flex-col md:flex-row gap-2 items-center">
-                        <Box className="md:w-3/5 flex-1">
+                        <Box className="w-full md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="printingStationary"
@@ -701,14 +751,17 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             disabled={attendance === "absent" ? true : false}
                           />
                         </Box>
-
-                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                          <img
-                            src={stationaryBillPreview}
-                            alt="stationaryBillPreview"
-                            className="w-full h-full"
-                          />
-                        </div>
+                        {stationaryBillPreview !== null ? (
+                          <div className=" w-full md:w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                            <img
+                              src={stationaryBillPreview}
+                              alt="stationaryBillPreview"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          <></>
+                        )}
 
                         <div className="flex-1">
                           <input
@@ -725,9 +778,11 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                               };
                               reader.readAsDataURL(e.target.files[0]);
                             }}
+                            required
                           />
                           <label htmlFor="upload-stationaryBill">
-                            <Button
+                           <Button
+                              className="w-full"
                               variant="contained"
                               color="primary"
                               component="span"
@@ -791,7 +846,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           sx={{ display: "inline" }}
                           name="use-radio-group"
                           value={posterActivity}
-                          onChange={(e)=> setPosterActivity(e.target.value)}
+                          onChange={(e) => setPosterActivity(e.target.value)}
                         >
                           <FormControlLabel
                             value="yes"
