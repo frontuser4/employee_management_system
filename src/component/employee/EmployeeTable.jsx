@@ -41,9 +41,9 @@ export const EmployeeTable = () => {
                   ...state,
                   emp: "emp",
                   empId: cell.row.original.empId__empId,
-                  empName : cell.row.original.empId__name,
-                  empDesig : cell.row.original.empId__desig,
-                  empHq : cell.row.original.empId__hq,
+                  empName: cell.row.original.empId__name,
+                  empDesig: cell.row.original.empId__desig,
+                  empHq: cell.row.original.empId__hq,
                   month,
                   year,
                 },
@@ -90,6 +90,16 @@ export const EmployeeTable = () => {
             <div>
               <YearDropDown year={year} setYear={setYear} />
             </div>
+            {["ASM", "Sr. ASM"].includes(data.desig) ? (
+              <button
+                onClick={() => navigate("/expence")}
+                className="bg-cyan-500 p-2 rounded text-white"
+              >
+                Add Expence
+              </button>
+            ) : (
+              <></>
+            )}
           </div>
         </>
       )}

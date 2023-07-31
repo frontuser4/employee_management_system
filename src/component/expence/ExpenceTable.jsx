@@ -40,12 +40,12 @@ const ExpenceTable = ({ year, month }) => {
       expData.empId = state.empId;
       expData.month = state.month;
       expData.year = state.year;
-      expData.user = state.desig;
+      expData.user = state.empDesig;
     } else {
       expData.empId = data.empId;
       expData.month = month;
       expData.year = year;
-      expData.user = data.desig;
+      expData.user = data?.desig;
     }
 
     const res = await get(
@@ -53,8 +53,10 @@ const ExpenceTable = ({ year, month }) => {
       expData.empId,
       expData.month,
       expData.year,
-      expData.user
+      expData?.user
     );
+
+    console.log("expData?.user: ", {state, data});
 
     setTableData(res.data);
     dispatch(expenceData(res.data));
@@ -136,10 +138,10 @@ const ExpenceTable = ({ year, month }) => {
             </tr>
           ) : (
             <tr>
-              <th colSpan={4}>Name: {data.name}</th>
-              <th colSpan={4}>Designation: {data.desig}</th>
-              <th colSpan={4}>Emp Code: {data.empId}</th>
-              <th colSpan={4}>Head/Quarter/Area: {data.hq}</th>
+              <th colSpan={4}>Name: {data?.name}</th>
+              <th colSpan={4}>Designation: {data?.desig}</th>
+              <th colSpan={4}>Emp Code: {data?.empId}</th>
+              <th colSpan={4}>Head/Quarter/Area: {data?.hq}</th>
             </tr>
           )}
 

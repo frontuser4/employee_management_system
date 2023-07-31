@@ -503,6 +503,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                               };
                               reader.readAsDataURL(e.target.files[0]);
                             }}
+                          
                           />
                           <label htmlFor="upload-foodBill">
                             <Button
