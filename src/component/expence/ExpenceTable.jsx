@@ -108,7 +108,7 @@ const ExpenceTable = ({ year, month }) => {
             <></>
           )}
 
-          { ['ASM', 'Sr. ASM'].includes(state.designation) ? (
+          { ['ASM', 'Sr. ASM'].includes(state?.designation) ? (
             <button
               className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
               onClick={() => setOpenForm(true)}
@@ -119,6 +119,7 @@ const ExpenceTable = ({ year, month }) => {
           ) : (
             <></>
           )}
+          
         </div>
         <div>
           <DownloadTableExcel

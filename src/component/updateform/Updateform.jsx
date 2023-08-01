@@ -29,7 +29,6 @@ import { update, imageDelete } from "../../utils/api";
 import CancelIcon from "@mui/icons-material/Cancel";
 
 export default function UpdateForm({ editData, setCloseUpdateform }) {
-  
   const BASE_URL = "http://64.227.141.209:8080";
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -76,7 +75,6 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
     `${BASE_URL}${editData.stationaryBillFile}`
   );
 
-
   const expenceId = `${data.empId}${dayjs(date.$d).format("YYYY")}${dayjs(
     date.$d
   ).format("MM")}${dayjs(date.$d).format("DD")}`;
@@ -100,7 +98,6 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   }
 
   const handleFormSubmit = () => {
-
     const updatedata = {
       ...formData,
       empId: data.empId,
@@ -119,7 +116,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
       stationaryBillFile,
       pjpChnage,
       posterActivity,
-      user: data.data
+      user: data.data,
     };
 
     UpdateData(updatedata);
@@ -130,7 +127,6 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
     setStockistData("");
     setDistance("");
     setCloseUpdateform((prev) => !prev);
-    
   };
 
   const handleDistanceChange = (e) => {
@@ -248,6 +244,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
           </FormGroup>
         </div>
 
+        {/* Travel */}
         <div className="grid mb-4">
           <Accordions
             heading="Travel"
@@ -318,7 +315,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                   </div>
 
                   <Box className="flex flex-col items-center md:flex-row gap-2">
-                    <Box className="md:w-3/5 flex-1">
+                    <Box className="w-full md:w-3/5 flex-1">
                       <TextField
                         type="number"
                         name="distance"
@@ -332,24 +329,37 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     </Box>
                     {distance > 100 ? (
                       <>
-                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                          <img
-                            src={distancePreview}
-                            alt="distance km"
-                            className="w-full h-full"
-                          />
-                        </div>
-                        <IconButton
-                          color="primary"
-                          size="medium"
-                          onClick={ async () =>{
-                            setDistancePreview(null)
-                            const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'distanceFile' );
-                            console.log("delete Distance File: ", res)
-                          } }
-                        >
-                          <CancelIcon />
-                        </IconButton>
+                        {distancePreview ? (
+                          <div className=" md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                            <img
+                              src={distancePreview}
+                              alt="distance km"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+                        {distancePreview ? (
+                          <IconButton
+                            color="primary"
+                            size="medium"
+                            onClick={async () => {
+                              setDistancePreview(null);
+                              const res = await imageDelete(
+                                "/deleteimage",
+                                data.empId,
+                                formData.dateExp,
+                                "distanceFile"
+                              );
+                              console.log("delete Distance File: ", res);
+                            }}
+                          >
+                            <CancelIcon />
+                          </IconButton>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : (
                       ""
@@ -375,12 +385,15 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         />
                         <label htmlFor="upload-distance">
                           <Button
+                            className="w-full"
                             variant="contained"
                             color="primary"
                             component="span"
                             startIcon={<CloudUploadIcon />}
                           >
-                            {distancePreview === null ? 'upload Files' : editData.distanceFile}
+                            {distancePreview
+                              ? distanceFile?.name
+                              : editData.distanceFile}
                           </Button>
                         </label>
                       </div>
@@ -390,7 +403,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                   </Box>
 
                   <Box className="flex flex-col md:flex-row gap-2 items-center">
-                    <Box className="md:w-3/5 flex-1">
+                    <Box className="w-full md:w-3/5 flex-1">
                       <TextField
                         type="number"
                         name="lodginBoardig"
@@ -403,25 +416,36 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                     </Box>
 
-                    <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                      <img
-                        src={lodgingPreview}
-                        alt="lodging preview"
-                        className="w-full h-full"
-                      />
-                    </div>
+                    {lodgingPreview ? (
+                      <>
+                        <div className=" md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <img
+                            src={lodgingPreview}
+                            alt="lodging preview"
+                            className="w-full h-full"
+                          />
+                        </div>
 
-                    <IconButton
-                      color="primary"
-                      size="medium"
-                      onClick={ async() => {
-                        setLodgingPreview(null)
-                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'lodgingBillFile' );
-                        console.log("delete loadging File: ", res)
-                      }  }
-                    >
-                      <CancelIcon />
-                    </IconButton>
+                        <IconButton
+                          color="primary"
+                          size="medium"
+                          onClick={async () => {
+                            setLodgingPreview(null);
+                            const res = await imageDelete(
+                              "/deleteimage",
+                              data.empId,
+                              formData.dateExp,
+                              "lodgingBillFile"
+                            );
+                            console.log("delete loadging File: ", res);
+                          }}
+                        >
+                          <CancelIcon />
+                        </IconButton>
+                      </>
+                    ) : (
+                      <></>
+                    )}
 
                     <div className="flex-1">
                       <input
@@ -446,7 +470,9 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {lodgingPreview === null ? 'upload file' : editData.lodgingBillFile}
+                          {lodgingPreview
+                            ? lodgingBillFile?.name
+                            : editData.lodgingBillFile}
                         </Button>
                       </label>
                     </div>
@@ -457,6 +483,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
           />
         </div>
 
+        {/* Food */}
         <div className="grid mb-4">
           <Accordions
             heading="Food"
@@ -464,7 +491,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
               <>
                 <div className="grid md:grid-cols-1 gap-3 ">
                   <Box className="flex flex-col md:flex-row gap-2 items-center">
-                    <Box className="md:w-3/5 flex-1">
+                    <Box className="w-full md:w-3/5 flex-1">
                       <TextField
                         type="number"
                         name="food"
@@ -477,7 +504,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                     </Box>
 
-                    <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                    <div className=" md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                       <img
                         src={foodPreview}
                         alt="foodPreview"
@@ -488,11 +515,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     <IconButton
                       color="primary"
                       size="medium"
-                      onClick={async() =>{
-                        setFoodPreview(null)
-                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'foodFile' );
-                        console.log("delete Food File: ", res)
-                      } }
+                      onClick={async () => {
+                        setFoodPreview(null);
+                        const res = await imageDelete(
+                          "/deleteimage",
+                          data.empId,
+                          formData.dateExp,
+                          "foodFile"
+                        );
+                        console.log("delete Food File: ", res);
+                      }}
                     >
                       <CancelIcon />
                     </IconButton>
@@ -520,14 +552,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          { foodPreview === null ? 'upload files' : editData.foodFile}
+                          {foodPreview === null
+                            ? "upload files"
+                            : editData.foodFile}
                         </Button>
                       </label>
                     </div>
                   </Box>
 
                   <Box className="flex flex-col md:flex-row gap-2 items-center">
-                    <Box className="md:w-3/5 flex-1">
+                    <Box className="w-full md:w-3/5 flex-1">
                       <TextField
                         type="number"
                         name="foodGST"
@@ -540,25 +574,36 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                     </Box>
 
-                    <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                      <img
-                        src={foodGstPreview}
-                        alt="foodPreview"
-                        className="w-full h-full"
-                      />
-                    </div>
+                    {foodGstPreview ? (
+                      <>
+                        <div className=" md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <img
+                            src={foodGstPreview}
+                            alt="foodPreview"
+                            className="w-full h-full"
+                          />
+                        </div>
 
-                    <IconButton
-                      color="primary"
-                      size="medium"
-                      onClick={ async() => {
-                        setFoodGstPreview(null)
-                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'foodGstFile' );
-                        console.log("delete FoodGst File: ", res)
-                      }}
-                    >
-                      <CancelIcon />
-                    </IconButton>
+                        <IconButton
+                          color="primary"
+                          size="medium"
+                          onClick={async () => {
+                            setFoodGstPreview(null);
+                            const res = await imageDelete(
+                              "/deleteimage",
+                              data.empId,
+                              formData.dateExp,
+                              "foodGstFile"
+                            );
+                            console.log("delete FoodGst File: ", res);
+                          }}
+                        >
+                          <CancelIcon />
+                        </IconButton>
+                      </>
+                    ) : (
+                      <></>
+                    )}
 
                     <div className="flex-1">
                       <input
@@ -583,7 +628,9 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {foodGstPreview === null ? 'upload files' :  editData.foodGstFile}
+                          {foodGstPreview
+                            ? foodGstFile?.name
+                            : editData.foodGstFile}
                         </Button>
                       </label>
                     </div>
@@ -594,6 +641,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
           />
         </div>
 
+        {/* Essentials */}
         <div className="grid mb-4">
           <Accordions
             heading="Essentials"
@@ -625,11 +673,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     <IconButton
                       color="primary"
                       size="medium"
-                      onClick={ async() => {
-                        setMobileBillPreview(null)
-                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'mobileBillFile' );
-                        console.log("delete mobileBillFile File: ", res)
-                      } }
+                      onClick={async () => {
+                        setMobileBillPreview(null);
+                        const res = await imageDelete(
+                          "/deleteimage",
+                          data.empId,
+                          formData.dateExp,
+                          "mobileBillFile"
+                        );
+                        console.log("delete mobileBillFile File: ", res);
+                      }}
                     >
                       <CancelIcon />
                     </IconButton>
@@ -657,7 +710,9 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          { mobileBillPreview === null ? 'upload files' : editData.mobileBillFile}
+                          {mobileBillPreview === null
+                            ? "upload files"
+                            : editData.mobileBillFile}
                         </Button>
                       </label>
                     </div>
@@ -688,11 +743,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     <IconButton
                       color="primary"
                       size="medium"
-                      onClick={ async() => {
-                        setCourierBillPreview(null)
-                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'courierBillFile' );
-                        console.log("delete courierBillFile File: ", res)
-                      } }
+                      onClick={async () => {
+                        setCourierBillPreview(null);
+                        const res = await imageDelete(
+                          "/deleteimage",
+                          data.empId,
+                          formData.dateExp,
+                          "courierBillFile"
+                        );
+                        console.log("delete courierBillFile File: ", res);
+                      }}
                     >
                       <CancelIcon />
                     </IconButton>
@@ -720,7 +780,9 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          { courierBillPreview === null ? 'upload files' : editData.courierBillFile}
+                          {courierBillPreview === null
+                            ? "upload files"
+                            : editData.courierBillFile}
                         </Button>
                       </label>
                     </div>
@@ -751,11 +813,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     <IconButton
                       color="primary"
                       size="medium"
-                      onClick={ async() => {
-                        setStationaryBillPreview(null)
-                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'stationaryBillFile' );
-                        console.log("delete stationaryBillFile File: ", res)
-                      } }
+                      onClick={async () => {
+                        setStationaryBillPreview(null);
+                        const res = await imageDelete(
+                          "/deleteimage",
+                          data.empId,
+                          formData.dateExp,
+                          "stationaryBillFile"
+                        );
+                        console.log("delete stationaryBillFile File: ", res);
+                      }}
                     >
                       <CancelIcon />
                     </IconButton>
@@ -783,7 +850,9 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          { stationaryBillPreview === null ? 'upload file' : editData.stationaryBillFile}
+                          {stationaryBillPreview === null
+                            ? "upload file"
+                            : editData.stationaryBillFile}
                         </Button>
                       </label>
                     </div>
@@ -794,6 +863,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
           />
         </div>
 
+        {/* others */}
         <div className="grid mb-4">
           <Accordions
             heading="others"
@@ -827,9 +897,10 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
           />
         </div>
 
+        {/* Poster and Activity */}
         <div className="grid mb-4">
           <Accordions
-            heading="Promotion and Activity"
+            heading="Poster and Activity"
             components={
               <>
                 <div className="grid md:grid-cols-1 gap-3 ">
@@ -858,6 +929,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             }
           />
         </div>
+
         <div className="flex gap-4 items-center">
           <Button
             variant="contained"

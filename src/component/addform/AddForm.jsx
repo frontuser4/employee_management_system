@@ -95,6 +95,26 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
 
   const handleClose = () => {
     setOpen(false);
+    setDistancePreview(null);
+    setLodgingPreview(null);
+    setFoodPreview(null);
+    setFoodGstPreview(null);
+    setMobileBillPreview(null);
+    setCourierBillPreview(null);
+    setStationaryBillPreview(null);
+
+    setDistanceFile(null);
+    setLodgingBillFile(null);
+    setFoodFile(null);
+    setFoodGstFile(null);
+    setMobileBillFile(null);
+    setCourierBillFile(null);
+    setStationaryBillFile(null);
+    setFormData(defaultState);
+    setDistance(null);
+    setModeTravel("");
+    setStockistData(null);
+    setPosterActivity(null);
   };
 
   const handleFormChange = (event) => {
@@ -107,7 +127,6 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
   const submitFormDataHandler = async (addData) => {
     try {
       const result = await post("/post", addData);
-      console.log("form-data: ", result);
       toast.success(result.data.message);
       setOpen(false);
     } catch (error) {
@@ -116,6 +135,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
   };
 
   const handleFormSubmit = () => {
+
     const addData = {
       ...formData,
       empId: data.empId,
@@ -145,6 +165,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
     setStockistData("");
     setDistance("");
     setCloseForm((prev) => !prev);
+
   };
 
   return (
@@ -287,6 +308,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
               </FormGroup>
             </div>
 
+            {/* Travel */}
             <div className="grid mb-4">
               <Accordions
                 heading="Travel"
@@ -372,7 +394,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                         {distance > 100 ? (
                           <>
                             {distancePreview !== null ? (
-                              <div className=" w-full md:w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                              <div className=" w-full md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                                 <img
                                   src={distancePreview}
                                   alt="distance km"
@@ -439,7 +461,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                         </Box>
 
                         {lodgingPreview !== null ? (
-                          <div className="w-full md:w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <div className="w-full md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                             <img
                               src={lodgingPreview}
                               alt="lodging preview"
@@ -488,6 +510,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
               />
             </div>
 
+             {/* food */}
             <div className="grid mb-4">
               <Accordions
                 heading="Food"
@@ -509,7 +532,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                         </Box>
 
                         {foodPreview !== null ? (
-                          <div className="w-full md:w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <div className="w-full md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                             <img
                               src={foodPreview}
                               alt="foodPreview"
@@ -566,7 +589,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                         </Box>
 
                         {foodGstPreview !== null ? (
-                          <div className="w-full md:w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <div className="w-full md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                             <img
                               src={foodGstPreview}
                               alt="foodPreview"
@@ -615,6 +638,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
               />
             </div>
 
+             {/* Essentials */}
             <div className="grid mb-4">
               <Accordions
                 heading="Essentials"
@@ -634,8 +658,9 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             disabled={attendance === "absent" ? true : false}
                           />
                         </Box>
+
                         {mobileBillPreview !== null ? (
-                          <div className=" w-full md:w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <div className=" w-full md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                             <img
                               src={mobileBillPreview}
                               alt="mobileBillPreview"
@@ -694,7 +719,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                         </Box>
 
                         {courierBillPreview !== null ? (
-                          <div className=" w-full md:w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <div className=" w-full md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                             <img
                               src={courierBillPreview}
                               alt="courierBillPreview"
@@ -752,7 +777,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           />
                         </Box>
                         {stationaryBillPreview !== null ? (
-                          <div className=" w-full md:w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <div className=" w-full md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                             <img
                               src={stationaryBillPreview}
                               alt="stationaryBillPreview"
@@ -801,6 +826,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
               />
             </div>
 
+             {/* others */}
             <div className="grid mb-4">
               <Accordions
                 heading="others"
@@ -834,9 +860,10 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
               />
             </div>
 
+            {/* Poster and Activity */}
             <div className="grid mb-4">
               <Accordions
-                heading="Promotion and Activity"
+                heading="Poster and Activity"
                 components={
                   <>
                     <div className="grid md:grid-cols-1 gap-3 ">
