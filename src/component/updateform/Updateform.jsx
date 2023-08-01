@@ -116,7 +116,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
       stationaryBillFile,
       pjpChnage,
       posterActivity,
-      user: data.data,
+      user: data.desig,
     };
 
     UpdateData(updatedata);
@@ -135,7 +135,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
 
   return (
     <>
-      <Box sx={{ flexFlow: 1, padding: 1 }} m={{ sm: 4, md: 10 }}>
+      <Box sx={{ flexFlow: 1, padding: 1 }} m={{ sm: 4, md: 10 }} mt={8}>
         <div className="grid md:grid-cols-2 place-items-center gap-3 mb-4">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
@@ -329,7 +329,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     </Box>
                     {distance > 100 ? (
                       <>
-                        {distancePreview ? (
+                        {distancePreview || editData.distanceFile ? (
                           <div className=" md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                             <img
                               src={distancePreview}
@@ -339,8 +339,9 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           </div>
                         ) : (
                           <></>
-                        )}
-                        {distancePreview ? (
+                        )}  
+
+                        {distancePreview || editData.distanceFile  ? (
                           <IconButton
                             color="primary"
                             size="medium"
@@ -649,7 +650,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
               <>
                 <div className="grid md:grid-cols-1 gap-3 ">
                   <Box className="flex flex-col md:flex-row gap-2 items-center">
-                    <Box className="md:w-3/5 flex-1">
+                    <Box className="w-full md:w-3/5 flex-1">
                       <TextField
                         type="number"
                         name="internet"
@@ -662,7 +663,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                     </Box>
 
-                    <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                    <div className=" md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                       <img
                         src={mobileBillPreview}
                         alt="mobileBillPreview"
@@ -711,7 +712,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           startIcon={<CloudUploadIcon />}
                         >
                           {mobileBillPreview === null
-                            ? "upload files"
+                            ? mobileBillFile?.file
                             : editData.mobileBillFile}
                         </Button>
                       </label>
@@ -719,7 +720,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                   </Box>
 
                   <Box className="flex flex-col md:flex-row gap-2 items-center">
-                    <Box className="md:w-3/5 flex-1">
+                    <Box className="w-full md:w-3/5 flex-1">
                       <TextField
                         type="number"
                         name="postageCourier"
@@ -732,7 +733,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                     </Box>
 
-                    <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                    <div className="md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                       <img
                         src={courierBillPreview}
                         alt="courierBillPreview"
@@ -781,7 +782,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           startIcon={<CloudUploadIcon />}
                         >
                           {courierBillPreview === null
-                            ? "upload files"
+                            ? courierBillFile.file
                             : editData.courierBillFile}
                         </Button>
                       </label>
@@ -789,7 +790,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                   </Box>
 
                   <Box className="flex flex-col md:flex-row gap-2 items-center">
-                    <Box className="md:w-3/5 flex-1">
+                    <Box className="w-full md:w-3/5 flex-1">
                       <TextField
                         type="number"
                         name="printingStationary"
@@ -802,7 +803,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                     </Box>
 
-                    <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                    <div className="md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                       <img
                         src={stationaryBillPreview}
                         alt="stationaryBillPreview"
@@ -851,7 +852,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           startIcon={<CloudUploadIcon />}
                         >
                           {stationaryBillPreview === null
-                            ? "upload file"
+                            ? stationaryBillFile.file
                             : editData.stationaryBillFile}
                         </Button>
                       </label>
