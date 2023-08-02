@@ -134,6 +134,7 @@ const ExpenceTable = ({ year, month }) => {
         </div>
       </div>
 
+      <div className="overflow-x-auto">
       <table ref={tableRef}>
         <thead>
           <tr>
@@ -387,6 +388,8 @@ const ExpenceTable = ({ year, month }) => {
           </tr>
         </tbody>
       </table>
+      </div>
+     
 
       {tableData?.length <= 0 ? (
         <p className="text-center bg-slate-500 w-full h-3/4 text-white text-3xl p-24">
