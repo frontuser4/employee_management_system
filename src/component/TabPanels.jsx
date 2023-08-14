@@ -105,7 +105,7 @@ export default function TabPanels({
         <TabPanel value={value} index={0} dir={theme.direction}>
           <ExpenceTables year={year} month={month} />
         </TabPanel>
-        {/* <TabPanel value={value} index={1} dir={theme.direction}>
+        <TabPanel value={value} index={1} dir={theme.direction}>
           {expence?.length <= 0 ? (
             <></>
           ) : (
@@ -120,7 +120,7 @@ export default function TabPanels({
               />
             </>
           )}
-        </TabPanel> */}
+        </TabPanel>
       </SwipeableViews>
     </Box>
   );

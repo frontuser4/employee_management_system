@@ -135,7 +135,6 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
   };
 
   const handleFormSubmit = () => {
-
     const addData = {
       ...formData,
       empId: data.empId,
@@ -165,7 +164,6 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
     setStockistData("");
     setDistance("");
     setCloseForm((prev) => !prev);
-
   };
 
   return (
@@ -209,9 +207,8 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 title="Attendance"
                 option={[
                   "present",
-                  "absent",
                   "MRM",
-                  "Joining Date",
+                  "Joining Work",
                   "Weekly Off",
                   "leave",
                 ]}
@@ -230,7 +227,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 label="TC"
                 id="tc"
                 size="small"
-                disabled={attendance === "absent" ? true : false}
+                disabled={attendance === "leave" ? true : false}
               />
               <TextField
                 type="number"
@@ -241,7 +238,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 label="PC"
                 id="pc"
                 size="small"
-                disabled={attendance === "absent" ? true : false}
+                disabled={attendance === "leave" ? true : false}
               />
             </div>
 
@@ -254,7 +251,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 onChange={handleFormChange}
                 label="SALE"
                 size="small"
-                disabled={attendance === "absent" ? true : false}
+                disabled={attendance === "leave" ? true : false}
               />
               <TextField
                 type="number"
@@ -264,7 +261,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 onChange={handleFormChange}
                 label="WORKING HOURS"
                 size="small"
-                disabled={attendance === "absent" ? true : false}
+                disabled={attendance === "leave" ? true : false}
               />
               <StockistDropdown
                 title="Stockist"
@@ -274,7 +271,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
               />
             </div>
 
-            <div className="grid md:grid-cols-3 gap-3 mb-4">
+            <div className="grid md:grid-cols-2 gap-3 mb-4">
               <TextField
                 type="text"
                 fullWidth
@@ -283,7 +280,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 onChange={handleFormChange}
                 label="TOWN AND MARKET"
                 size="small"
-                disabled={attendance === "absent" ? true : false}
+                disabled={attendance === "leave" ? true : false}
               />
               <TextField
                 type="number"
@@ -293,19 +290,43 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 onChange={handleFormChange}
                 label="D.A."
                 size="small"
-                disabled={attendance === "absent" ? true : false}
+                disabled={attendance === "leave" ? true : false}
               />
-              <FormGroup>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      disabled={attendance === "absent" ? true : false}
-                      onChange={(e) => setPjpChange(e.target.checked)}
-                    />
-                  }
-                  label="PJP Change?"
-                />
-              </FormGroup>
+            </div>
+
+            {/* PJP Change */}
+            <div className="grid mb-4">
+              <Accordions
+                heading="PJP Change"
+                components={
+                  <>
+                    <div className="grid md:grid-cols-1 gap-3 ">
+                      <FormControl>
+                        <FormLabel>PJP Change?</FormLabel>
+                        <RadioGroup
+                          sx={{ display: "inline" }}
+                          name="use-radio-group"
+                          value={pjpChnage}
+                          onChange={(e) => setPjpChange(e.target.value)}
+                        >
+                          <FormControlLabel
+                            disabled={attendance === "leave" ? true : false}
+                            value="yes"
+                            label="Yes"
+                            control={<Radio />}
+                          />
+                          <FormControlLabel
+                            disabled={attendance === "leave" ? true : false}
+                            value="no"
+                            label="No"
+                            control={<Radio />}
+                          />
+                        </RadioGroup>
+                      </FormControl>
+                    </div>
+                  </>
+                }
+              />
             </div>
 
             {/* Travel */}
@@ -324,7 +345,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           fullWidth
                           label="TRAVEL FROM"
                           size="small"
-                          disabled={attendance === "absent" ? true : false}
+                          disabled={attendance === "leave" ? true : false}
                         />
 
                         <TextField
@@ -335,7 +356,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           fullWidth
                           label="TRAVEL TO"
                           size="small"
-                          disabled={attendance === "absent" ? true : false}
+                          disabled={attendance === "leave" ? true : false}
                         />
 
                         <ModeDropdown
@@ -364,7 +385,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           fullWidth
                           label="TRAVEL LONG(GST)"
                           size="small"
-                          disabled={attendance === "absent" ? true : false}
+                          disabled={attendance === "leave" ? true : false}
                         />
 
                         <TextField
@@ -374,7 +395,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           onChange={handleFormChange}
                           label="NIGHT TRAVEL ALLOWANCE"
                           size="small"
-                          disabled={attendance === "absent" ? true : false}
+                          disabled={attendance === "leave" ? true : false}
                         />
                       </div>
 
@@ -388,7 +409,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             fullWidth
                             label="ONE SIDE KM"
                             size="small"
-                            disabled={attendance === "absent" ? true : false}
+                            disabled={attendance === "leave" ? true : false}
                           />
                         </Box>
                         {distance > 100 ? (
@@ -456,7 +477,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             fullWidth
                             label="LODGING BILL"
                             size="small"
-                            disabled={attendance === "absent" ? true : false}
+                            disabled={attendance === "leave" ? true : false}
                           />
                         </Box>
 
@@ -510,7 +531,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
               />
             </div>
 
-             {/* food */}
+            {/* food */}
             <div className="grid mb-4">
               <Accordions
                 heading="Food"
@@ -527,7 +548,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             onChange={handleFormChange}
                             label="FOOD"
                             size="small"
-                            disabled={attendance === "absent" ? true : false}
+                            disabled={attendance === "leave" ? true : false}
                           />
                         </Box>
 
@@ -584,7 +605,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             fullWidth
                             label="FOOD GST"
                             size="small"
-                            disabled={attendance === "absent" ? true : false}
+                            disabled={attendance === "leave" ? true : false}
                           />
                         </Box>
 
@@ -638,7 +659,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
               />
             </div>
 
-             {/* Essentials */}
+            {/* Essentials */}
             <div className="grid mb-4">
               <Accordions
                 heading="Essentials"
@@ -655,7 +676,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             fullWidth
                             label="MOBILE BILL"
                             size="small"
-                            disabled={attendance === "absent" ? true : false}
+                            disabled={attendance === "leave" ? true : false}
                           />
                         </Box>
 
@@ -714,7 +735,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             fullWidth
                             label="COURIER"
                             size="small"
-                            disabled={attendance === "absent" ? true : false}
+                            disabled={attendance === "leave" ? true : false}
                           />
                         </Box>
 
@@ -773,7 +794,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             fullWidth
                             label="STATIONARY"
                             size="small"
-                            disabled={attendance === "absent" ? true : false}
+                            disabled={attendance === "leave" ? true : false}
                           />
                         </Box>
                         {stationaryBillPreview !== null ? (
@@ -806,7 +827,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             required
                           />
                           <label htmlFor="upload-stationaryBill">
-                           <Button
+                            <Button
                               className="w-full"
                               variant="contained"
                               color="primary"
@@ -826,7 +847,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
               />
             </div>
 
-             {/* others */}
+            {/* others */}
             <div className="grid mb-4">
               <Accordions
                 heading="others"
@@ -841,7 +862,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                         value={formData.other}
                         onChange={handleFormChange}
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
 
                       <TextField
@@ -852,7 +873,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                         fullWidth
                         label="OTHERS GST"
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
                     </div>
                   </>
@@ -876,11 +897,13 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           onChange={(e) => setPosterActivity(e.target.value)}
                         >
                           <FormControlLabel
+                            disabled={attendance === "leave" ? true : false}
                             value="yes"
                             label="Yes"
                             control={<Radio />}
                           />
                           <FormControlLabel
+                            disabled={attendance === "leave" ? true : false}
                             value="no"
                             label="No"
                             control={<Radio />}

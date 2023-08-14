@@ -144,7 +144,7 @@ const ScoreCard = ({ empId, month, year }) => {
               <td className="text-center">40</td>
               <td className="text-center">10</td>
               <td className="text-center">
-                {marksOne} {scoreGradeOne}
+                {marksOne} 
               </td>
             </tr>
             <tr>
@@ -152,7 +152,7 @@ const ScoreCard = ({ empId, month, year }) => {
               <td className="text-center">25</td>
               <td className="text-center">10</td>
               <td className="text-center">
-                {marksTwo} {scoreGradeTwo}
+                {marksTwo} 
               </td>
             </tr>
             <tr>
@@ -160,7 +160,7 @@ const ScoreCard = ({ empId, month, year }) => {
               <td className="text-center">15</td>
               <td className="text-center">10</td>
               <td className="text-center">
-                {marksThree} {scoreGradeThree}
+                {marksThree} 
               </td>
             </tr>
             <tr>

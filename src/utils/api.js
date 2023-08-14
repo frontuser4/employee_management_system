@@ -2,6 +2,16 @@ import axios from "axios";
 axios.defaults.headers.common["Authorization"] = `jhsajdkhsakdjhsdjakjdhsajdsd`;
 const SALES_TG_URL = "http://142.93.208.119:80";
 const BASE_URL = "http://64.227.141.209:8080";
+const APP_LOGIN = 'http://142.93.208.119:8000';
+
+async function loginPage(url, data){
+    try {
+      const loginRes = await axios.post(`${APP_LOGIN}${url}`, data);
+      return loginRes;
+    } catch (error) {
+      return error;
+    }
+}
 
 async function get(url, id, month, year, users) {
   try {
@@ -80,4 +90,4 @@ async function imageDelete(url, empId, date, imageFile){
 
 } 
 
-export { get, post, update, getEmp, scoreSummaryGet, imageDelete };
+export { get, post, loginPage, update, getEmp, scoreSummaryGet, imageDelete };

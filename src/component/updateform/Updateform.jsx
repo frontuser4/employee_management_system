@@ -150,7 +150,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
 
           <AttendanceDropdown
             title="Attendance"
-            option={["present", "absent", "MRM"]}
+            option={["present", "MRM", "Joining Work", "Weekly Off", "leave"]}
             value={attendance}
             onChange={(e) => setAttendance(e)}
           />
@@ -166,7 +166,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             label="TC"
             id="tc"
             size="small"
-            disabled={attendance === "absent" ? true : false}
+            disabled={attendance === "leave" ? true : false}
           />
           <TextField
             type="number"
@@ -177,7 +177,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             label="PC"
             id="pc"
             size="small"
-            disabled={attendance === "absent" ? true : false}
+            disabled={attendance === "leave" ? true : false}
           />
         </div>
 
@@ -190,7 +190,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             onChange={handleFormChange}
             label="SALE"
             size="small"
-            disabled={attendance === "absent" ? true : false}
+            disabled={attendance === "leave" ? true : false}
           />
           <TextField
             type="number"
@@ -200,7 +200,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             onChange={handleFormChange}
             label="WORKING HOURS"
             size="small"
-            disabled={attendance === "absent" ? true : false}
+            disabled={attendance === "leave" ? true : false}
           />
           <StockistDropdown
             title="Stockist"
@@ -210,7 +210,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
           />
         </div>
 
-        <div className="grid md:grid-cols-3 gap-3 mb-4">
+        <div className="grid md:grid-cols-2 gap-3 mb-4">
           <TextField
             type="text"
             fullWidth
@@ -219,7 +219,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             onChange={handleFormChange}
             label="TOWN AND MARKET"
             size="small"
-            disabled={attendance === "absent" ? true : false}
+            disabled={attendance === "leave" ? true : false}
           />
           <TextField
             type="number"
@@ -229,19 +229,8 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             onChange={handleFormChange}
             label="D.A."
             size="small"
-            disabled={attendance === "absent" ? true : false}
+            disabled={attendance === "leave" ? true : false}
           />
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  disabled={attendance === "absent" ? true : false}
-                  onChange={(e) => setPjpChange(e.target.checked)}
-                />
-              }
-              label="PJP Change?"
-            />
-          </FormGroup>
         </div>
 
         {/* Travel */}
@@ -260,7 +249,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       fullWidth
                       label="TRAVEL FROM"
                       size="small"
-                      disabled={attendance === "absent" ? true : false}
+                      disabled={attendance === "leave" ? true : false}
                     />
 
                     <TextField
@@ -271,7 +260,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       fullWidth
                       label="TRAVEL TO"
                       size="small"
-                      disabled={attendance === "absent" ? true : false}
+                      disabled={attendance === "leave" ? true : false}
                     />
 
                     <ModeDropdown
@@ -300,7 +289,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       fullWidth
                       label="TRAVEL LONG(GST)"
                       size="small"
-                      disabled={attendance === "absent" ? true : false}
+                      disabled={attendance === "leave" ? true : false}
                     />
 
                     <TextField
@@ -310,7 +299,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       onChange={handleFormChange}
                       label="NIGHT TRAVEL ALLOWANCE"
                       size="small"
-                      disabled={attendance === "absent" ? true : false}
+                      disabled={attendance === "leave" ? true : false}
                     />
                   </div>
 
@@ -324,7 +313,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="ONE SIDE KM"
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
                     </Box>
                     {distance > 100 ? (
@@ -413,7 +402,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="LODGING BILL"
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
                     </Box>
 
@@ -501,7 +490,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         onChange={handleFormChange}
                         label="FOOD"
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
                     </Box>
 
@@ -571,7 +560,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="FOOD GST"
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
                     </Box>
 
@@ -659,7 +648,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="MOBILE BILL"
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
                     </Box>
 
@@ -729,7 +718,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="COURIER"
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
                     </Box>
 
@@ -799,7 +788,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="STATIONARY"
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
                     </Box>
 
@@ -879,7 +868,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     value={formData.other}
                     onChange={handleFormChange}
                     size="small"
-                    disabled={attendance === "absent" ? true : false}
+                    disabled={attendance === "leave" ? true : false}
                   />
 
                   <TextField
@@ -890,7 +879,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     fullWidth
                     label="OTHERS GST"
                     size="small"
-                    disabled={attendance === "absent" ? true : false}
+                    disabled={attendance === "leave" ? true : false}
                   />
                 </div>
               </>
@@ -914,11 +903,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       onChange={(e) => setPosterActivity(e.target.value)}
                     >
                       <FormControlLabel
+                        disabled={attendance === "leave" ? true : false}
                         value="yes"
                         label="Yes"
                         control={<Radio />}
                       />
                       <FormControlLabel
+                       disabled={attendance === "leave" ? true : false}  
                         value="no"
                         label="No"
                         control={<Radio />}
