@@ -113,15 +113,15 @@ export default function Dashboard() {
             >
               <MenuItem className="flex flex-col gap-2">
                 <Typography textAlign="center">
-                  Name : {state.data.name}
+                  Name : {state?.data?.name}
                 </Typography>
                 <Typography textAlign="center">
-                  Id : {state.data.empId}
+                  Id : {state?.data?.empId}
                 </Typography>
                 <Typography textAlign="center">
-                  Designation : {state.data.desig}
+                  Designation : {state?.data?.desig}
                 </Typography>
-                <Typography textAlign="center">Hq : {state.data.hq}</Typography>
+                <Typography textAlign="center">Hq : {state?.data?.hq}</Typography>
               </MenuItem>
             </Menu>
           </Box>

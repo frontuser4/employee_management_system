@@ -30,7 +30,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { post } from "../../utils/api";
 import toast, { Toaster } from "react-hot-toast";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
 const defaultState = {
   attendance: "",
@@ -59,11 +59,10 @@ const defaultState = {
 };
 
 export default function AddForm({ open, setOpen, setCloseForm }) {
-
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-  const {data} = useSelector((state)=> state.login.data);
-  const {stockist} = useSelector((state)=> state.login.data);
+  const { data } = useSelector((state) => state.login.data);
+  const { stockist } = useSelector((state) => state.login.data);
   const [formData, setFormData] = useState(defaultState);
   const [attendance, setAttendance] = useState("present");
   const [modeTravel, setModeTravel] = useState("");
@@ -96,6 +95,26 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
 
   const handleClose = () => {
     setOpen(false);
+    setDistancePreview(null);
+    setLodgingPreview(null);
+    setFoodPreview(null);
+    setFoodGstPreview(null);
+    setMobileBillPreview(null);
+    setCourierBillPreview(null);
+    setStationaryBillPreview(null);
+
+    setDistanceFile(null);
+    setLodgingBillFile(null);
+    setFoodFile(null);
+    setFoodGstFile(null);
+    setMobileBillFile(null);
+    setCourierBillFile(null);
+    setStationaryBillFile(null);
+    setFormData(defaultState);
+    setDistance(null);
+    setModeTravel("");
+    setStockistData(null);
+    setPosterActivity(null);
   };
 
   const handleFormChange = (event) => {
@@ -108,7 +127,6 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
   const submitFormDataHandler = async (addData) => {
     try {
       const result = await post("/post", addData);
-      console.log("form-data: ", result);
       toast.success(result.data.message);
       setOpen(false);
     } catch (error) {
@@ -117,7 +135,6 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
   };
 
   const handleFormSubmit = () => {
-   
     const addData = {
       ...formData,
       empId: data.empId,
@@ -127,9 +144,9 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
       dateExp: dayjs(date).format("YYYY-MM-DD"),
       expenseId: expenceId,
       distance,
-      localConv : distance * 2 * 2,
-      pjp : pjpChnage,
-      poster : posterActivity,
+      localConv: distance * 2 * 2,
+      pjp: pjpChnage,
+      poster: posterActivity,
       distanceFile,
       lodgingBillFile,
       foodFile,
@@ -137,7 +154,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
       mobileBillFile,
       courierBillFile,
       stationaryBillFile,
-      desig : data.desig,
+      desig: data.desig,
     };
 
     submitFormDataHandler(addData);
@@ -147,7 +164,6 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
     setStockistData("");
     setDistance("");
     setCloseForm((prev) => !prev);
-
   };
 
   return (
@@ -164,22 +180,38 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
         <DialogContent>
           <Box sx={{ flexFlow: 1, padding: 1 }}>
             <div className="grid md:grid-cols-2 place-items-center gap-3 mb-4">
-              <LocalizationProvider dateAdapter={AdapterDayjs} >
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label="Select Date"
                   value={date}
-                  onChange={(newDate) =>{
+                  onChange={(newDate) => {
                     setDate(newDate);
                     setDateError(null);
-                  } }
-                  slotProps={dateError === 400 ? { textField: { helperText:'Date Already Exists, please select another date', size:'small' }} : {textField:{size:'small'}}}
-                  sx={{width:'100%'}}
+                  }}
+                  slotProps={
+                    dateError === 400
+                      ? {
+                          textField: {
+                            helperText:
+                              "Date Already Exists, please select another date",
+                            size: "small",
+                          },
+                        }
+                      : { textField: { size: "small" } }
+                  }
+                  sx={{ width: "100%" }}
                 />
               </LocalizationProvider>
 
               <AttendanceDropdown
                 title="Attendance"
-                option={["present", "absent", "MRM", "Joining Date", "Weekly Off", "leave"]}
+                option={[
+                  "present",
+                  "MRM",
+                  "Joining Work",
+                  "Weekly Off",
+                  "leave",
+                ]}
                 value={attendance}
                 onChange={(e) => setAttendance(e)}
               />
@@ -195,7 +227,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 label="TC"
                 id="tc"
                 size="small"
-                disabled={attendance === "absent" ? true : false}
+                disabled={attendance === "leave" ? true : false}
               />
               <TextField
                 type="number"
@@ -206,7 +238,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 label="PC"
                 id="pc"
                 size="small"
-                disabled={attendance === "absent" ? true : false}
+                disabled={attendance === "leave" ? true : false}
               />
             </div>
 
@@ -219,7 +251,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 onChange={handleFormChange}
                 label="SALE"
                 size="small"
-                disabled={attendance === "absent" ? true : false}
+                disabled={attendance === "leave" ? true : false}
               />
               <TextField
                 type="number"
@@ -229,7 +261,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 onChange={handleFormChange}
                 label="WORKING HOURS"
                 size="small"
-                disabled={attendance === "absent" ? true : false}
+                disabled={attendance === "leave" ? true : false}
               />
               <StockistDropdown
                 title="Stockist"
@@ -239,7 +271,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
               />
             </div>
 
-            <div className="grid md:grid-cols-3 gap-3 mb-4">
+            <div className="grid md:grid-cols-2 gap-3 mb-4">
               <TextField
                 type="text"
                 fullWidth
@@ -248,7 +280,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 onChange={handleFormChange}
                 label="TOWN AND MARKET"
                 size="small"
-                disabled={attendance === "absent" ? true : false}
+                disabled={attendance === "leave" ? true : false}
               />
               <TextField
                 type="number"
@@ -258,21 +290,46 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 onChange={handleFormChange}
                 label="D.A."
                 size="small"
-                disabled={attendance === "absent" ? true : false}
+                disabled={attendance === "leave" ? true : false}
               />
-              <FormGroup>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      disabled={attendance === "absent" ? true : false}
-                      onChange={(e) => setPjpChange(e.target.checked)}
-                    />
-                  }
-                  label="PJP Change?"
-                />
-              </FormGroup>
             </div>
 
+            {/* PJP Change */}
+            <div className="grid mb-4">
+              <Accordions
+                heading="PJP Change"
+                components={
+                  <>
+                    <div className="grid md:grid-cols-1 gap-3 ">
+                      <FormControl>
+                        <FormLabel>PJP Change?</FormLabel>
+                        <RadioGroup
+                          sx={{ display: "inline" }}
+                          name="use-radio-group"
+                          value={pjpChnage}
+                          onChange={(e) => setPjpChange(e.target.value)}
+                        >
+                          <FormControlLabel
+                            disabled={attendance === "leave" ? true : false}
+                            value="yes"
+                            label="Yes"
+                            control={<Radio />}
+                          />
+                          <FormControlLabel
+                            disabled={attendance === "leave" ? true : false}
+                            value="no"
+                            label="No"
+                            control={<Radio />}
+                          />
+                        </RadioGroup>
+                      </FormControl>
+                    </div>
+                  </>
+                }
+              />
+            </div>
+
+            {/* Travel */}
             <div className="grid mb-4">
               <Accordions
                 heading="Travel"
@@ -288,7 +345,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           fullWidth
                           label="TRAVEL FROM"
                           size="small"
-                          disabled={attendance === "absent" ? true : false}
+                          disabled={attendance === "leave" ? true : false}
                         />
 
                         <TextField
@@ -299,7 +356,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           fullWidth
                           label="TRAVEL TO"
                           size="small"
-                          disabled={attendance === "absent" ? true : false}
+                          disabled={attendance === "leave" ? true : false}
                         />
 
                         <ModeDropdown
@@ -328,7 +385,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           fullWidth
                           label="TRAVEL LONG(GST)"
                           size="small"
-                          disabled={attendance === "absent" ? true : false}
+                          disabled={attendance === "leave" ? true : false}
                         />
 
                         <TextField
@@ -338,31 +395,37 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           onChange={handleFormChange}
                           label="NIGHT TRAVEL ALLOWANCE"
                           size="small"
-                          disabled={attendance === "absent" ? true : false}
+                          disabled={attendance === "leave" ? true : false}
                         />
                       </div>
 
                       <Box className="flex flex-col items-center md:flex-row gap-2">
-                        <Box className="md:w-3/5 flex-1">
+                        <Box className="w-full md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="distance"
                             value={distance}
-                            onChange={(e)=> setDistance(e.target.value)}
+                            onChange={(e) => setDistance(e.target.value)}
                             fullWidth
                             label="ONE SIDE KM"
                             size="small"
-                            disabled={attendance === "absent" ? true : false}
+                            disabled={attendance === "leave" ? true : false}
                           />
                         </Box>
                         {distance > 100 ? (
-                          <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                            <img
-                              src={distancePreview}
-                              alt="distance km"
-                              className="w-full h-full"
-                            />
-                          </div>
+                          <>
+                            {distancePreview !== null ? (
+                              <div className=" w-full md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                                <img
+                                  src={distancePreview}
+                                  alt="distance km"
+                                  className="w-full h-full"
+                                />
+                              </div>
+                            ) : (
+                              <></>
+                            )}
+                          </>
                         ) : (
                           ""
                         )}
@@ -383,9 +446,11 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                                 };
                                 reader.readAsDataURL(e.target.files[0]);
                               }}
+                              required
                             />
                             <label htmlFor="upload-distance">
                               <Button
+                                className="w-full"
                                 variant="contained"
                                 color="primary"
                                 component="span"
@@ -403,7 +468,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                       </Box>
 
                       <Box className="flex flex-col md:flex-row gap-2 items-center">
-                        <Box className="md:w-3/5 flex-1">
+                        <Box className="w-full md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="lodginBoardig"
@@ -412,17 +477,21 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             fullWidth
                             label="LODGING BILL"
                             size="small"
-                            disabled={attendance === "absent" ? true : false}
+                            disabled={attendance === "leave" ? true : false}
                           />
                         </Box>
 
-                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                          <img
-                            src={lodgingPreview}
-                            alt="lodging preview"
-                            className="w-full h-full"
-                          />
-                        </div>
+                        {lodgingPreview !== null ? (
+                          <div className="w-full md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                            <img
+                              src={lodgingPreview}
+                              alt="lodging preview"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          <></>
+                        )}
 
                         <div className="flex-1">
                           <input
@@ -439,9 +508,11 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                               };
                               reader.readAsDataURL(e.target.files[0]);
                             }}
+                            required
                           />
                           <label htmlFor="upload-lodging">
                             <Button
+                              className="w-full"
                               variant="contained"
                               color="primary"
                               component="span"
@@ -460,6 +531,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
               />
             </div>
 
+            {/* food */}
             <div className="grid mb-4">
               <Accordions
                 heading="Food"
@@ -467,7 +539,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                   <>
                     <div className="grid md:grid-cols-1 gap-3 ">
                       <Box className="flex flex-col md:flex-row gap-2 items-center">
-                        <Box className="md:w-3/5 flex-1">
+                        <Box className="w-full md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="food"
@@ -476,17 +548,21 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             onChange={handleFormChange}
                             label="FOOD"
                             size="small"
-                            disabled={attendance === "absent" ? true : false}
+                            disabled={attendance === "leave" ? true : false}
                           />
                         </Box>
 
-                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                          <img
-                            src={foodPreview}
-                            alt="foodPreview"
-                            className="w-full h-full"
-                          />
-                        </div>
+                        {foodPreview !== null ? (
+                          <div className="w-full md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                            <img
+                              src={foodPreview}
+                              alt="foodPreview"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          <></>
+                        )}
 
                         <div className="flex-1">
                           <input
@@ -503,9 +579,11 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                               };
                               reader.readAsDataURL(e.target.files[0]);
                             }}
+                            required
                           />
                           <label htmlFor="upload-foodBill">
                             <Button
+                              className="w-full"
                               variant="contained"
                               color="primary"
                               component="span"
@@ -518,7 +596,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                       </Box>
 
                       <Box className="flex flex-col md:flex-row gap-2 items-center">
-                        <Box className="md:w-3/5 flex-1">
+                        <Box className="w-full md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="foodGST"
@@ -527,17 +605,21 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             fullWidth
                             label="FOOD GST"
                             size="small"
-                            disabled={attendance === "absent" ? true : false}
+                            disabled={attendance === "leave" ? true : false}
                           />
                         </Box>
 
-                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                          <img
-                            src={foodGstPreview}
-                            alt="foodPreview"
-                            className="w-full h-full"
-                          />
-                        </div>
+                        {foodGstPreview !== null ? (
+                          <div className="w-full md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                            <img
+                              src={foodGstPreview}
+                              alt="foodPreview"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          <></>
+                        )}
 
                         <div className="flex-1">
                           <input
@@ -554,9 +636,11 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                               };
                               reader.readAsDataURL(e.target.files[0]);
                             }}
+                            required
                           />
                           <label htmlFor="upload-foodGstBill">
                             <Button
+                              className="w-full"
                               variant="contained"
                               color="primary"
                               component="span"
@@ -575,6 +659,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
               />
             </div>
 
+            {/* Essentials */}
             <div className="grid mb-4">
               <Accordions
                 heading="Essentials"
@@ -582,7 +667,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                   <>
                     <div className="grid md:grid-cols-1 gap-3 ">
                       <Box className="flex flex-col md:flex-row gap-2 items-center">
-                        <Box className="md:w-3/5 flex-1">
+                        <Box className="w-full md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="internet"
@@ -591,17 +676,21 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             fullWidth
                             label="MOBILE BILL"
                             size="small"
-                            disabled={attendance === "absent" ? true : false}
+                            disabled={attendance === "leave" ? true : false}
                           />
                         </Box>
 
-                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                          <img
-                            src={mobileBillPreview}
-                            alt="mobileBillPreview"
-                            className="w-full h-full"
-                          />
-                        </div>
+                        {mobileBillPreview !== null ? (
+                          <div className=" w-full md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                            <img
+                              src={mobileBillPreview}
+                              alt="mobileBillPreview"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          <></>
+                        )}
 
                         <div className="flex-1">
                           <input
@@ -618,9 +707,11 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                               };
                               reader.readAsDataURL(e.target.files[0]);
                             }}
+                            required
                           />
                           <label htmlFor="upload-internetBill">
                             <Button
+                              className="w-full"
                               variant="contained"
                               color="primary"
                               component="span"
@@ -635,7 +726,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                       </Box>
 
                       <Box className="flex flex-col md:flex-row gap-2 items-center">
-                        <Box className="md:w-3/5 flex-1">
+                        <Box className="w-full md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="postageCourier"
@@ -644,17 +735,21 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             fullWidth
                             label="COURIER"
                             size="small"
-                            disabled={attendance === "absent" ? true : false}
+                            disabled={attendance === "leave" ? true : false}
                           />
                         </Box>
 
-                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                          <img
-                            src={courierBillPreview}
-                            alt="courierBillPreview"
-                            className="w-full h-full"
-                          />
-                        </div>
+                        {courierBillPreview !== null ? (
+                          <div className=" w-full md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                            <img
+                              src={courierBillPreview}
+                              alt="courierBillPreview"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          <></>
+                        )}
 
                         <div className="flex-1">
                           <input
@@ -671,9 +766,11 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                               };
                               reader.readAsDataURL(e.target.files[0]);
                             }}
+                            required
                           />
                           <label htmlFor="upload-postageCourierBill">
                             <Button
+                              className="w-full"
                               variant="contained"
                               color="primary"
                               component="span"
@@ -688,7 +785,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                       </Box>
 
                       <Box className="flex flex-col md:flex-row gap-2 items-center">
-                        <Box className="md:w-3/5 flex-1">
+                        <Box className="w-full md:w-3/5 flex-1">
                           <TextField
                             type="number"
                             name="printingStationary"
@@ -697,17 +794,20 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                             fullWidth
                             label="STATIONARY"
                             size="small"
-                            disabled={attendance === "absent" ? true : false}
+                            disabled={attendance === "leave" ? true : false}
                           />
                         </Box>
-
-                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                          <img
-                            src={stationaryBillPreview}
-                            alt="stationaryBillPreview"
-                            className="w-full h-full"
-                          />
-                        </div>
+                        {stationaryBillPreview !== null ? (
+                          <div className=" w-full md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                            <img
+                              src={stationaryBillPreview}
+                              alt="stationaryBillPreview"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          <></>
+                        )}
 
                         <div className="flex-1">
                           <input
@@ -724,9 +824,11 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                               };
                               reader.readAsDataURL(e.target.files[0]);
                             }}
+                            required
                           />
                           <label htmlFor="upload-stationaryBill">
                             <Button
+                              className="w-full"
                               variant="contained"
                               color="primary"
                               component="span"
@@ -745,6 +847,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
               />
             </div>
 
+            {/* others */}
             <div className="grid mb-4">
               <Accordions
                 heading="others"
@@ -759,7 +862,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                         value={formData.other}
                         onChange={handleFormChange}
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
 
                       <TextField
@@ -770,7 +873,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                         fullWidth
                         label="OTHERS GST"
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
                     </div>
                   </>
@@ -778,9 +881,10 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
               />
             </div>
 
+            {/* Poster and Activity */}
             <div className="grid mb-4">
               <Accordions
-                heading="Promotion and Activity"
+                heading="Poster and Activity"
                 components={
                   <>
                     <div className="grid md:grid-cols-1 gap-3 ">
@@ -790,14 +894,16 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                           sx={{ display: "inline" }}
                           name="use-radio-group"
                           value={posterActivity}
-                          onChange={(e)=> setPosterActivity(e.target.value)}
+                          onChange={(e) => setPosterActivity(e.target.value)}
                         >
                           <FormControlLabel
+                            disabled={attendance === "leave" ? true : false}
                             value="yes"
                             label="Yes"
                             control={<Radio />}
                           />
                           <FormControlLabel
+                            disabled={attendance === "leave" ? true : false}
                             value="no"
                             label="No"
                             control={<Radio />}

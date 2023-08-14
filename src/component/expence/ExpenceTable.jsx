@@ -27,33 +27,40 @@ const ExpenceTable = ({ year, month }) => {
   const [loading, setLoading] = useState(false);
   const [grandTotal, setGrandTotal] = useState(null);
   const [btnFlag, setBtnFlag] = useState(null);
+  const [totalExpData, setTotalExpData] = useState(null);
   const { data } = useSelector((state) => state.login.data);
 
   async function fetchData() {
-
     setLoading(true);
 
     const expData = {};
 
-    if(state?.emp === 'emp'){
-       
-       expData.empId = state.empId
-       expData.month = state.month
-       expData.year = state.year
-    }else{
-     
-      expData.empId = data.empId
-      expData.month = month
-      expData.year = year
+    if (state?.emp === "emp") {
+      expData.empId = state.empId;
+      expData.month = state.month;
+      expData.year = state.year;
+      expData.user = state.empDesig;
+    } else {
+      expData.empId = data.empId;
+      expData.month = month;
+      expData.year = year;
+      expData.user = data?.desig;
     }
 
-    const res = await get("/getput", expData.empId, expData.month, expData.year);
+    const res = await get(
+      "/getput",
+      expData.empId,
+      expData.month,
+      expData.year,
+      expData?.user
+    );
 
     setTableData(res.data);
     dispatch(expenceData(res.data));
     setChangeLogsData(res.data_log);
     setGrandTotal(res.grand_total);
     setBtnFlag(res.buttonFlag);
+    setTotalExpData(res);
     setLoading(false);
   }
 
@@ -89,7 +96,7 @@ const ExpenceTable = ({ year, month }) => {
     <>
       <div className="flex items-center gap-3">
         <div>
-          {data.desig === "TSO" || state?.empDesig === 'TSO' ? (
+          {["TSO", "SSR", "ST", "ASE", "AASM"].includes(data.desig) ? (
             <button
               className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
               onClick={() => setOpenForm(true)}
@@ -100,6 +107,19 @@ const ExpenceTable = ({ year, month }) => {
           ) : (
             <></>
           )}
+
+          { ['ASM', 'Sr. ASM'].includes(state?.designation) ? (
+            <button
+              className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
+              onClick={() => setOpenForm(true)}
+            >
+              <AddIcon />
+              Add
+            </button>
+          ) : (
+            <></>
+          )}
+          
         </div>
         <div>
           <DownloadTableExcel
@@ -114,6 +134,7 @@ const ExpenceTable = ({ year, month }) => {
         </div>
       </div>
 
+      <div className="overflow-x-auto">
       <table ref={tableRef}>
         <thead>
           <tr>
@@ -128,10 +149,10 @@ const ExpenceTable = ({ year, month }) => {
             </tr>
           ) : (
             <tr>
-              <th colSpan={4}>Name: {data.name}</th>
-              <th colSpan={4}>Designation: {data.desig}</th>
-              <th colSpan={4}>Emp Code: {data.empId}</th>
-              <th colSpan={4}>Head/Quarter/Area: {data.hq}</th>
+              <th colSpan={4}>Name: {data?.name}</th>
+              <th colSpan={4}>Designation: {data?.desig}</th>
+              <th colSpan={4}>Emp Code: {data?.empId}</th>
+              <th colSpan={4}>Head/Quarter/Area: {data?.hq}</th>
             </tr>
           )}
 
@@ -321,13 +342,54 @@ const ExpenceTable = ({ year, month }) => {
             })
           )}
           <tr>
-            <td colSpan={26} className="font-bold">
+            <td colSpan={3} className="font-bold">
               Grand Total
             </td>
-            <td className="text-center">{grandTotal}</td>
+            <td className="text-center font-bold"></td>
+            <td className="text-center font-bold"></td>
+            <td className="text-center font-bold"></td>
+            <td colSpan={5}></td>
+            <td className="text-center font-bold"></td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_dailyConv}
+            </td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_localConv}
+            </td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_travelingLong}
+            </td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_lodginBoardig}
+            </td>
+            <td className="text-center font-bold">{totalExpData?.sum_food}</td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_foodGst}
+            </td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_nightAllowance}
+            </td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_internet}
+            </td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_postageCourier}
+            </td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_printingStationary}
+            </td>
+            <td className="text-center font-bold">{totalExpData?.sum_other}</td>
+            <td className="text-center font-bold">
+              {totalExpData?.sum_otherGst}
+            </td>
+            <td className="text-center font-bold"></td>
+            <td colSpan={1}></td>
+            <td className="text-center font-bold">{grandTotal}</td>
           </tr>
         </tbody>
       </table>
+      </div>
+     
 
       {tableData?.length <= 0 ? (
         <p className="text-center bg-slate-500 w-full h-3/4 text-white text-3xl p-24">

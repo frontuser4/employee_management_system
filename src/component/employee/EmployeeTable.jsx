@@ -7,6 +7,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export const EmployeeTable = () => {
+
   const navigate = useNavigate();
   const { state } = useLocation();
   const [empData, setEmpData] = useState([]);
@@ -41,9 +42,9 @@ export const EmployeeTable = () => {
                   ...state,
                   emp: "emp",
                   empId: cell.row.original.empId__empId,
-                  empName : cell.row.original.empId__name,
-                  empDesig : cell.row.original.empId__desig,
-                  empHq : cell.row.original.empId__hq,
+                  empName: cell.row.original.empId__name,
+                  empDesig: cell.row.original.empId__desig,
+                  empHq: cell.row.original.empId__hq,
                   month,
                   year,
                 },
@@ -90,6 +91,16 @@ export const EmployeeTable = () => {
             <div>
               <YearDropDown year={year} setYear={setYear} />
             </div>
+            {["ASM", "Sr. ASM"].includes(data.desig) ? (
+              <button
+                onClick={() => navigate("/expence", {state: {designation: data.desig}})}
+                className="bg-cyan-500 p-2 rounded text-white"
+              >
+                Add Expence
+              </button>
+            ) : (
+              <></>
+            )}
           </div>
         </>
       )}

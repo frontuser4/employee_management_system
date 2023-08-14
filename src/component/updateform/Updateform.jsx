@@ -29,7 +29,6 @@ import { update, imageDelete } from "../../utils/api";
 import CancelIcon from "@mui/icons-material/Cancel";
 
 export default function UpdateForm({ editData, setCloseUpdateform }) {
-  
   const BASE_URL = "http://64.227.141.209:8080";
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -76,7 +75,6 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
     `${BASE_URL}${editData.stationaryBillFile}`
   );
 
-
   const expenceId = `${data.empId}${dayjs(date.$d).format("YYYY")}${dayjs(
     date.$d
   ).format("MM")}${dayjs(date.$d).format("DD")}`;
@@ -100,7 +98,6 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   }
 
   const handleFormSubmit = () => {
-
     const updatedata = {
       ...formData,
       empId: data.empId,
@@ -119,6 +116,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
       stationaryBillFile,
       pjpChnage,
       posterActivity,
+      user: data.desig,
     };
 
     UpdateData(updatedata);
@@ -129,7 +127,6 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
     setStockistData("");
     setDistance("");
     setCloseUpdateform((prev) => !prev);
-    
   };
 
   const handleDistanceChange = (e) => {
@@ -138,7 +135,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
 
   return (
     <>
-      <Box sx={{ flexFlow: 1, padding: 1 }} m={{ sm: 4, md: 10 }}>
+      <Box sx={{ flexFlow: 1, padding: 1 }} m={{ sm: 4, md: 10 }} mt={8}>
         <div className="grid md:grid-cols-2 place-items-center gap-3 mb-4">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
@@ -153,7 +150,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
 
           <AttendanceDropdown
             title="Attendance"
-            option={["present", "absent", "MRM"]}
+            option={["present", "MRM", "Joining Work", "Weekly Off", "leave"]}
             value={attendance}
             onChange={(e) => setAttendance(e)}
           />
@@ -169,7 +166,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             label="TC"
             id="tc"
             size="small"
-            disabled={attendance === "absent" ? true : false}
+            disabled={attendance === "leave" ? true : false}
           />
           <TextField
             type="number"
@@ -180,7 +177,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             label="PC"
             id="pc"
             size="small"
-            disabled={attendance === "absent" ? true : false}
+            disabled={attendance === "leave" ? true : false}
           />
         </div>
 
@@ -193,7 +190,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             onChange={handleFormChange}
             label="SALE"
             size="small"
-            disabled={attendance === "absent" ? true : false}
+            disabled={attendance === "leave" ? true : false}
           />
           <TextField
             type="number"
@@ -203,7 +200,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             onChange={handleFormChange}
             label="WORKING HOURS"
             size="small"
-            disabled={attendance === "absent" ? true : false}
+            disabled={attendance === "leave" ? true : false}
           />
           <StockistDropdown
             title="Stockist"
@@ -213,7 +210,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
           />
         </div>
 
-        <div className="grid md:grid-cols-3 gap-3 mb-4">
+        <div className="grid md:grid-cols-2 gap-3 mb-4">
           <TextField
             type="text"
             fullWidth
@@ -222,7 +219,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             onChange={handleFormChange}
             label="TOWN AND MARKET"
             size="small"
-            disabled={attendance === "absent" ? true : false}
+            disabled={attendance === "leave" ? true : false}
           />
           <TextField
             type="number"
@@ -232,21 +229,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             onChange={handleFormChange}
             label="D.A."
             size="small"
-            disabled={attendance === "absent" ? true : false}
+            disabled={attendance === "leave" ? true : false}
           />
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  disabled={attendance === "absent" ? true : false}
-                  onChange={(e) => setPjpChange(e.target.checked)}
-                />
-              }
-              label="PJP Change?"
-            />
-          </FormGroup>
         </div>
 
+        {/* Travel */}
         <div className="grid mb-4">
           <Accordions
             heading="Travel"
@@ -262,7 +249,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       fullWidth
                       label="TRAVEL FROM"
                       size="small"
-                      disabled={attendance === "absent" ? true : false}
+                      disabled={attendance === "leave" ? true : false}
                     />
 
                     <TextField
@@ -273,7 +260,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       fullWidth
                       label="TRAVEL TO"
                       size="small"
-                      disabled={attendance === "absent" ? true : false}
+                      disabled={attendance === "leave" ? true : false}
                     />
 
                     <ModeDropdown
@@ -302,7 +289,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       fullWidth
                       label="TRAVEL LONG(GST)"
                       size="small"
-                      disabled={attendance === "absent" ? true : false}
+                      disabled={attendance === "leave" ? true : false}
                     />
 
                     <TextField
@@ -312,12 +299,12 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       onChange={handleFormChange}
                       label="NIGHT TRAVEL ALLOWANCE"
                       size="small"
-                      disabled={attendance === "absent" ? true : false}
+                      disabled={attendance === "leave" ? true : false}
                     />
                   </div>
 
                   <Box className="flex flex-col items-center md:flex-row gap-2">
-                    <Box className="md:w-3/5 flex-1">
+                    <Box className="w-full md:w-3/5 flex-1">
                       <TextField
                         type="number"
                         name="distance"
@@ -326,29 +313,43 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="ONE SIDE KM"
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
                     </Box>
                     {distance > 100 ? (
                       <>
-                        <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                          <img
-                            src={distancePreview}
-                            alt="distance km"
-                            className="w-full h-full"
-                          />
-                        </div>
-                        <IconButton
-                          color="primary"
-                          size="medium"
-                          onClick={ async () =>{
-                            setDistancePreview(null)
-                            const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'distanceFile' );
-                            console.log("delete Distance File: ", res)
-                          } }
-                        >
-                          <CancelIcon />
-                        </IconButton>
+                        {distancePreview || editData.distanceFile ? (
+                          <div className=" md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                            <img
+                              src={distancePreview}
+                              alt="distance km"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          <></>
+                        )}  
+
+                        {distancePreview || editData.distanceFile  ? (
+                          <IconButton
+                            color="primary"
+                            size="medium"
+                            onClick={async () => {
+                              setDistancePreview(null);
+                              const res = await imageDelete(
+                                "/deleteimage",
+                                data.empId,
+                                formData.dateExp,
+                                "distanceFile"
+                              );
+                              console.log("delete Distance File: ", res);
+                            }}
+                          >
+                            <CancelIcon />
+                          </IconButton>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : (
                       ""
@@ -374,12 +375,15 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         />
                         <label htmlFor="upload-distance">
                           <Button
+                            className="w-full"
                             variant="contained"
                             color="primary"
                             component="span"
                             startIcon={<CloudUploadIcon />}
                           >
-                            {distancePreview === null ? 'upload Files' : editData.distanceFile}
+                            {distancePreview
+                              ? distanceFile?.name
+                              : editData.distanceFile}
                           </Button>
                         </label>
                       </div>
@@ -389,7 +393,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                   </Box>
 
                   <Box className="flex flex-col md:flex-row gap-2 items-center">
-                    <Box className="md:w-3/5 flex-1">
+                    <Box className="w-full md:w-3/5 flex-1">
                       <TextField
                         type="number"
                         name="lodginBoardig"
@@ -398,29 +402,40 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="LODGING BILL"
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
                     </Box>
 
-                    <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                      <img
-                        src={lodgingPreview}
-                        alt="lodging preview"
-                        className="w-full h-full"
-                      />
-                    </div>
+                    {lodgingPreview ? (
+                      <>
+                        <div className=" md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <img
+                            src={lodgingPreview}
+                            alt="lodging preview"
+                            className="w-full h-full"
+                          />
+                        </div>
 
-                    <IconButton
-                      color="primary"
-                      size="medium"
-                      onClick={ async() => {
-                        setLodgingPreview(null)
-                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'lodgingBillFile' );
-                        console.log("delete loadging File: ", res)
-                      }  }
-                    >
-                      <CancelIcon />
-                    </IconButton>
+                        <IconButton
+                          color="primary"
+                          size="medium"
+                          onClick={async () => {
+                            setLodgingPreview(null);
+                            const res = await imageDelete(
+                              "/deleteimage",
+                              data.empId,
+                              formData.dateExp,
+                              "lodgingBillFile"
+                            );
+                            console.log("delete loadging File: ", res);
+                          }}
+                        >
+                          <CancelIcon />
+                        </IconButton>
+                      </>
+                    ) : (
+                      <></>
+                    )}
 
                     <div className="flex-1">
                       <input
@@ -445,7 +460,9 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {lodgingPreview === null ? 'upload file' : editData.lodgingBillFile}
+                          {lodgingPreview
+                            ? lodgingBillFile?.name
+                            : editData.lodgingBillFile}
                         </Button>
                       </label>
                     </div>
@@ -456,6 +473,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
           />
         </div>
 
+        {/* Food */}
         <div className="grid mb-4">
           <Accordions
             heading="Food"
@@ -463,7 +481,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
               <>
                 <div className="grid md:grid-cols-1 gap-3 ">
                   <Box className="flex flex-col md:flex-row gap-2 items-center">
-                    <Box className="md:w-3/5 flex-1">
+                    <Box className="w-full md:w-3/5 flex-1">
                       <TextField
                         type="number"
                         name="food"
@@ -472,11 +490,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         onChange={handleFormChange}
                         label="FOOD"
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
                     </Box>
 
-                    <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                    <div className=" md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                       <img
                         src={foodPreview}
                         alt="foodPreview"
@@ -487,11 +505,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     <IconButton
                       color="primary"
                       size="medium"
-                      onClick={async() =>{
-                        setFoodPreview(null)
-                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'foodFile' );
-                        console.log("delete Food File: ", res)
-                      } }
+                      onClick={async () => {
+                        setFoodPreview(null);
+                        const res = await imageDelete(
+                          "/deleteimage",
+                          data.empId,
+                          formData.dateExp,
+                          "foodFile"
+                        );
+                        console.log("delete Food File: ", res);
+                      }}
                     >
                       <CancelIcon />
                     </IconButton>
@@ -519,14 +542,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          { foodPreview === null ? 'upload files' : editData.foodFile}
+                          {foodPreview === null
+                            ? "upload files"
+                            : editData.foodFile}
                         </Button>
                       </label>
                     </div>
                   </Box>
 
                   <Box className="flex flex-col md:flex-row gap-2 items-center">
-                    <Box className="md:w-3/5 flex-1">
+                    <Box className="w-full md:w-3/5 flex-1">
                       <TextField
                         type="number"
                         name="foodGST"
@@ -535,29 +560,40 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="FOOD GST"
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
                     </Box>
 
-                    <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                      <img
-                        src={foodGstPreview}
-                        alt="foodPreview"
-                        className="w-full h-full"
-                      />
-                    </div>
+                    {foodGstPreview ? (
+                      <>
+                        <div className=" md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                          <img
+                            src={foodGstPreview}
+                            alt="foodPreview"
+                            className="w-full h-full"
+                          />
+                        </div>
 
-                    <IconButton
-                      color="primary"
-                      size="medium"
-                      onClick={ async() => {
-                        setFoodGstPreview(null)
-                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'foodGstFile' );
-                        console.log("delete FoodGst File: ", res)
-                      }}
-                    >
-                      <CancelIcon />
-                    </IconButton>
+                        <IconButton
+                          color="primary"
+                          size="medium"
+                          onClick={async () => {
+                            setFoodGstPreview(null);
+                            const res = await imageDelete(
+                              "/deleteimage",
+                              data.empId,
+                              formData.dateExp,
+                              "foodGstFile"
+                            );
+                            console.log("delete FoodGst File: ", res);
+                          }}
+                        >
+                          <CancelIcon />
+                        </IconButton>
+                      </>
+                    ) : (
+                      <></>
+                    )}
 
                     <div className="flex-1">
                       <input
@@ -582,7 +618,9 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {foodGstPreview === null ? 'upload files' :  editData.foodGstFile}
+                          {foodGstPreview
+                            ? foodGstFile?.name
+                            : editData.foodGstFile}
                         </Button>
                       </label>
                     </div>
@@ -593,6 +631,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
           />
         </div>
 
+        {/* Essentials */}
         <div className="grid mb-4">
           <Accordions
             heading="Essentials"
@@ -600,7 +639,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
               <>
                 <div className="grid md:grid-cols-1 gap-3 ">
                   <Box className="flex flex-col md:flex-row gap-2 items-center">
-                    <Box className="md:w-3/5 flex-1">
+                    <Box className="w-full md:w-3/5 flex-1">
                       <TextField
                         type="number"
                         name="internet"
@@ -609,11 +648,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="MOBILE BILL"
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
                     </Box>
 
-                    <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                    <div className=" md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                       <img
                         src={mobileBillPreview}
                         alt="mobileBillPreview"
@@ -624,11 +663,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     <IconButton
                       color="primary"
                       size="medium"
-                      onClick={ async() => {
-                        setMobileBillPreview(null)
-                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'mobileBillFile' );
-                        console.log("delete mobileBillFile File: ", res)
-                      } }
+                      onClick={async () => {
+                        setMobileBillPreview(null);
+                        const res = await imageDelete(
+                          "/deleteimage",
+                          data.empId,
+                          formData.dateExp,
+                          "mobileBillFile"
+                        );
+                        console.log("delete mobileBillFile File: ", res);
+                      }}
                     >
                       <CancelIcon />
                     </IconButton>
@@ -656,14 +700,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          { mobileBillPreview === null ? 'upload files' : editData.mobileBillFile}
+                          {mobileBillPreview === null
+                            ? mobileBillFile?.file
+                            : editData.mobileBillFile}
                         </Button>
                       </label>
                     </div>
                   </Box>
 
                   <Box className="flex flex-col md:flex-row gap-2 items-center">
-                    <Box className="md:w-3/5 flex-1">
+                    <Box className="w-full md:w-3/5 flex-1">
                       <TextField
                         type="number"
                         name="postageCourier"
@@ -672,11 +718,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="COURIER"
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
                     </Box>
 
-                    <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                    <div className="md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                       <img
                         src={courierBillPreview}
                         alt="courierBillPreview"
@@ -687,11 +733,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     <IconButton
                       color="primary"
                       size="medium"
-                      onClick={ async() => {
-                        setCourierBillPreview(null)
-                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'courierBillFile' );
-                        console.log("delete courierBillFile File: ", res)
-                      } }
+                      onClick={async () => {
+                        setCourierBillPreview(null);
+                        const res = await imageDelete(
+                          "/deleteimage",
+                          data.empId,
+                          formData.dateExp,
+                          "courierBillFile"
+                        );
+                        console.log("delete courierBillFile File: ", res);
+                      }}
                     >
                       <CancelIcon />
                     </IconButton>
@@ -719,14 +770,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          { courierBillPreview === null ? 'upload files' : editData.courierBillFile}
+                          {courierBillPreview === null
+                            ? courierBillFile.file
+                            : editData.courierBillFile}
                         </Button>
                       </label>
                     </div>
                   </Box>
 
                   <Box className="flex flex-col md:flex-row gap-2 items-center">
-                    <Box className="md:w-3/5 flex-1">
+                    <Box className="w-full md:w-3/5 flex-1">
                       <TextField
                         type="number"
                         name="printingStationary"
@@ -735,11 +788,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="STATIONARY"
                         size="small"
-                        disabled={attendance === "absent" ? true : false}
+                        disabled={attendance === "leave" ? true : false}
                       />
                     </Box>
 
-                    <div className="w-8 h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                    <div className="md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                       <img
                         src={stationaryBillPreview}
                         alt="stationaryBillPreview"
@@ -750,11 +803,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     <IconButton
                       color="primary"
                       size="medium"
-                      onClick={ async() => {
-                        setStationaryBillPreview(null)
-                        const res = await imageDelete('/deleteimage', data.empId, formData.dateExp, 'stationaryBillFile' );
-                        console.log("delete stationaryBillFile File: ", res)
-                      } }
+                      onClick={async () => {
+                        setStationaryBillPreview(null);
+                        const res = await imageDelete(
+                          "/deleteimage",
+                          data.empId,
+                          formData.dateExp,
+                          "stationaryBillFile"
+                        );
+                        console.log("delete stationaryBillFile File: ", res);
+                      }}
                     >
                       <CancelIcon />
                     </IconButton>
@@ -782,7 +840,9 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          { stationaryBillPreview === null ? 'upload file' : editData.stationaryBillFile}
+                          {stationaryBillPreview === null
+                            ? stationaryBillFile.file
+                            : editData.stationaryBillFile}
                         </Button>
                       </label>
                     </div>
@@ -793,6 +853,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
           />
         </div>
 
+        {/* others */}
         <div className="grid mb-4">
           <Accordions
             heading="others"
@@ -807,7 +868,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     value={formData.other}
                     onChange={handleFormChange}
                     size="small"
-                    disabled={attendance === "absent" ? true : false}
+                    disabled={attendance === "leave" ? true : false}
                   />
 
                   <TextField
@@ -818,7 +879,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     fullWidth
                     label="OTHERS GST"
                     size="small"
-                    disabled={attendance === "absent" ? true : false}
+                    disabled={attendance === "leave" ? true : false}
                   />
                 </div>
               </>
@@ -826,9 +887,10 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
           />
         </div>
 
+        {/* Poster and Activity */}
         <div className="grid mb-4">
           <Accordions
-            heading="Promotion and Activity"
+            heading="Poster and Activity"
             components={
               <>
                 <div className="grid md:grid-cols-1 gap-3 ">
@@ -841,11 +903,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       onChange={(e) => setPosterActivity(e.target.value)}
                     >
                       <FormControlLabel
+                        disabled={attendance === "leave" ? true : false}
                         value="yes"
                         label="Yes"
                         control={<Radio />}
                       />
                       <FormControlLabel
+                       disabled={attendance === "leave" ? true : false}  
                         value="no"
                         label="No"
                         control={<Radio />}
@@ -857,6 +921,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             }
           />
         </div>
+
         <div className="flex gap-4 items-center">
           <Button
             variant="contained"
