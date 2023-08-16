@@ -37,8 +37,7 @@ async function post(url, data) {
   }
 }
 
-async function update(url, id, month, year, data) {
-  //  let empId = id;
+async function update(url, id, month, year, desig, data) {
   try {
     const result = await axios({
       url: `${BASE_URL}${url}`,
@@ -47,7 +46,7 @@ async function update(url, id, month, year, data) {
       headers:{
         "content-type": "multipart/form-data",
       },
-      params: { empId: id, month: month, year: year }
+      params: { empId: id, month: month, year: year, user : desig}
     })
     return result.data;
   } catch (error) {

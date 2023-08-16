@@ -208,7 +208,7 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
                 option={[
                   "present",
                   "MRM",
-                  "Joining Work",
+                  "Joined Work",
                   "Weekly Off",
                   "leave",
                 ]}

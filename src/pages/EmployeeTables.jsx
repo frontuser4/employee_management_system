@@ -23,7 +23,7 @@ function EmployeeTables() {
             ESM
           </Typography>
           <Box>
-            <Typography>Hello, {state.data.name}</Typography>
+            {/* <Typography>Hello, {state.data.name}</Typography> */}
           </Box>
         </Toolbar>
       </AppBar>

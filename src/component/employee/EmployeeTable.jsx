@@ -91,7 +91,7 @@ export const EmployeeTable = () => {
             <div>
               <YearDropDown year={year} setYear={setYear} />
             </div>
-            {["ASM", "Sr. ASM"].includes(data.desig) ? (
+            {["ASM", "Sr. ASM", "RMS", "accounts", "AASM", "SM"].includes(data.desig) ? (
               <button
                 onClick={() => navigate("/expence", {state: {designation: data.desig}})}
                 className="bg-cyan-500 p-2 rounded text-white"
