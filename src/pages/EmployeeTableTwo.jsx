@@ -119,6 +119,7 @@ export default function Dashboard() {
                   Designation : {data?.desig}
                 </Typography>
                 <Typography textAlign="center">Hq : {data?.hq}</Typography>
+                <Typography textAlign="center">Group : {data.empGroup}</Typography>
               </MenuItem>
             </Menu>
           </Box>

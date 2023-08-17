@@ -30,7 +30,7 @@ export const EmployeeTable = () => {
 
   const columns = [
     {
-      accessorKey: "empId__empId",
+      accessorKey: "empId",
       header: "EmpId",
       Cell: ({ cell }) => {
         return (
@@ -56,16 +56,20 @@ export const EmployeeTable = () => {
       },
     },
     {
-      accessorKey: "empId__name",
+      accessorKey: "name",
       header: "Emp Name",
     },
     {
-      accessorKey: "empId__desig",
+      accessorKey: "desig",
       header: "Emp Designation",
     },
     {
-      accessorKey: "empId__hq",
+      accessorKey: "hq",
       header: "Emp HQ",
+    },
+    {
+      accessorKey: "empGroup",
+      header: "Group",
     },
   ];
 
