@@ -18,6 +18,7 @@ const ExpenceTable = ({ year, month }) => {
   const dispatch = useDispatch();
   const tableRef = useRef(null);
   const { state } = useLocation();
+  const { data } = useSelector((state) => state.login.data);
   const [tableData, setTableData] = useState(null);
   const [previewImage, setPreviewImage] = useState(false);
   const [previewImageFile, setPreviewImageFile] = useState(false);
@@ -30,7 +31,6 @@ const ExpenceTable = ({ year, month }) => {
   const [displayFlag, setDisplayFlag] = useState(null);
   const [totalExpData, setTotalExpData] = useState(null);
   const [approvalRefresh, setApprovalRefresh] = useState(false);
-  const { data } = useSelector((state) => state.login.data);
 
   async function fetchData() {
     setLoading(true);
@@ -72,7 +72,8 @@ const ExpenceTable = ({ year, month }) => {
   }, [month, year, closeForm, approvalRefresh]);
 
   const handleEdit = (mydata) => {
-    navigate("/updatetable", { state: { ...data, ...mydata } });
+    const {emp, ...rest} = state;
+    navigate("/updatetable", { state: { ...rest, ...mydata } });
   };
 
   const handlePreviewImage = (imgpath) => {
@@ -81,8 +82,9 @@ const ExpenceTable = ({ year, month }) => {
   };
 
   const approveHandler = async () => {
+    let id = state?.emp === "emp" ? state.empId : data.empId;
     let approvedata = {
-      empId: state.empId,
+      empId: id,
       month,
       year,
       submitby: data.desig,
@@ -103,7 +105,9 @@ const ExpenceTable = ({ year, month }) => {
     <>
       <div className="flex items-center gap-3">
         <div>
-          {["TSO", "SSR", "ST", "ASE", "AASM"].includes(data.desig) ? (
+          {["Account"].includes(data.desig) ? (
+            <></>
+          ) : (
             <button
               className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600 cursor-pointer"
               onClick={() => setOpenForm(true)}
@@ -112,21 +116,8 @@ const ExpenceTable = ({ year, month }) => {
               <AddIcon />
               Add
             </button>
-          ) : (
-            <></>
           )}
 
-          {["ASM", "Sr. ASM"].includes(state?.designation) ? (
-            <button
-              className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
-              onClick={() => setOpenForm(true)}
-            >
-              <AddIcon />
-              Add
-            </button>
-          ) : (
-            <></>
-          )}
         </div>
         <div>
           <DownloadTableExcel
@@ -408,7 +399,7 @@ const ExpenceTable = ({ year, month }) => {
               </tr>
             </tbody>
           ) : (
-            <div>Data submiited</div>
+            <></>
           )}
         </table>
       </div>

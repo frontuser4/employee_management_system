@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../store/loginSlice";
 
-const APP_LOGIN = "http://142.93.208.119:8000/account/weblogin";
+const APP_LOGIN = "http://142.93.208.119:80/account/weblogin";
 
 const Login = () => {
   const userRef = useRef();

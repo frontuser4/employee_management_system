@@ -87,9 +87,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   };
 
   async function UpdateData(updatedata) {
+    const id = state?.emp === 'emp' ? state?.empId : data.empId
+    console.log("update: ", state)
     const res = await update(
       "/getput",
-      data.empId,
+      id,
       dayjs(date.$d).format("MM"),
       dayjs(date.$d).format("YYYY"),
       data.desig,

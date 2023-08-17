@@ -2,7 +2,7 @@ import axios from "axios";
 axios.defaults.headers.common["Authorization"] = `jhsajdkhsakdjhsdjakjdhsajdsd`;
 const SALES_TG_URL = "http://142.93.208.119:80";
 const BASE_URL = "http://64.227.141.209:8080";
-const APP_LOGIN = 'http://142.93.208.119:8000';
+const APP_LOGIN = 'http://142.93.208.119:80';
 
 async function loginPage(url, data){
     try {

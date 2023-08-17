@@ -3,12 +3,11 @@ import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useLocation } from 'react-router-dom';
 import EmployeeTable from '../component/employee/EmployeeTable'; 
+import { useSelector } from "react-redux";
 
 function EmployeeTables() {
-
-  const { state } = useLocation();
+  const { data } = useSelector((state) => state.login.data);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -23,7 +22,7 @@ function EmployeeTables() {
             ESM
           </Typography>
           <Box>
-            {/* <Typography>Hello, {state.data.name}</Typography> */}
+            <Typography>Hello, {data.name}</Typography>
           </Box>
         </Toolbar>
       </AppBar>

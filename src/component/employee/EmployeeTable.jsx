@@ -9,7 +9,6 @@ import { useSelector } from "react-redux";
 export const EmployeeTable = () => {
 
   const navigate = useNavigate();
-  const { state } = useLocation();
   const [empData, setEmpData] = useState([]);
   const [date, setDate] = useState(dayjs());
   const [year, setYear] = useState(dayjs(date.$d).format("YYYY"));
@@ -39,7 +38,6 @@ export const EmployeeTable = () => {
             onClick={() =>
               navigate(`/expence`, {
                 state: {
-                  ...state,
                   emp: "emp",
                   empId: cell.row.original.empId__empId,
                   empName: cell.row.original.empId__name,
@@ -91,9 +89,9 @@ export const EmployeeTable = () => {
             <div>
               <YearDropDown year={year} setYear={setYear} />
             </div>
-            {["ASM", "Sr. ASM", "RMS", "accounts", "AASM", "SM"].includes(data.desig) ? (
+            {["ASM", "Sr.ASM", "RMS", "AASM", "SM", "HOD"].includes(data.desig) ? (
               <button
-                onClick={() => navigate("/expence", {state: {designation: data.desig}})}
+                onClick={() => navigate("/expence")}
                 className="bg-cyan-500 p-2 rounded text-white"
               >
                 Add Expence
