@@ -120,7 +120,7 @@ export default function Dashboard() {
 
       <Box component="main" sx={{ flexGrow: 1, p: 3, overflowX: "auto" }}>
         <DrawerHeader />
-        {["ASM", "Sr. ASM", "RMS", "accounts"].includes(data.desig) ? (
+        {["ASM", "Sr.ASM", "RMS", "Account", "AASM", "SM", "HOD"].includes(data.desig) ? (
           <EmployeeTables />
         ) : (
           <TabPanelTables />

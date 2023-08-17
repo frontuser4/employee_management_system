@@ -87,25 +87,28 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   };
 
   async function UpdateData(updatedata) {
+    const id = state?.emp === 'emp' ? state?.empId : data.empId
+    console.log("update: ", state)
     const res = await update(
       "/getput",
-      data.empId,
+      id,
       dayjs(date.$d).format("MM"),
       dayjs(date.$d).format("YYYY"),
+      data.desig,
       updatedata
     );
-    console.log(res);
+    console.log("update: ", res);
   }
 
   const handleFormSubmit = () => {
     const updatedata = {
       ...formData,
-      empId: data.empId,
+      empId: state.empId,
       attendance,
       modeTravel,
       payer: stockistData,
       dateExp: dayjs(date).format("YYYY-MM-DD"),
-      expenseId: expenceId,
+      expenseId: state.expenseId,
       distance,
       distanceFile,
       lodgingBillFile,
@@ -115,13 +118,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
       courierBillFile,
       stationaryBillFile,
       pjpChnage,
-      posterActivity,
-      user: data.desig,
+      posterActivity
     };
 
     UpdateData(updatedata);
-    navigate("/dashboard");
-    setFormData(defaultState);
+    navigate("/dashboard", {state: data});
     setAttendance("present");
     setModeTravel("");
     setStockistData("");
@@ -150,7 +151,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
 
           <AttendanceDropdown
             title="Attendance"
-            option={["present", "MRM", "Joining Work", "Weekly Off", "leave"]}
+            option={["present", "MRM", "Joined Work", "Weekly Off", "leave"]}
             value={attendance}
             onChange={(e) => setAttendance(e)}
           />

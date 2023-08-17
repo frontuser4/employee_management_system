@@ -18,6 +18,7 @@ const ExpenceTable = ({ year, month }) => {
   const dispatch = useDispatch();
   const tableRef = useRef(null);
   const { state } = useLocation();
+  const { data } = useSelector((state) => state.login.data);
   const [tableData, setTableData] = useState(null);
   const [previewImage, setPreviewImage] = useState(false);
   const [previewImageFile, setPreviewImageFile] = useState(false);
@@ -26,9 +27,10 @@ const ExpenceTable = ({ year, month }) => {
   const [closeForm, setCloseForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [grandTotal, setGrandTotal] = useState(null);
-  const [btnFlag, setBtnFlag] = useState(null);
+  const [editFlag, setEditFlag] = useState(null);
+  const [displayFlag, setDisplayFlag] = useState(null);
   const [totalExpData, setTotalExpData] = useState(null);
-  const { data } = useSelector((state) => state.login.data);
+  const [approvalRefresh, setApprovalRefresh] = useState(false);
 
   async function fetchData() {
     setLoading(true);
@@ -39,7 +41,7 @@ const ExpenceTable = ({ year, month }) => {
       expData.empId = state.empId;
       expData.month = state.month;
       expData.year = state.year;
-      expData.user = state.empDesig;
+      expData.user = data?.desig;
     } else {
       expData.empId = data.empId;
       expData.month = month;
@@ -59,17 +61,19 @@ const ExpenceTable = ({ year, month }) => {
     dispatch(expenceData(res.data));
     setChangeLogsData(res.data_log);
     setGrandTotal(res.grand_total);
-    setBtnFlag(res.buttonFlag);
+    setEditFlag(res.editFlag);
+    setDisplayFlag(res.displayFlag);
     setTotalExpData(res);
     setLoading(false);
   }
 
   useEffect(() => {
     fetchData();
-  }, [month, year, closeForm]);
+  }, [month, year, closeForm, approvalRefresh]);
 
   const handleEdit = (mydata) => {
-    navigate("/updatetable", { state: { ...data, ...mydata } });
+    const {emp, ...rest} = state;
+    navigate("/updatetable", { state: { ...rest, ...mydata } });
   };
 
   const handlePreviewImage = (imgpath) => {
@@ -78,17 +82,22 @@ const ExpenceTable = ({ year, month }) => {
   };
 
   const approveHandler = async () => {
-    console.log("btnFlag: ", btnFlag);
+    let id = state?.emp === "emp" ? state.empId : data.empId;
     let approvedata = {
-      empId: data.empId,
+      empId: id,
       month,
       year,
       submitby: data.desig,
     };
-    const res = await post("/approval", approvedata);
-    if (res.data.status === "200") {
-      toast.success(res.data.data);
-      setCloseForm((prev) => !prev);
+
+    try {
+      const res = await post("/approval", approvedata);
+      setApprovalRefresh((prev) => !prev);
+      if (res.data.status === "200") {
+        toast.success(res.data.data);
+      }
+    } catch (error) {
+      console.log("approval error: ", error);
     }
   };
 
@@ -96,30 +105,19 @@ const ExpenceTable = ({ year, month }) => {
     <>
       <div className="flex items-center gap-3">
         <div>
-          {["TSO", "SSR", "ST", "ASE", "AASM"].includes(data.desig) ? (
+          {["Account"].includes(data.desig) ? (
+            <></>
+          ) : (
             <button
-              className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
+              className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600 cursor-pointer"
               onClick={() => setOpenForm(true)}
+              disabled={editFlag === false ? true : false}
             >
               <AddIcon />
               Add
             </button>
-          ) : (
-            <></>
           )}
 
-          { ['ASM', 'Sr. ASM'].includes(state?.designation) ? (
-            <button
-              className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
-              onClick={() => setOpenForm(true)}
-            >
-              <AddIcon />
-              Add
-            </button>
-          ) : (
-            <></>
-          )}
-          
         </div>
         <div>
           <DownloadTableExcel
@@ -135,261 +133,276 @@ const ExpenceTable = ({ year, month }) => {
       </div>
 
       <div className="overflow-x-auto">
-      <table ref={tableRef}>
-        <thead>
-          <tr>
-            <th colSpan={16}>Sapat International Pvt. Ltd.</th>
-          </tr>
-          {state?.emp === "emp" ? (
+        <table ref={tableRef}>
+          <thead>
             <tr>
-              <th colSpan={4}>Name: {state.empName}</th>
-              <th colSpan={4}>Designation: {state.empDesig}</th>
-              <th colSpan={4}>Emp Code: {state.empId}</th>
-              <th colSpan={4}>Head/Quarter/Area: {state.empHq}</th>
+              <th colSpan={16}>Sapat International Pvt. Ltd.</th>
             </tr>
-          ) : (
-            <tr>
-              <th colSpan={4}>Name: {data?.name}</th>
-              <th colSpan={4}>Designation: {data?.desig}</th>
-              <th colSpan={4}>Emp Code: {data?.empId}</th>
-              <th colSpan={4}>Head/Quarter/Area: {data?.hq}</th>
-            </tr>
-          )}
+            {state?.emp === "emp" ? (
+              <tr>
+                <th colSpan={4}>Name: {state.empName}</th>
+                <th colSpan={4}>Designation: {state.empDesig}</th>
+                <th colSpan={4}>Emp Code: {state.empId}</th>
+                <th colSpan={4}>Head/Quarter/Area: {state.empHq}</th>
+              </tr>
+            ) : (
+              <tr>
+                <th colSpan={4}>Name: {data?.name}</th>
+                <th colSpan={4}>Designation: {data?.desig}</th>
+                <th colSpan={4}>Emp Code: {data?.empId}</th>
+                <th colSpan={4}>Head/Quarter/Area: {data?.hq}</th>
+              </tr>
+            )}
 
-          <tr>
-            <th className="text-center">Action</th>
-            <th className="text-center">Date</th>
-            <th className="text-center">Attendence</th>
-            <th className="text-center">TC</th>
-            <th className="text-center">PC</th>
-            <th className="text-center">SALE</th>
-            <th className="text-center">STOCKIST</th>
-            <th className="text-center">TOWN MARKET WORKED</th>
-            <th className="text-center">TRAVEL FROM</th>
-            <th className="text-center">TRAVEL TO</th>
-            <th className="text-center">MODE TRAVEL</th>
-            <th className="text-center">KM</th>
-            <th className="text-center">DALY CONV</th>
-            <th className="text-center">LOCAL CONVEY</th>
-            <th className="text-center">TRAVELING LONG</th>
-            <th className="text-center">LODGIN BOARDING</th>
-            <th className="text-center">FOOD</th>
-            <th className="text-center">FOOD GST</th>
-            <th className="text-center">NIGHT ALLOWANCE</th>
-            <th className="text-center">INTERNET</th>
-            <th className="text-center">POSTAGE COURIER</th>
-            <th className="text-center">PRINTING STATIONARY</th>
-            <th className="text-center">OTHER</th>
-            <th className="text-center">OTHER GST</th>
-            <th className="text-center">WORKING HOURS</th>
-            <th className="text-center">
-              APPROVAL
-              {btnFlag === false ? (
-                <button
-                  className="bg-rose-500 px-3 rounded text-white"
-                  disabled={true}
-                >
-                  Already submit
-                </button>
-              ) : (
-                <>
+            <tr>
+              <th className="text-center">Action</th>
+              <th className="text-center">Date</th>
+              <th className="text-center">Attendence</th>
+              <th className="text-center">TC</th>
+              <th className="text-center">PC</th>
+              <th className="text-center">SALE</th>
+              <th className="text-center">STOCKIST</th>
+              <th className="text-center">TOWN MARKET WORKED</th>
+              <th className="text-center">TRAVEL FROM</th>
+              <th className="text-center">TRAVEL TO</th>
+              <th className="text-center">MODE TRAVEL</th>
+              <th className="text-center">KM</th>
+              <th className="text-center">DALY CONV</th>
+              <th className="text-center">LOCAL CONVEY</th>
+              <th className="text-center">TRAVELING LONG</th>
+              <th className="text-center">LODGIN BOARDING</th>
+              <th className="text-center">FOOD</th>
+              <th className="text-center">FOOD GST</th>
+              <th className="text-center">NIGHT ALLOWANCE</th>
+              <th className="text-center">INTERNET</th>
+              <th className="text-center">POSTAGE COURIER</th>
+              <th className="text-center">PRINTING STATIONARY</th>
+              <th className="text-center">OTHER</th>
+              <th className="text-center">OTHER GST</th>
+              <th className="text-center">WORKING HOURS</th>
+              <th className="text-center">
+                APPROVAL
+                {editFlag === false ? (
                   <button
-                    className="bg-cyan-500 px-3 rounded text-white"
-                    onClick={approveHandler}
+                    className="bg-rose-500 px-3 rounded text-white"
+                    disabled={true}
                   >
-                    submit
+                    Already submit
                   </button>
-                </>
-              )}
-            </th>
-            <th className="text-center">TOTAL</th>
-          </tr>
-        </thead>
-        <tbody>
-          {loading ? (
-            <div>
-              <Skeleton count={10} width={1200} />
-            </div>
-          ) : (
-            tableData?.map((data, index) => {
-              return (
-                <tr key={index}>
-                  <td className="text-center">
+                ) : (
+                  <>
                     <button
-                      onClick={() => handleEdit(data)}
-                      disabled={data.approval === "TSO" ? true : false}
+                      className="bg-cyan-500 px-3 rounded text-white"
+                      onClick={approveHandler}
                     >
-                      <EditIcon />
+                      submit
                     </button>
-                  </td>
-                  <td className="text-center" style={{ fontSize: "14px" }}>
-                    {data.dateExp}
-                  </td>
-                  <td className="text-center">{data.attendance}</td>
-                  <td className="text-center">{data.tc}</td>
-                  <td className="text-center">{data.pc}</td>
-                  <td className="text-center">{data.sale}</td>
-                  <td className="text-center">{data.payer}</td>
-                  <td className="text-center">{data.townMarketWork}</td>
-                  <td className="text-center">{data.travelSource}</td>
-                  <td className="text-center">{data.travelDestination}</td>
-                  <td className="text-center">{data.modeTravel}</td>
-                  <td className="text-center">
-                    {data.distance}
-                    {data.distanceFile !== null ? (
-                      <button
-                        className="bg-cyan-500 mt-2 p-1 rounded"
-                        onClick={() => handlePreviewImage(data.distanceFile)}
-                      >
-                        preview
-                      </button>
-                    ) : (
-                      <></>
-                    )}
-                  </td>
-                  <td className="text-center">{data.dailyConv}</td>
-                  <td className="text-center">{data.localConv}</td>
-                  <td className="text-center">{data.travelingLong}</td>
-                  <td className="text-center">
-                    {data.lodginBoardig}
+                  </>
+                )}
+              </th>
+              <th className="text-center">TOTAL</th>
+            </tr>
+          </thead>
+          {displayFlag ? (
+            <tbody>
+              {loading ? (
+                <div>
+                  <Skeleton count={10} width={1200} />
+                </div>
+              ) : (
+                tableData?.map((data, index) => {
+                  return (
+                    <tr key={index}>
+                      <td className="text-center">
+                        <button
+                          onClick={() => handleEdit(data)}
+                          disabled={editFlag ? false : true}
+                        >
+                          <EditIcon />
+                        </button>
+                      </td>
+                      <td className="text-center" style={{ fontSize: "14px" }}>
+                        {data.dateExp}
+                      </td>
+                      <td className="text-center">{data.attendance}</td>
+                      <td className="text-center">{data.tc}</td>
+                      <td className="text-center">{data.pc}</td>
+                      <td className="text-center">{data.sale}</td>
+                      <td className="text-center">{data.payer}</td>
+                      <td className="text-center">{data.townMarketWork}</td>
+                      <td className="text-center">{data.travelSource}</td>
+                      <td className="text-center">{data.travelDestination}</td>
+                      <td className="text-center">{data.modeTravel}</td>
+                      <td className="text-center">
+                        {data.distance}
+                        {data.distanceFile !== null ? (
+                          <button
+                            className="bg-cyan-500 mt-2 p-1 rounded"
+                            onClick={() =>
+                              handlePreviewImage(data.distanceFile)
+                            }
+                          >
+                            preview
+                          </button>
+                        ) : (
+                          <></>
+                        )}
+                      </td>
+                      <td className="text-center">{data.dailyConv}</td>
+                      <td className="text-center">{data.localConv}</td>
+                      <td className="text-center">{data.travelingLong}</td>
+                      <td className="text-center">
+                        {data.lodginBoardig}
 
-                    {data.lodgingBillFile !== null ? (
-                      <button
-                        className="bg-cyan-500 mt-2 p-1 rounded"
-                        onClick={() => handlePreviewImage(data.lodgingBillFile)}
-                      >
-                        preview
-                      </button>
-                    ) : (
-                      <></>
-                    )}
-                  </td>
-                  <td className="text-center">
-                    {data.food}
-                    {data.foodFile !== null ? (
-                      <button
-                        className="bg-cyan-500 mt-2 p-1 rounded"
-                        onClick={() => handlePreviewImage(data.foodFile)}
-                      >
-                        preview
-                      </button>
-                    ) : (
-                      <></>
-                    )}
-                  </td>
-                  <td className="text-center">
-                    {data.foodGST}
-                    {data.foodGstFile !== null ? (
-                      <button
-                        className="bg-cyan-500 mt-2 p-1 rounded"
-                        onClick={() => handlePreviewImage(data.foodGstFile)}
-                      >
-                        preview
-                      </button>
-                    ) : (
-                      <></>
-                    )}
-                  </td>
-                  <td className="text-center">{data.nightAllowance}</td>
-                  <td className="text-center">
-                    {data.internet}
-                    {data.mobileBillFile !== null ? (
-                      <button
-                        className="bg-cyan-500 mt-2 p-1 rounded"
-                        onClick={() => handlePreviewImage(data.mobileBillFile)}
-                      >
-                        preview
-                      </button>
-                    ) : (
-                      <></>
-                    )}
-                  </td>
-                  <td className="text-center">
-                    {data.postageCourier}
-                    {data.courierBillFile !== null ? (
-                      <button
-                        className="bg-cyan-500 mt-2 p-1 rounded"
-                        onClick={() => handlePreviewImage(data.courierBillFile)}
-                      >
-                        preview
-                      </button>
-                    ) : (
-                      <></>
-                    )}
-                  </td>
-                  <td className="text-center">
-                    {data.printingStationary}
-                    {data.stationaryBillFile !== null ? (
-                      <button
-                        className="bg-cyan-500 mt-2 p-1 rounded"
-                        onClick={() =>
-                          handlePreviewImage(data.stationaryBillFile)
-                        }
-                      >
-                        preview
-                      </button>
-                    ) : (
-                      <></>
-                    )}
-                  </td>
-                  <td className="text-center">{data.other}</td>
-                  <td className="text-center">{data.otherGst}</td>
-                  <td className="text-center">{data.workingHr}</td>
-                  <td>{data.approval}</td>
-                  <td className="text-center">{data.total}</td>
-                </tr>
-              );
-            })
+                        {data.lodgingBillFile !== null ? (
+                          <button
+                            className="bg-cyan-500 mt-2 p-1 rounded"
+                            onClick={() =>
+                              handlePreviewImage(data.lodgingBillFile)
+                            }
+                          >
+                            preview
+                          </button>
+                        ) : (
+                          <></>
+                        )}
+                      </td>
+                      <td className="text-center">
+                        {data.food}
+                        {data.foodFile !== null ? (
+                          <button
+                            className="bg-cyan-500 mt-2 p-1 rounded"
+                            onClick={() => handlePreviewImage(data.foodFile)}
+                          >
+                            preview
+                          </button>
+                        ) : (
+                          <></>
+                        )}
+                      </td>
+                      <td className="text-center">
+                        {data.foodGST}
+                        {data.foodGstFile !== null ? (
+                          <button
+                            className="bg-cyan-500 mt-2 p-1 rounded"
+                            onClick={() => handlePreviewImage(data.foodGstFile)}
+                          >
+                            preview
+                          </button>
+                        ) : (
+                          <></>
+                        )}
+                      </td>
+                      <td className="text-center">{data.nightAllowance}</td>
+                      <td className="text-center">
+                        {data.internet}
+                        {data.mobileBillFile !== null ? (
+                          <button
+                            className="bg-cyan-500 mt-2 p-1 rounded"
+                            onClick={() =>
+                              handlePreviewImage(data.mobileBillFile)
+                            }
+                          >
+                            preview
+                          </button>
+                        ) : (
+                          <></>
+                        )}
+                      </td>
+                      <td className="text-center">
+                        {data.postageCourier}
+                        {data.courierBillFile !== null ? (
+                          <button
+                            className="bg-cyan-500 mt-2 p-1 rounded"
+                            onClick={() =>
+                              handlePreviewImage(data.courierBillFile)
+                            }
+                          >
+                            preview
+                          </button>
+                        ) : (
+                          <></>
+                        )}
+                      </td>
+                      <td className="text-center">
+                        {data.printingStationary}
+                        {data.stationaryBillFile !== null ? (
+                          <button
+                            className="bg-cyan-500 mt-2 p-1 rounded"
+                            onClick={() =>
+                              handlePreviewImage(data.stationaryBillFile)
+                            }
+                          >
+                            preview
+                          </button>
+                        ) : (
+                          <></>
+                        )}
+                      </td>
+                      <td className="text-center">{data.other}</td>
+                      <td className="text-center">{data.otherGst}</td>
+                      <td className="text-center">{data.workingHr}</td>
+                      <td>{data.approval}</td>
+                      <td className="text-center">{data.total}</td>
+                    </tr>
+                  );
+                })
+              )}
+              <tr>
+                <td colSpan={3} className="font-bold">
+                  Grand Total
+                </td>
+                <td className="text-center font-bold"></td>
+                <td className="text-center font-bold"></td>
+                <td className="text-center font-bold"></td>
+                <td colSpan={5}></td>
+                <td className="text-center font-bold"></td>
+                <td className="text-center font-bold">
+                  {totalExpData?.sum_dailyConv}
+                </td>
+                <td className="text-center font-bold">
+                  {totalExpData?.sum_localConv}
+                </td>
+                <td className="text-center font-bold">
+                  {totalExpData?.sum_travelingLong}
+                </td>
+                <td className="text-center font-bold">
+                  {totalExpData?.sum_lodginBoardig}
+                </td>
+                <td className="text-center font-bold">
+                  {totalExpData?.sum_food}
+                </td>
+                <td className="text-center font-bold">
+                  {totalExpData?.sum_foodGst}
+                </td>
+                <td className="text-center font-bold">
+                  {totalExpData?.sum_nightAllowance}
+                </td>
+                <td className="text-center font-bold">
+                  {totalExpData?.sum_internet}
+                </td>
+                <td className="text-center font-bold">
+                  {totalExpData?.sum_postageCourier}
+                </td>
+                <td className="text-center font-bold">
+                  {totalExpData?.sum_printingStationary}
+                </td>
+                <td className="text-center font-bold">
+                  {totalExpData?.sum_other}
+                </td>
+                <td className="text-center font-bold">
+                  {totalExpData?.sum_otherGst}
+                </td>
+                <td className="text-center font-bold"></td>
+                <td colSpan={1}></td>
+                <td className="text-center font-bold">{grandTotal}</td>
+              </tr>
+            </tbody>
+          ) : (
+            <></>
           )}
-          <tr>
-            <td colSpan={3} className="font-bold">
-              Grand Total
-            </td>
-            <td className="text-center font-bold"></td>
-            <td className="text-center font-bold"></td>
-            <td className="text-center font-bold"></td>
-            <td colSpan={5}></td>
-            <td className="text-center font-bold"></td>
-            <td className="text-center font-bold">
-              {totalExpData?.sum_dailyConv}
-            </td>
-            <td className="text-center font-bold">
-              {totalExpData?.sum_localConv}
-            </td>
-            <td className="text-center font-bold">
-              {totalExpData?.sum_travelingLong}
-            </td>
-            <td className="text-center font-bold">
-              {totalExpData?.sum_lodginBoardig}
-            </td>
-            <td className="text-center font-bold">{totalExpData?.sum_food}</td>
-            <td className="text-center font-bold">
-              {totalExpData?.sum_foodGst}
-            </td>
-            <td className="text-center font-bold">
-              {totalExpData?.sum_nightAllowance}
-            </td>
-            <td className="text-center font-bold">
-              {totalExpData?.sum_internet}
-            </td>
-            <td className="text-center font-bold">
-              {totalExpData?.sum_postageCourier}
-            </td>
-            <td className="text-center font-bold">
-              {totalExpData?.sum_printingStationary}
-            </td>
-            <td className="text-center font-bold">{totalExpData?.sum_other}</td>
-            <td className="text-center font-bold">
-              {totalExpData?.sum_otherGst}
-            </td>
-            <td className="text-center font-bold"></td>
-            <td colSpan={1}></td>
-            <td className="text-center font-bold">{grandTotal}</td>
-          </tr>
-        </tbody>
-      </table>
+        </table>
       </div>
-     
 
       {tableData?.length <= 0 ? (
         <p className="text-center bg-slate-500 w-full h-3/4 text-white text-3xl p-24">

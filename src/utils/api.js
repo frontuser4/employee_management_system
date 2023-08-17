@@ -2,7 +2,7 @@ import axios from "axios";
 axios.defaults.headers.common["Authorization"] = `jhsajdkhsakdjhsdjakjdhsajdsd`;
 const SALES_TG_URL = "http://142.93.208.119:80";
 const BASE_URL = "http://64.227.141.209:8080";
-const APP_LOGIN = 'http://142.93.208.119:8000';
+const APP_LOGIN = 'http://142.93.208.119:80';
 
 async function loginPage(url, data){
     try {
@@ -37,8 +37,7 @@ async function post(url, data) {
   }
 }
 
-async function update(url, id, month, year, data) {
-  //  let empId = id;
+async function update(url, id, month, year, desig, data) {
   try {
     const result = await axios({
       url: `${BASE_URL}${url}`,
@@ -47,7 +46,7 @@ async function update(url, id, month, year, data) {
       headers:{
         "content-type": "multipart/form-data",
       },
-      params: { empId: id, month: month, year: year }
+      params: { empId: id, month: month, year: year, user : desig}
     })
     return result.data;
   } catch (error) {

@@ -5,7 +5,8 @@ import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
-import { useLocation, useNavigate} from "react-router-dom";
+import { useNavigate} from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
   Tooltip,
   IconButton,
@@ -49,13 +50,9 @@ const AppBar = styled(MuiAppBar, {
 
 export default function Dashboard() {
   
-  const { state } = useLocation();
   const [anchorElUser, setAnchorElUser] = useState(null);
   const navigate = useNavigate();
-  const [date, setDate] = useState(dayjs());
-  const [year, setYear] = useState(dayjs(date.$d).format("YYYY"));
-  const [month, setMonth] = useState(dayjs(date.$d).format("MM").split("")[1]);
-
+  const { data } = useSelector((state) => state.login.data);
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -113,15 +110,16 @@ export default function Dashboard() {
             >
               <MenuItem className="flex flex-col gap-2">
                 <Typography textAlign="center">
-                  Name : {state?.data?.name}
+                  Name : {data?.name}
                 </Typography>
                 <Typography textAlign="center">
-                  Id : {state?.data?.empId}
+                  Id : {data?.empId}
                 </Typography>
                 <Typography textAlign="center">
-                  Designation : {state?.data?.desig}
+                  Designation : {data?.desig}
                 </Typography>
-                <Typography textAlign="center">Hq : {state?.data?.hq}</Typography>
+                <Typography textAlign="center">Hq : {data?.hq}</Typography>
+                <Typography textAlign="center">Group : {data.empGroup}</Typography>
               </MenuItem>
             </Menu>
           </Box>
