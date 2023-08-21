@@ -58,7 +58,7 @@ const defaultState = {
   poster: "",
 };
 
-export default function AddForm({ open, setOpen, setCloseForm }) {
+export default function AddForm({ open, setOpen, setCloseForm, empData }) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const { data } = useSelector((state) => state.login.data);
@@ -126,23 +126,45 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
 
   const submitFormDataHandler = async (addData) => {
     try {
-      const result = await post("/post", addData);
+      const result = await post("/web/postexpense", addData);
       toast.success(result.data.message);
       setOpen(false);
     } catch (error) {
+      console.log("date error: ", error);
+      toast.error("Date Already Exists, please select another date");
       setDateError(400);
     }
   };
 
   const handleFormSubmit = () => {
+    let level;
+    let id;
+    let expId;
+    let desig;
+    if (empData && empData.emp !== undefined) {
+      level = empData ? empData.empLevel : data.empGroup;
+      id = empData ? empData.empId : data.empId;
+      expId = empData
+        ? `${empData.empId}${dayjs(date.$d).format("YYYY")}${dayjs(
+            date.$d
+          ).format("MM")}${dayjs(date.$d).format("DD")}`
+        : expenceId;
+      desig = empData ? empData.empDesig : data.desig;
+    } else {
+      level = data.empGroup;
+      id = data.empId;
+      expId = expenceId;
+      desig = data.desig;
+    }
+
     const addData = {
       ...formData,
-      empId: data.empId,
+      empId: id,
       attendance,
       modeTravel,
       payer: stockistData,
       dateExp: dayjs(date).format("YYYY-MM-DD"),
-      expenseId: expenceId,
+      expenseId: expId,
       distance,
       localConv: distance * 2 * 2,
       pjp: pjpChnage,
@@ -154,7 +176,8 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
       mobileBillFile,
       courierBillFile,
       stationaryBillFile,
-      desig: data.desig,
+      desig: desig,
+      empLevel: level,
     };
 
     submitFormDataHandler(addData);
@@ -925,8 +948,8 @@ export default function AddForm({ open, setOpen, setCloseForm }) {
             Save
           </Button>
         </DialogActions>
+        <Toaster position="top-center" />
       </Dialog>
-      <Toaster position="top-center" />
     </div>
   );
 }

@@ -90,11 +90,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
     const id = state?.emp === 'emp' ? state?.empId : data.empId
     console.log("update: ", state)
     const res = await update(
-      "/getput",
+      "/web/getexpense",
       id,
       dayjs(date.$d).format("MM"),
       dayjs(date.$d).format("YYYY"),
-      data.desig,
+      data.empGroup,
       updatedata
     );
     console.log("update: ", res);
@@ -338,7 +338,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                             onClick={async () => {
                               setDistancePreview(null);
                               const res = await imageDelete(
-                                "/deleteimage",
+                                "/web/deleteimage",
                                 data.empId,
                                 formData.dateExp,
                                 "distanceFile"
@@ -423,7 +423,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           onClick={async () => {
                             setLodgingPreview(null);
                             const res = await imageDelete(
-                              "/deleteimage",
+                              "/web/deleteimage",
                               data.empId,
                               formData.dateExp,
                               "lodgingBillFile"
@@ -509,7 +509,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       onClick={async () => {
                         setFoodPreview(null);
                         const res = await imageDelete(
-                          "/deleteimage",
+                          "/web/deleteimage",
                           data.empId,
                           formData.dateExp,
                           "foodFile"
@@ -581,7 +581,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           onClick={async () => {
                             setFoodGstPreview(null);
                             const res = await imageDelete(
-                              "/deleteimage",
+                              "/web/deleteimage",
                               data.empId,
                               formData.dateExp,
                               "foodGstFile"
@@ -667,7 +667,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       onClick={async () => {
                         setMobileBillPreview(null);
                         const res = await imageDelete(
-                          "/deleteimage",
+                          "/web/deleteimage",
                           data.empId,
                           formData.dateExp,
                           "mobileBillFile"
@@ -737,7 +737,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       onClick={async () => {
                         setCourierBillPreview(null);
                         const res = await imageDelete(
-                          "/deleteimage",
+                          "/web/deleteimage",
                           data.empId,
                           formData.dateExp,
                           "courierBillFile"
@@ -807,7 +807,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       onClick={async () => {
                         setStationaryBillPreview(null);
                         const res = await imageDelete(
-                          "/deleteimage",
+                          "/web/deleteimage",
                           data.empId,
                           formData.dateExp,
                           "stationaryBillFile"

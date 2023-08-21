@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import "./scoreCard.css";
 import { TextField, Button } from "@mui/material";
 import { post } from "../utils/api";
 import toast, { Toaster } from "react-hot-toast";
@@ -89,7 +88,7 @@ const ScoreCard = ({ empId, month, year }) => {
     if(!e.target[0].value){
       return;
     }
-    const res = await post("/claimgift", {
+    const res = await post("/web/claimgift", {
       claimGift: e.target[0].value,
       empId,
       month,
@@ -101,7 +100,7 @@ const ScoreCard = ({ empId, month, year }) => {
   };
 
   const fetchScore = async()=>{
-     const res = await get('/score', empId, month, year);
+     const res = await get('/web/score', empId, month, year);
      setScores(res.data_score.claimGift);
   }
 

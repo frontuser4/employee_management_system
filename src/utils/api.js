@@ -2,7 +2,12 @@ import axios from "axios";
 axios.defaults.headers.common["Authorization"] = `jhsajdkhsakdjhsdjakjdhsajdsd`;
 const SALES_TG_URL = "http://142.93.208.119:80";
 const BASE_URL = "http://64.227.141.209:8080";
+// const BASE_URL = "http://192.168.0.120:8000";
 const APP_LOGIN = 'http://142.93.208.119:80';
+
+const axiosInstance =  axios.create({
+  baseURL:'http://64.227.141.209:8080'
+})
 
 async function loginPage(url, data){
     try {
@@ -16,7 +21,7 @@ async function loginPage(url, data){
 async function get(url, id, month, year, users) {
   try {
     const result = await axios.get(`${BASE_URL}${url}`, {
-      params: { empId: id, month: month, year: year, user : users },
+      params: { empId: id, month: month, year: year, level : users },
     });
     return result.data;
   } catch (error) {
@@ -37,7 +42,7 @@ async function post(url, data) {
   }
 }
 
-async function update(url, id, month, year, desig, data) {
+async function update(url, id, month, year, level, data) {
   try {
     const result = await axios({
       url: `${BASE_URL}${url}`,
@@ -46,7 +51,7 @@ async function update(url, id, month, year, desig, data) {
       headers:{
         "content-type": "multipart/form-data",
       },
-      params: { empId: id, month: month, year: year, user : desig}
+      params: { empId: id, month: month, year: year, level: level}
     })
     return result.data;
   } catch (error) {
@@ -54,10 +59,10 @@ async function update(url, id, month, year, desig, data) {
   }
 }
 
-async function getEmp(url, empId, desig) {
+async function getEmp(url, empId, desig, group) {
   try {
     const result = await axios.get(`${SALES_TG_URL}${url}`, {
-      params: {empId: empId, desig: desig },
+      params: {empId: empId, desig: desig, empGroup:group },
     });
     return result.data.empList;
   } catch (error) {
@@ -89,4 +94,4 @@ async function imageDelete(url, empId, date, imageFile){
 
 } 
 
-export { get, post, loginPage, update, getEmp, scoreSummaryGet, imageDelete };
+export { get, post, loginPage, update, getEmp, scoreSummaryGet, imageDelete , axiosInstance};
