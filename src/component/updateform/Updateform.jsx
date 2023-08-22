@@ -30,6 +30,8 @@ import CancelIcon from "@mui/icons-material/Cancel";
 
 export default function UpdateForm({ editData, setCloseUpdateform }) {
   const BASE_URL = "http://64.227.141.209:8080";
+  // const BASE_URL = "http://192.168.0.120:8000";
+
   const navigate = useNavigate();
   const { state } = useLocation();
   const { data } = useSelector((state) => state.login.data);
@@ -87,8 +89,8 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   };
 
   async function UpdateData(updatedata) {
-    const id = state?.emp === 'emp' ? state?.empId : data.empId
-    console.log("update: ", state)
+    const id = state?.emp === "emp" ? state?.empId : data.empId;
+
     const res = await update(
       "/web/getexpense",
       id,
@@ -101,14 +103,32 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   }
 
   const handleFormSubmit = () => {
+    const { emp, empDesig, empId, empLevel, expenseId } = state;
+    let id;
+    let desig;
+    let level;
+    let expId;
+
+    if (emp === "emp") {
+      id = empId;
+      desig = empDesig;
+      level = empLevel;
+      expId = expenseId;
+    } else {
+      id = data.empId;
+      desig = data.desig;
+      level = data.empGroup;
+      expId = expenceId;
+    }
+
     const updatedata = {
       ...formData,
-      empId: state.empId,
+      empId: id,
       attendance,
       modeTravel,
       payer: stockistData,
       dateExp: dayjs(date).format("YYYY-MM-DD"),
-      expenseId: state.expenseId,
+      expenseId: expId,
       distance,
       distanceFile,
       lodgingBillFile,
@@ -118,11 +138,12 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
       courierBillFile,
       stationaryBillFile,
       pjpChnage,
-      posterActivity
+      posterActivity,
+      empLevel: level,
     };
 
     UpdateData(updatedata);
-    navigate("/dashboard", {state: data});
+    navigate("/dashboard", { state: data });
     setAttendance("present");
     setModeTravel("");
     setStockistData("");
@@ -151,7 +172,15 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
 
           <AttendanceDropdown
             title="Attendance"
-            option={["present", "MRM", "Joined Work", "Weekly Off", "leave"]}
+            option={[
+              "PRESENT",
+              "MRM",
+              "JOINED WORK",
+              "WEEKLY OFF",
+              "HOLIDAY",
+              "C/OFF",
+              "LEAVE",
+            ]}
             value={attendance}
             onChange={(e) => setAttendance(e)}
           />
@@ -167,7 +196,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             label="TC"
             id="tc"
             size="small"
-            disabled={attendance === "leave" ? true : false}
+            disabled={
+              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(attendance)
+                ? true
+                : false
+            }
           />
           <TextField
             type="number"
@@ -178,7 +211,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             label="PC"
             id="pc"
             size="small"
-            disabled={attendance === "leave" ? true : false}
+            disabled={
+              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(attendance)
+                ? true
+                : false
+            }
           />
         </div>
 
@@ -191,7 +228,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             onChange={handleFormChange}
             label="SALE"
             size="small"
-            disabled={attendance === "leave" ? true : false}
+            disabled={
+              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(attendance)
+                ? true
+                : false
+            }
           />
           <TextField
             type="number"
@@ -201,13 +242,22 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             onChange={handleFormChange}
             label="WORKING HOURS"
             size="small"
-            disabled={attendance === "leave" ? true : false}
+            disabled={
+              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(attendance)
+                ? true
+                : false
+            }
           />
           <StockistDropdown
             title="Stockist"
             option={stockist}
             value={stockistData}
             onChange={(e) => setStockistData(e)}
+            disabled={
+              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(attendance)
+                ? true
+                : false
+            }
           />
         </div>
 
@@ -220,7 +270,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             onChange={handleFormChange}
             label="TOWN AND MARKET"
             size="small"
-            disabled={attendance === "leave" ? true : false}
+            disabled={
+              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(attendance)
+                ? true
+                : false
+            }
           />
           <TextField
             type="number"
@@ -230,7 +284,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             onChange={handleFormChange}
             label="D.A."
             size="small"
-            disabled={attendance === "leave" ? true : false}
+            disabled={
+              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(attendance)
+                ? true
+                : false
+            }
           />
         </div>
 
@@ -250,7 +308,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       fullWidth
                       label="TRAVEL FROM"
                       size="small"
-                      disabled={attendance === "leave" ? true : false}
+                      disabled={
+                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                          attendance
+                        )
+                          ? true
+                          : false
+                      }
                     />
 
                     <TextField
@@ -261,7 +325,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       fullWidth
                       label="TRAVEL TO"
                       size="small"
-                      disabled={attendance === "leave" ? true : false}
+                      disabled={
+                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                          attendance
+                        )
+                          ? true
+                          : false
+                      }
                     />
 
                     <ModeDropdown
@@ -269,6 +339,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       option={["train", "bus", "bike"]}
                       value={modeTravel}
                       onChange={(e) => setModeTravel(e)}
+                      disabled={
+                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                          attendance
+                        )
+                          ? true
+                          : false
+                      }
                     />
 
                     <TextField
@@ -290,7 +367,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       fullWidth
                       label="TRAVEL LONG(GST)"
                       size="small"
-                      disabled={attendance === "leave" ? true : false}
+                      disabled={
+                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                          attendance
+                        )
+                          ? true
+                          : false
+                      }
                     />
 
                     <TextField
@@ -300,7 +383,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       onChange={handleFormChange}
                       label="NIGHT TRAVEL ALLOWANCE"
                       size="small"
-                      disabled={attendance === "leave" ? true : false}
+                      disabled={
+                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                          attendance
+                        )
+                          ? true
+                          : false
+                      }
                     />
                   </div>
 
@@ -314,7 +403,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="ONE SIDE KM"
                         size="small"
-                        disabled={attendance === "leave" ? true : false}
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
                       />
                     </Box>
                     {distance > 100 ? (
@@ -329,10 +424,20 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           </div>
                         ) : (
                           <></>
-                        )}  
+                        )}
 
-                        {distancePreview || editData.distanceFile  ? (
+                        {distancePreview || editData.distanceFile ? (
                           <IconButton
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
                             color="primary"
                             size="medium"
                             onClick={async () => {
@@ -360,6 +465,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       <div className="flex-1">
                         {" "}
                         <input
+                          disabled={
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
+                              ? true
+                              : false
+                          }
                           type="file"
                           name="distanceBill"
                           id="upload-distance"
@@ -376,6 +491,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         />
                         <label htmlFor="upload-distance">
                           <Button
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
                             className="w-full"
                             variant="contained"
                             color="primary"
@@ -403,7 +528,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="LODGING BILL"
                         size="small"
-                        disabled={attendance === "leave" ? true : false}
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
                       />
                     </Box>
 
@@ -418,6 +549,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         </div>
 
                         <IconButton
+                          disabled={
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
+                              ? true
+                              : false
+                          }
                           color="primary"
                           size="medium"
                           onClick={async () => {
@@ -440,6 +581,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
 
                     <div className="flex-1">
                       <input
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
                         type="file"
                         name="lodgingBill"
                         id="upload-lodging"
@@ -456,6 +604,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                       <label htmlFor="upload-lodging">
                         <Button
+                          disabled={
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
+                              ? true
+                              : false
+                          }
                           variant="contained"
                           color="primary"
                           component="span"
@@ -491,7 +649,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         onChange={handleFormChange}
                         label="FOOD"
                         size="small"
-                        disabled={attendance === "leave" ? true : false}
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
                       />
                     </Box>
 
@@ -504,6 +668,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     </div>
 
                     <IconButton
+                      disabled={
+                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                          attendance
+                        )
+                          ? true
+                          : false
+                      }
                       color="primary"
                       size="medium"
                       onClick={async () => {
@@ -522,6 +693,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
 
                     <div className="flex-1">
                       <input
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
                         type="file"
                         name="foodBill"
                         id="upload-foodBill"
@@ -538,6 +716,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                       <label htmlFor="upload-foodBill">
                         <Button
+                          disabled={
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
+                              ? true
+                              : false
+                          }
                           variant="contained"
                           color="primary"
                           component="span"
@@ -561,7 +749,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="FOOD GST"
                         size="small"
-                        disabled={attendance === "leave" ? true : false}
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
                       />
                     </Box>
 
@@ -576,6 +770,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         </div>
 
                         <IconButton
+                          disabled={
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
+                              ? true
+                              : false
+                          }
                           color="primary"
                           size="medium"
                           onClick={async () => {
@@ -598,6 +802,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
 
                     <div className="flex-1">
                       <input
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
                         type="file"
                         name="foodGstBill"
                         id="upload-foodGstBill"
@@ -614,6 +825,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                       <label htmlFor="upload-foodGstBill">
                         <Button
+                          disabled={
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
+                              ? true
+                              : false
+                          }
                           variant="contained"
                           color="primary"
                           component="span"
@@ -649,7 +870,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="MOBILE BILL"
                         size="small"
-                        disabled={attendance === "leave" ? true : false}
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
                       />
                     </Box>
 
@@ -662,6 +889,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     </div>
 
                     <IconButton
+                      disabled={
+                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                          attendance
+                        )
+                          ? true
+                          : false
+                      }
                       color="primary"
                       size="medium"
                       onClick={async () => {
@@ -680,6 +914,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
 
                     <div className="flex-1">
                       <input
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
                         type="file"
                         name="internetBill"
                         id="upload-internetBill"
@@ -696,6 +937,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                       <label htmlFor="upload-internetBill">
                         <Button
+                          disabled={
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
+                              ? true
+                              : false
+                          }
                           variant="contained"
                           color="primary"
                           component="span"
@@ -719,7 +970,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="COURIER"
                         size="small"
-                        disabled={attendance === "leave" ? true : false}
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
                       />
                     </Box>
 
@@ -732,6 +989,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     </div>
 
                     <IconButton
+                      disabled={
+                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                          attendance
+                        )
+                          ? true
+                          : false
+                      }
                       color="primary"
                       size="medium"
                       onClick={async () => {
@@ -750,6 +1014,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
 
                     <div className="flex-1">
                       <input
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
                         type="file"
                         name="postageCourierBill"
                         id="upload-postageCourierBill"
@@ -766,6 +1037,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                       <label htmlFor="upload-postageCourierBill">
                         <Button
+                          disabled={
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
+                              ? true
+                              : false
+                          }
                           variant="contained"
                           color="primary"
                           component="span"
@@ -789,7 +1070,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         fullWidth
                         label="STATIONARY"
                         size="small"
-                        disabled={attendance === "leave" ? true : false}
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
                       />
                     </Box>
 
@@ -802,6 +1089,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     </div>
 
                     <IconButton
+                      disabled={
+                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                          attendance
+                        )
+                          ? true
+                          : false
+                      }
                       color="primary"
                       size="medium"
                       onClick={async () => {
@@ -820,6 +1114,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
 
                     <div className="flex-1">
                       <input
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
                         type="file"
                         name="stationaryBill"
                         id="upload-stationaryBill"
@@ -836,6 +1137,16 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                       <label htmlFor="upload-stationaryBill">
                         <Button
+                          disabled={
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
+                              ? true
+                              : false
+                          }
                           variant="contained"
                           color="primary"
                           component="span"
@@ -869,7 +1180,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     value={formData.other}
                     onChange={handleFormChange}
                     size="small"
-                    disabled={attendance === "leave" ? true : false}
+                    disabled={
+                      ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                        attendance
+                      )
+                        ? true
+                        : false
+                    }
                   />
 
                   <TextField
@@ -880,7 +1197,13 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                     fullWidth
                     label="OTHERS GST"
                     size="small"
-                    disabled={attendance === "leave" ? true : false}
+                    disabled={
+                      ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                        attendance
+                      )
+                        ? true
+                        : false
+                    }
                   />
                 </div>
               </>
@@ -904,13 +1227,25 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       onChange={(e) => setPosterActivity(e.target.value)}
                     >
                       <FormControlLabel
-                        disabled={attendance === "leave" ? true : false}
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
                         value="yes"
                         label="Yes"
                         control={<Radio />}
                       />
                       <FormControlLabel
-                       disabled={attendance === "leave" ? true : false}  
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
                         value="no"
                         label="No"
                         control={<Radio />}

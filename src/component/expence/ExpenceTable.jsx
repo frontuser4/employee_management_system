@@ -72,8 +72,7 @@ const ExpenceTable = ({ year, month }) => {
   }, [month, year, closeForm, approvalRefresh]);
 
   const handleEdit = (mydata) => {
-    const { emp, ...rest } = state;
-    navigate("/updatetable", { state: { ...rest, ...mydata } });
+    navigate("/updatetable", { state: {...state, ...mydata } });
   };
 
   const handlePreviewImage = (imgpath) => {
@@ -103,10 +102,13 @@ const ExpenceTable = ({ year, month }) => {
 
   const handleResetAproval = async ()=>{
     let id = state?.emp === "emp" ? state.empId : data.empId;
+    let empLevel = state?.emp === "emp" ? state.empLevel : data.empGroup;
+    
     let approvedata = {
       empId: id,
       month,
       year,
+      empLevel,
       submitby: data.empGroup,
     };
 

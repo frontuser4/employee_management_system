@@ -3,7 +3,7 @@ import { MaterialReactTable } from "material-react-table";
 import dayjs from "dayjs";
 import { getEmp } from "../../utils/api";
 import { MonthDropDown, YearDropDown } from "../Dropdown";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { axiosInstance } from "../../utils/api";
 
@@ -14,8 +14,10 @@ export const EmployeeTable = () => {
   const [year, setYear] = useState(dayjs(date.$d).format("YYYY"));
   const [month, setMonth] = useState(dayjs(date.$d).format("MM").split("")[1]);
   const { data } = useSelector((state) => state.login.data);
-  const [filterApproval, setFilterApproval] = useState(null);
-  const [uncheck, setCheck] = useState(null);
+  const [filterApproval, setFilterApproval] = useState([]);
+  const [uncheck, setCheck] = useState([]);
+  const [filtersData, setFilterData] = useState(false);
+  const filterData = empData?.filter((data)=> [...filterApproval, ...uncheck].includes(data.empId))
 
   const getEmployeData = async () => {
     try {
@@ -46,7 +48,7 @@ export const EmployeeTable = () => {
           },
         }
       );
-      console.log("filter: ", response.data.check);
+      setFilterData((prev)=> !prev)
       setCheck(response.data.uncheck);
       setFilterApproval(response.data.check);
     } catch (error) {
@@ -119,7 +121,7 @@ export const EmployeeTable = () => {
   return (
     <MaterialReactTable
       columns={columns}
-      data={empData ?? []}
+      data={filtersData ? filterData : empData}
       enableColumnActions={false}
       enableColumnFilters={false}
       enablePagination={false}
@@ -143,7 +145,7 @@ export const EmployeeTable = () => {
                 onClick={() => navigate("/expence")}
                 className="bg-cyan-500 p-2 rounded text-white"
               >
-                Add Expence
+                Add / View Expence
               </button>
             ) : (
               <></>

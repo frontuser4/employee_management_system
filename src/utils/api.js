@@ -6,7 +6,7 @@ const BASE_URL = "http://64.227.141.209:8080";
 const APP_LOGIN = 'http://142.93.208.119:80';
 
 const axiosInstance =  axios.create({
-  baseURL:'http://64.227.141.209:8080'
+  baseURL: BASE_URL
 })
 
 async function loginPage(url, data){
