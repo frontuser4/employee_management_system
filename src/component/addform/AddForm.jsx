@@ -43,8 +43,7 @@ const defaultState = {
   dailyConv: "",
   travelSource: "",
   travelDestination: "",
-  // distance: "",
-  localConv: "",
+  // localConv: "",
   travelingLong: "",
   lodginBoardig: "",
   nightAllowance: "",
@@ -72,6 +71,7 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
   const [date, setDate] = useState(dayjs());
   const [distance, setDistance] = useState(null);
   const [dateError, setDateError] = useState(null);
+  const [localConv, setLocalConv] = useState(null);
 
   const [distanceFile, setDistanceFile] = useState(null);
   const [lodgingBillFile, setLodgingBillFile] = useState(null);
@@ -118,6 +118,7 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
   };
 
   const handleFormChange = (event) => {
+    console.log("handle form change: ", {[event.target.name]: event.target.value})
     setFormData((prev) => ({
       ...prev,
       [event.target.name]: event.target.value,
@@ -156,6 +157,8 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
       expId = expenceId;
       desig = data.desig;
     }
+   
+    let local = distance < 100 ? distance * 2 * 2 : localConv;
 
     const addData = {
       ...formData,
@@ -166,9 +169,9 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
       dateExp: dayjs(date).format("YYYY-MM-DD"),
       expenseId: expId,
       distance,
-      localConv: distance * 2 * 2,
       pjp: pjpChnage,
       poster: posterActivity,
+      localConv: local,
       distanceFile,
       lodgingBillFile,
       foodFile,
@@ -186,6 +189,7 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
     setModeTravel("");
     setStockistData("");
     setDistance("");
+    setLocalConv(null);
     setCloseForm((prev) => !prev);
   };
 
@@ -305,26 +309,40 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                 label="WORKING HOURS"
                 size="small"
                 disabled={
-                  ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                    attendance
-                  )
-                    ? true
-                    : false
+                 true
                 }
               />
-              <StockistDropdown
-                title="Stockist"
-                option={stockist}
-                value={stockistData}
-                onChange={(e) => setStockistData(e)}
-                disabled={
-                  ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                    attendance
-                  )
-                    ? true
-                    : false
-                }
-              />
+              {data.desig === "RMS" ? (
+                <TextField
+                  type="number"
+                  fullWidth
+                  value={stockistData}
+                  onChange={(e) => setStockistData(e.target.value)}
+                  label="STOCKIST"
+                  size="small"
+                  disabled={
+                    ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                      attendance
+                    )
+                      ? true
+                      : false
+                  }
+                />
+              ) : (
+                <StockistDropdown
+                  title="Stockist"
+                  option={stockist}
+                  value={stockistData}
+                  onChange={(e) => setStockistData(e)}
+                  disabled={
+                    ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                      attendance
+                    )
+                      ? true
+                      : false
+                  }
+                />
+              )}
             </div>
 
             <div className="grid md:grid-cols-2 gap-3 mb-4">
@@ -378,22 +396,28 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                           onChange={(e) => setPjpChange(e.target.value)}
                         >
                           <FormControlLabel
-                           disabled={
-                            ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                              attendance
-                            )
-                              ? true
-                              : false
-                          }
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
                             value="yes"
                             label="Yes"
                             control={<Radio />}
                           />
                           <FormControlLabel
                             disabled={
-                              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                attendance
-                              )
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
                                 ? true
                                 : false
                             }
@@ -426,9 +450,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                           label="TRAVEL FROM"
                           size="small"
                           disabled={
-                            ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                              attendance
-                            )
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
                               ? true
                               : false
                           }
@@ -443,9 +470,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                           label="TRAVEL TO"
                           size="small"
                           disabled={
-                            ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                              attendance
-                            )
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
                               ? true
                               : false
                           }
@@ -457,24 +487,43 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                           value={modeTravel}
                           onChange={(e) => setModeTravel(e)}
                           disabled={
-                            ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                              attendance
-                            )
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
                               ? true
                               : false
                           }
                         />
 
-                        <TextField
-                          type="number"
-                          name="localConv"
-                          value={distance * 2 * 2}
-                          // onChange={()=> setLocalConv()}
-                          fullWidth
-                          label="LOCAL CONV"
-                          size="small"
-                          disabled={true}
-                        />
+                        {distance < 100 ? (
+                          <p className="text-lg flex items-center justify-center border-gray-200 w-full bg-slate-100">
+                           LocalConv: {distance * 2 * 2}
+                          </p>
+                        ) : (
+                          <TextField
+                            type="number"
+                            value={localConv}
+                            onChange={(e)=> {
+                              setLocalConv(e.target.value)
+                            }}
+                            fullWidth
+                            label="LOCAL CONV"
+                            size="small"
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
+                          />
+                        )}
 
                         <TextField
                           type="number"
@@ -485,9 +534,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                           label="TRAVEL LONG(GST)"
                           size="small"
                           disabled={
-                            ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                              attendance
-                            )
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
                               ? true
                               : false
                           }
@@ -501,9 +553,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                           label="NIGHT TRAVEL ALLOWANCE"
                           size="small"
                           disabled={
-                            ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                              attendance
-                            )
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
                               ? true
                               : false
                           }
@@ -521,9 +576,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                             label="ONE SIDE KM"
                             size="small"
                             disabled={
-                              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                attendance
-                              )
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
                                 ? true
                                 : false
                             }
@@ -551,9 +609,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                             {" "}
                             <input
                               disabled={
-                                ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                  attendance
-                                )
+                                [
+                                  "LEAVE",
+                                  "WEEKLY OFF",
+                                  "HOLIDAY",
+                                  "C/OFF",
+                                ].includes(attendance)
                                   ? true
                                   : false
                               }
@@ -575,9 +636,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                             <label htmlFor="upload-distance">
                               <Button
                                 disabled={
-                                  ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                    attendance
-                                  )
+                                  [
+                                    "LEAVE",
+                                    "WEEKLY OFF",
+                                    "HOLIDAY",
+                                    "C/OFF",
+                                  ].includes(attendance)
                                     ? true
                                     : false
                                 }
@@ -609,9 +673,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                             label="LODGING BILL"
                             size="small"
                             disabled={
-                              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                attendance
-                              )
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
                                 ? true
                                 : false
                             }
@@ -633,9 +700,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                         <div className="flex-1">
                           <input
                             disabled={
-                              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                attendance
-                              )
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
                                 ? true
                                 : false
                             }
@@ -657,9 +727,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                           <label htmlFor="upload-lodging">
                             <Button
                               disabled={
-                                ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                  attendance
-                                )
+                                [
+                                  "LEAVE",
+                                  "WEEKLY OFF",
+                                  "HOLIDAY",
+                                  "C/OFF",
+                                ].includes(attendance)
                                   ? true
                                   : false
                               }
@@ -700,9 +773,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                             label="FOOD"
                             size="small"
                             disabled={
-                              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                attendance
-                              )
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
                                 ? true
                                 : false
                             }
@@ -724,9 +800,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                         <div className="flex-1">
                           <input
                             disabled={
-                              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                attendance
-                              )
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
                                 ? true
                                 : false
                             }
@@ -748,9 +827,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                           <label htmlFor="upload-foodBill">
                             <Button
                               disabled={
-                                ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                  attendance
-                                )
+                                [
+                                  "LEAVE",
+                                  "WEEKLY OFF",
+                                  "HOLIDAY",
+                                  "C/OFF",
+                                ].includes(attendance)
                                   ? true
                                   : false
                               }
@@ -777,9 +859,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                             label="FOOD GST"
                             size="small"
                             disabled={
-                              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                attendance
-                              )
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
                                 ? true
                                 : false
                             }
@@ -801,9 +886,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                         <div className="flex-1">
                           <input
                             disabled={
-                              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                attendance
-                              )
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
                                 ? true
                                 : false
                             }
@@ -825,9 +913,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                           <label htmlFor="upload-foodGstBill">
                             <Button
                               disabled={
-                                ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                  attendance
-                                )
+                                [
+                                  "LEAVE",
+                                  "WEEKLY OFF",
+                                  "HOLIDAY",
+                                  "C/OFF",
+                                ].includes(attendance)
                                   ? true
                                   : false
                               }
@@ -868,9 +959,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                             label="MOBILE BILL"
                             size="small"
                             disabled={
-                              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                attendance
-                              )
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
                                 ? true
                                 : false
                             }
@@ -892,9 +986,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                         <div className="flex-1">
                           <input
                             disabled={
-                              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                attendance
-                              )
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
                                 ? true
                                 : false
                             }
@@ -916,9 +1013,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                           <label htmlFor="upload-internetBill">
                             <Button
                               disabled={
-                                ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                  attendance
-                                )
+                                [
+                                  "LEAVE",
+                                  "WEEKLY OFF",
+                                  "HOLIDAY",
+                                  "C/OFF",
+                                ].includes(attendance)
                                   ? true
                                   : false
                               }
@@ -947,9 +1047,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                             label="COURIER"
                             size="small"
                             disabled={
-                              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                attendance
-                              )
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
                                 ? true
                                 : false
                             }
@@ -971,9 +1074,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                         <div className="flex-1">
                           <input
                             disabled={
-                              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                attendance
-                              )
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
                                 ? true
                                 : false
                             }
@@ -995,9 +1101,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                           <label htmlFor="upload-postageCourierBill">
                             <Button
                               disabled={
-                                ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                  attendance
-                                )
+                                [
+                                  "LEAVE",
+                                  "WEEKLY OFF",
+                                  "HOLIDAY",
+                                  "C/OFF",
+                                ].includes(attendance)
                                   ? true
                                   : false
                               }
@@ -1018,7 +1127,6 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                       <Box className="flex flex-col md:flex-row gap-2 items-center">
                         <Box className="w-full md:w-3/5 flex-1">
                           <TextField
-
                             type="number"
                             name="printingStationary"
                             value={formData.printingStationary}
@@ -1026,13 +1134,16 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                             fullWidth
                             label="STATIONARY"
                             size="small"
-                           disabled={
-                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                          attendance
-                        )
-                          ? true
-                          : false
-                      }
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
                           />
                         </Box>
                         {stationaryBillPreview !== null ? (
@@ -1049,13 +1160,16 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
 
                         <div className="flex-1">
                           <input
-                           disabled={
-                            ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                              attendance
-                            )
-                              ? true
-                              : false
-                          }
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
                             type="file"
                             name="stationaryBill"
                             id="upload-stationaryBill"
@@ -1073,13 +1187,16 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                           />
                           <label htmlFor="upload-stationaryBill">
                             <Button
-                             disabled={
-                              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                attendance
-                              )
-                                ? true
-                                : false
-                            }
+                              disabled={
+                                [
+                                  "LEAVE",
+                                  "WEEKLY OFF",
+                                  "HOLIDAY",
+                                  "C/OFF",
+                                ].includes(attendance)
+                                  ? true
+                                  : false
+                              }
                               className="w-full"
                               variant="contained"
                               color="primary"
@@ -1162,9 +1279,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                         >
                           <FormControlLabel
                             disabled={
-                              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                attendance
-                              )
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
                                 ? true
                                 : false
                             }
@@ -1174,9 +1294,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                           />
                           <FormControlLabel
                             disabled={
-                              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                                attendance
-                              )
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
                                 ? true
                                 : false
                             }

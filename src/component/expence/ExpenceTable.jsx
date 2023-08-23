@@ -72,7 +72,7 @@ const ExpenceTable = ({ year, month }) => {
   }, [month, year, closeForm, approvalRefresh]);
 
   const handleEdit = (mydata) => {
-    navigate("/updatetable", { state: {...state, ...mydata } });
+    navigate("/updatetable", { state: { ...state, ...mydata } });
   };
 
   const handlePreviewImage = (imgpath) => {
@@ -100,10 +100,10 @@ const ExpenceTable = ({ year, month }) => {
     }
   };
 
-  const handleResetAproval = async ()=>{
+  const handleResetAproval = async () => {
     let id = state?.emp === "emp" ? state.empId : data.empId;
     let empLevel = state?.emp === "emp" ? state.empLevel : data.empGroup;
-    
+
     let approvedata = {
       empId: id,
       month,
@@ -121,7 +121,7 @@ const ExpenceTable = ({ year, month }) => {
     } catch (error) {
       console.log("approval reset error: ", error);
     }
-  }
+  };
 
   return (
     <>
@@ -157,7 +157,9 @@ const ExpenceTable = ({ year, month }) => {
         <table ref={tableRef}>
           <thead>
             <tr>
-              <th colSpan={27}>Sapat International Pvt. Ltd.</th>
+              <th colSpan={27} className="text-4xl">
+                Sapat International Pvt. Ltd - Monthly Expenses
+              </th>
             </tr>
             {state?.emp === "emp" ? (
               <tr>
@@ -168,11 +170,16 @@ const ExpenceTable = ({ year, month }) => {
                 <th colSpan={4}>Month: {month}</th>
                 <th colSpan={4}>Year: {year}</th>
                 <th colSpan={4}>
-                  {
-                    data.empGroup === 'level3' ? <button onClick={handleResetAproval} className="bg-[#0ea5e9] px-3 py-1 text-md rounded text-white mb-2 hover:bg-cyan-600">
-                    Reset Approval
-                  </button> : <></>
-                  }
+                  {data.empGroup === "level3" ? (
+                    <button
+                      onClick={handleResetAproval}
+                      className="bg-[#0ea5e9] px-3 py-1 text-md rounded text-white mb-2 hover:bg-cyan-600"
+                    >
+                      Reset Approval
+                    </button>
+                  ) : (
+                    <></>
+                  )}
                 </th>
               </tr>
             ) : (
@@ -184,11 +191,16 @@ const ExpenceTable = ({ year, month }) => {
                 <th colSpan={4}>Month: {month}</th>
                 <th colSpan={4}>Year: {year}</th>
                 <th colSpan={4}>
-                  {
-                    data.empGroup === 'level3' ? <button onClick={handleResetAproval} className="bg-[#0ea5e9] px-3 py-1 text-md rounded text-white mb-2 hover:bg-cyan-600">
-                    Reset Approval
-                  </button> : <></>
-                  }
+                  {data.empGroup === "level3" ? (
+                    <button
+                      onClick={handleResetAproval}
+                      className="bg-[#0ea5e9] px-3 py-1 text-md rounded text-white mb-2 hover:bg-cyan-600"
+                    >
+                      Reset Approval
+                    </button>
+                  ) : (
+                    <></>
+                  )}
                 </th>
               </tr>
             )}
@@ -218,20 +230,18 @@ const ExpenceTable = ({ year, month }) => {
               <th className="text-center">PRINTING STATIONARY</th>
               <th className="text-center">OTHER</th>
               <th className="text-center">OTHER GST</th>
-              <th className="text-center">WORKING HOURS</th>
+              {/* <th className="text-center">WORKING HOURS</th> */}
               <th className="text-center">
                 APPROVAL
-                {editFlag  ? (
+                {editFlag ? (
                   <button
-                  className="bg-cyan-500 px-3 rounded text-white"
-                  onClick={approveHandler}
-                >
-                  submit
-                </button>
+                    className="bg-cyan-500 px-3 rounded text-white"
+                    onClick={approveHandler}
+                  >
+                    submit
+                  </button>
                 ) : (
-                  <>
-                   
-                  </>
+                  <></>
                 )}
               </th>
               <th className="text-center">TOTAL</th>
@@ -375,7 +385,7 @@ const ExpenceTable = ({ year, month }) => {
                       </td>
                       <td className="text-center">{data.other}</td>
                       <td className="text-center">{data.otherGst}</td>
-                      <td className="text-center">{data.workingHr}</td>
+                      {/* <td className="text-center">{data.workingHr}</td> */}
                       <td>{data.approval}</td>
                       <td className="text-center">{data.total}</td>
                     </tr>
@@ -428,8 +438,33 @@ const ExpenceTable = ({ year, month }) => {
                   {totalExpData?.sum_otherGst}
                 </td>
                 <td className="text-center font-bold"></td>
-                <td colSpan={1}></td>
+          
                 <td className="text-center font-bold">{grandTotal}</td>
+              </tr>
+              <tr>
+                <td colSpan={26}>
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={5} className="font-bold">
+                  Prepared By: {state?.emp === "emp" ? state?.empName : data?.name}
+                </td>
+                <td colSpan={5} className="font-bold">
+                  ASM : 
+                </td>
+                <td colSpan={5} className="font-bold">
+                  Check By: Suhas Ghare
+                </td>
+                <td colSpan={5} className="font-bold">
+                  RSM : Jotiram Ghnawat
+                </td>
+                <td colSpan={6} className="font-bold">
+                  Account : Arjun / Mahesh Wagh
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={20}></td>
+                <td colSpan={6} className=" font-bold font-serif italic">This is computer generated no signature required</td>
               </tr>
             </tbody>
           ) : (
@@ -481,7 +516,7 @@ const ExpenceTable = ({ year, month }) => {
         open={openForm}
         setOpen={setOpenForm}
         setCloseForm={setCloseForm}
-        empData = {state}
+        empData={state}
       />
 
       <ImagePreview

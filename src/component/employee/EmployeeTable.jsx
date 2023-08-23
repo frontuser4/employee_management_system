@@ -15,9 +15,12 @@ export const EmployeeTable = () => {
   const [month, setMonth] = useState(dayjs(date.$d).format("MM").split("")[1]);
   const { data } = useSelector((state) => state.login.data);
   const [filterApproval, setFilterApproval] = useState([]);
-  const [uncheck, setCheck] = useState([]);
-  const [filtersData, setFilterData] = useState(false);
-  const filterData = empData?.filter((data)=> [...filterApproval, ...uncheck].includes(data.empId))
+
+  const filterData = empData.filter((items1) =>
+    filterApproval?.some((items2) => {
+      return items1.empId === items2.empId;
+    })
+  );
 
   const getEmployeData = async () => {
     try {
@@ -48,9 +51,8 @@ export const EmployeeTable = () => {
           },
         }
       );
-      setFilterData((prev)=> !prev)
-      setCheck(response.data.uncheck);
-      setFilterApproval(response.data.check);
+
+      setFilterApproval(response.data.empList);
     } catch (error) {
       console.log("filter approval error: ", error);
     }
@@ -58,10 +60,12 @@ export const EmployeeTable = () => {
 
   useEffect(() => {
     getEmployeData();
+    handleFilterApproval();
   }, []);
 
   useEffect(() => {
     getEmployeData();
+    handleFilterApproval();
   }, [month, year]);
 
   const columns = [
@@ -69,8 +73,12 @@ export const EmployeeTable = () => {
       accessorKey: "empId",
       header: "EmpId",
       Cell: ({ cell }) => {
-        const checkapprove = filterApproval?.includes(cell.row.original.empId);
-        const uncheckapprove = uncheck?.includes(cell.row.original.empId);
+        let color;
+        filterApproval?.forEach((val) => {
+          if (val.empId === cell.row.original.empId) {
+            color = val.color;
+          }
+        });
         return (
           <button
             onClick={() =>
@@ -87,13 +95,15 @@ export const EmployeeTable = () => {
                 },
               })
             }
-            className={
-              checkapprove
-                ? `bg-red-400 px-2 py-1 rounded`
-                : uncheckapprove
-                ? "bg-green-400 px-2 py-1 rounded"
-                : "bg-cyan-400 px-2 py-1 rounded"
-            }
+            style={{
+              background: `${color}`,
+              padding: "10px 20px",
+              borderRadius: "10px",
+              color: "#fff",
+              cursor: 'pointer',
+              textAlign: "center",
+              border: "none"
+            }}
           >
             {cell.getValue()}
           </button>
@@ -116,12 +126,16 @@ export const EmployeeTable = () => {
       accessorKey: "empGroup",
       header: "Group",
     },
+    {
+      accessorKey: "salesGroup",
+      header: "Sales Group",
+    },
   ];
 
   return (
     <MaterialReactTable
       columns={columns}
-      data={filtersData ? filterData : empData}
+      data={filterData ?? []}
       enableColumnActions={false}
       enableColumnFilters={false}
       enablePagination={false}
@@ -150,13 +164,6 @@ export const EmployeeTable = () => {
             ) : (
               <></>
             )}
-
-            <button
-              onClick={handleFilterApproval}
-              className="bg-cyan-500 p-2 rounded text-white"
-            >
-              Filter By Approval
-            </button>
           </div>
         </>
       )}
