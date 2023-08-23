@@ -158,7 +158,7 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
       desig = data.desig;
     }
    
-    let local = distance < 100 ? distance * 2 * 2 : localConv;
+    let local = distance <= 100 ? distance * 2 * 2 : localConv;
 
     const addData = {
       ...formData,
@@ -498,7 +498,7 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                           }
                         />
 
-                        {distance < 100 ? (
+                        {distance <= 100 ? (
                           <p className="text-lg flex items-center justify-center border-gray-200 w-full bg-slate-100">
                            LocalConv: {distance * 2 * 2}
                           </p>

@@ -99,10 +99,10 @@ export const EmployeeTable = () => {
               background: `${color}`,
               padding: "10px 20px",
               borderRadius: "10px",
-              color: "#fff",
-              cursor: 'pointer',
+              color: "#000",
+              cursor: "pointer",
               textAlign: "center",
-              border: "none"
+              border: "none",
             }}
           >
             {cell.getValue()}
@@ -135,7 +135,7 @@ export const EmployeeTable = () => {
   return (
     <MaterialReactTable
       columns={columns}
-      data={filterData ?? []}
+      data={data?.empGroup === "level3" ? empData : filterData ?? []}
       enableColumnActions={false}
       enableColumnFilters={false}
       enablePagination={false}
