@@ -3,29 +3,69 @@ import { MaterialReactTable } from "material-react-table";
 import dayjs from "dayjs";
 import { getEmp } from "../../utils/api";
 import { MonthDropDown, YearDropDown } from "../Dropdown";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { axiosInstance } from "../../utils/api";
 
 export const EmployeeTable = () => {
-
   const navigate = useNavigate();
   const [empData, setEmpData] = useState([]);
   const [date, setDate] = useState(dayjs());
   const [year, setYear] = useState(dayjs(date.$d).format("YYYY"));
   const [month, setMonth] = useState(dayjs(date.$d).format("MM").split("")[1]);
   const { data } = useSelector((state) => state.login.data);
+  const [filterApproval, setFilterApproval] = useState([]);
+
+  const filterData = empData.filter((items1) =>
+    filterApproval?.some((items2) => {
+      return items1.empId === items2.empId;
+    })
+  );
 
   const getEmployeData = async () => {
-    const result = await getEmp("/account/emplist", data.empId, data.desig);
-    setEmpData(result);
+    try {
+      const result = await getEmp(
+        "/account/emplist",
+        data.empId,
+        data.desig,
+        data.empGroup
+      );
+      setEmpData(result);
+    } catch (error) {
+      console.log("emp list error: ", error);
+    }
+  };
+
+  const handleFilterApproval = async () => {
+    try {
+      const response = await axiosInstance.post(
+        "/web/filter",
+        {
+          month,
+          year,
+          level: data.empGroup,
+        },
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      setFilterApproval(response.data.empList);
+    } catch (error) {
+      console.log("filter approval error: ", error);
+    }
   };
 
   useEffect(() => {
     getEmployeData();
+    handleFilterApproval();
   }, []);
 
   useEffect(() => {
     getEmployeData();
+    handleFilterApproval();
   }, [month, year]);
 
   const columns = [
@@ -33,22 +73,37 @@ export const EmployeeTable = () => {
       accessorKey: "empId",
       header: "EmpId",
       Cell: ({ cell }) => {
+        let color;
+        filterApproval?.forEach((val) => {
+          if (val.empId === cell.row.original.empId) {
+            color = val.color;
+          }
+        });
         return (
           <button
             onClick={() =>
               navigate(`/expence`, {
                 state: {
                   emp: "emp",
-                  empId: cell.row.original.empId__empId,
-                  empName: cell.row.original.empId__name,
-                  empDesig: cell.row.original.empId__desig,
-                  empHq: cell.row.original.empId__hq,
+                  empId: cell.row.original.empId,
+                  empName: cell.row.original.name,
+                  empDesig: cell.row.original.desig,
+                  empHq: cell.row.original.hq,
+                  empLevel: cell.row.original.empGroup,
                   month,
                   year,
                 },
               })
             }
-            className="bg-cyan-400 px-2 py-1 rounded"
+            style={{
+              background: `${color}`,
+              padding: "10px 20px",
+              borderRadius: "10px",
+              color: "#000",
+              cursor: "pointer",
+              textAlign: "center",
+              border: "none",
+            }}
           >
             {cell.getValue()}
           </button>
@@ -71,12 +126,16 @@ export const EmployeeTable = () => {
       accessorKey: "empGroup",
       header: "Group",
     },
+    {
+      accessorKey: "salesGroup",
+      header: "Sales Group",
+    },
   ];
 
   return (
     <MaterialReactTable
       columns={columns}
-      data={empData ?? []}
+      data={data?.empGroup === "level3" ? empData : filterData ?? []}
       enableColumnActions={false}
       enableColumnFilters={false}
       enablePagination={false}
@@ -93,12 +152,14 @@ export const EmployeeTable = () => {
             <div>
               <YearDropDown year={year} setYear={setYear} />
             </div>
-            {["ASM", "Sr.ASM", "RMS", "AASM", "SM", "HOD"].includes(data.desig) ? (
+            {data.empGroup === "level2" ||
+            data.empGroup === "level3" ||
+            data.empGroup === "level4" ? (
               <button
                 onClick={() => navigate("/expence")}
                 className="bg-cyan-500 p-2 rounded text-white"
               >
-                Add Expence
+                Add / View Expence
               </button>
             ) : (
               <></>

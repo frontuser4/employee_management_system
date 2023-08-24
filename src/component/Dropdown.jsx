@@ -4,7 +4,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
-const StockistDropdown = ({title, option, value, onChange})=>{
+const StockistDropdown = ({title, option, value, onChange, disabled})=>{
 
   const [open, setOpen] = useState(false);
 
@@ -33,6 +33,7 @@ const StockistDropdown = ({title, option, value, onChange})=>{
           label={title}
           onChange={handleChange}
           size='small'
+          disabled={disabled}
         >
         {
           option?.map((data, index)=>{
@@ -84,7 +85,7 @@ const AttendanceDropdown = ({title, option, value, onChange})=>{
   )
 }
 
-const ModeDropdown = ({title, option, value, onChange})=>{
+const ModeDropdown = ({title, option, value, onChange, disabled})=>{
   const [open, setOpen] = useState(false);
 
   const handleChange = (event) => {
@@ -112,6 +113,7 @@ const ModeDropdown = ({title, option, value, onChange})=>{
           label={title}
           onChange={handleChange}
           size='small'
+          disabled={disabled}
         >
            {
           option?.map((data, index)=>{

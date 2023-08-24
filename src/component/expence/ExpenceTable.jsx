@@ -41,16 +41,16 @@ const ExpenceTable = ({ year, month }) => {
       expData.empId = state.empId;
       expData.month = state.month;
       expData.year = state.year;
-      expData.user = data?.desig;
+      expData.user = data?.empGroup;
     } else {
       expData.empId = data.empId;
       expData.month = month;
       expData.year = year;
-      expData.user = data?.desig;
+      expData.user = data?.empGroup;
     }
 
     const res = await get(
-      "/getput",
+      "/web/getexpense",
       expData.empId,
       expData.month,
       expData.year,
@@ -72,8 +72,7 @@ const ExpenceTable = ({ year, month }) => {
   }, [month, year, closeForm, approvalRefresh]);
 
   const handleEdit = (mydata) => {
-    const {emp, ...rest} = state;
-    navigate("/updatetable", { state: { ...rest, ...mydata } });
+    navigate("/updatetable", { state: { ...state, ...mydata } });
   };
 
   const handlePreviewImage = (imgpath) => {
@@ -87,11 +86,11 @@ const ExpenceTable = ({ year, month }) => {
       empId: id,
       month,
       year,
-      submitby: data.desig,
+      submitby: data.empGroup,
     };
 
     try {
-      const res = await post("/approval", approvedata);
+      const res = await post("/web/approval", approvedata);
       setApprovalRefresh((prev) => !prev);
       if (res.data.status === "200") {
         toast.success(res.data.data);
@@ -101,11 +100,34 @@ const ExpenceTable = ({ year, month }) => {
     }
   };
 
+  const handleResetAproval = async () => {
+    let id = state?.emp === "emp" ? state.empId : data.empId;
+    let empLevel = state?.emp === "emp" ? state.empLevel : data.empGroup;
+
+    let approvedata = {
+      empId: id,
+      month,
+      year,
+      empLevel,
+      submitby: data.empGroup,
+    };
+
+    try {
+      const res = await post("/web/reset", approvedata);
+      setApprovalRefresh((prev) => !prev);
+      if (res.data.status === "200") {
+        toast.success(res.data.data);
+      }
+    } catch (error) {
+      console.log("approval reset error: ", error);
+    }
+  };
+
   return (
     <>
       <div className="flex items-center gap-3">
         <div>
-          {["Account"].includes(data.desig) ? (
+          {state?.emp === "emp" ? (
             <></>
           ) : (
             <button
@@ -117,7 +139,6 @@ const ExpenceTable = ({ year, month }) => {
               Add
             </button>
           )}
-
         </div>
         <div>
           <DownloadTableExcel
@@ -136,7 +157,9 @@ const ExpenceTable = ({ year, month }) => {
         <table ref={tableRef}>
           <thead>
             <tr>
-              <th colSpan={16}>Sapat International Pvt. Ltd.</th>
+              <th colSpan={27} className="text-4xl">
+                Sapat International Pvt. Ltd - Monthly Expenses
+              </th>
             </tr>
             {state?.emp === "emp" ? (
               <tr>
@@ -144,6 +167,20 @@ const ExpenceTable = ({ year, month }) => {
                 <th colSpan={4}>Designation: {state.empDesig}</th>
                 <th colSpan={4}>Emp Code: {state.empId}</th>
                 <th colSpan={4}>Head/Quarter/Area: {state.empHq}</th>
+                <th colSpan={4}>Month: {month}</th>
+                <th colSpan={4}>Year: {year}</th>
+                <th colSpan={4}>
+                  {data.empGroup === "level3" ? (
+                    <button
+                      onClick={handleResetAproval}
+                      className="bg-[#0ea5e9] px-3 py-1 text-md rounded text-white mb-2 hover:bg-cyan-600"
+                    >
+                      Reset Approval
+                    </button>
+                  ) : (
+                    <></>
+                  )}
+                </th>
               </tr>
             ) : (
               <tr>
@@ -151,6 +188,20 @@ const ExpenceTable = ({ year, month }) => {
                 <th colSpan={4}>Designation: {data?.desig}</th>
                 <th colSpan={4}>Emp Code: {data?.empId}</th>
                 <th colSpan={4}>Head/Quarter/Area: {data?.hq}</th>
+                <th colSpan={4}>Month: {month}</th>
+                <th colSpan={4}>Year: {year}</th>
+                <th colSpan={4}>
+                  {data.empGroup === "level3" ? (
+                    <button
+                      onClick={handleResetAproval}
+                      className="bg-[#0ea5e9] px-3 py-1 text-md rounded text-white mb-2 hover:bg-cyan-600"
+                    >
+                      Reset Approval
+                    </button>
+                  ) : (
+                    <></>
+                  )}
+                </th>
               </tr>
             )}
 
@@ -179,25 +230,18 @@ const ExpenceTable = ({ year, month }) => {
               <th className="text-center">PRINTING STATIONARY</th>
               <th className="text-center">OTHER</th>
               <th className="text-center">OTHER GST</th>
-              <th className="text-center">WORKING HOURS</th>
+              {/* <th className="text-center">WORKING HOURS</th> */}
               <th className="text-center">
                 APPROVAL
-                {editFlag === false ? (
+                {editFlag ? (
                   <button
-                    className="bg-rose-500 px-3 rounded text-white"
-                    disabled={true}
+                    className="bg-cyan-500 px-3 rounded text-white"
+                    onClick={approveHandler}
                   >
-                    Already submit
+                    submit
                   </button>
                 ) : (
-                  <>
-                    <button
-                      className="bg-cyan-500 px-3 rounded text-white"
-                      onClick={approveHandler}
-                    >
-                      submit
-                    </button>
-                  </>
+                  <></>
                 )}
               </th>
               <th className="text-center">TOTAL</th>
@@ -341,7 +385,7 @@ const ExpenceTable = ({ year, month }) => {
                       </td>
                       <td className="text-center">{data.other}</td>
                       <td className="text-center">{data.otherGst}</td>
-                      <td className="text-center">{data.workingHr}</td>
+                      {/* <td className="text-center">{data.workingHr}</td> */}
                       <td>{data.approval}</td>
                       <td className="text-center">{data.total}</td>
                     </tr>
@@ -394,8 +438,33 @@ const ExpenceTable = ({ year, month }) => {
                   {totalExpData?.sum_otherGst}
                 </td>
                 <td className="text-center font-bold"></td>
-                <td colSpan={1}></td>
+          
                 <td className="text-center font-bold">{grandTotal}</td>
+              </tr>
+              <tr>
+                <td colSpan={26}>
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={5} className="font-bold">
+                  Prepared By: {state?.emp === "emp" ? state?.empName : data?.name}
+                </td>
+                <td colSpan={5} className="font-bold">
+                  ASM : 
+                </td>
+                <td colSpan={5} className="font-bold">
+                  Check By: Suhas Ghare
+                </td>
+                <td colSpan={5} className="font-bold">
+                  RSM : Jotiram Ghnawat
+                </td>
+                <td colSpan={6} className="font-bold">
+                  Account : Arjun / Mahesh Wagh
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={20}></td>
+                <td colSpan={6} className=" font-bold font-serif italic">This is computer generated no signature required</td>
               </tr>
             </tbody>
           ) : (
@@ -447,6 +516,7 @@ const ExpenceTable = ({ year, month }) => {
         open={openForm}
         setOpen={setOpenForm}
         setCloseForm={setCloseForm}
+        empData={state}
       />
 
       <ImagePreview

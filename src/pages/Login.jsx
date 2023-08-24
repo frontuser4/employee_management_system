@@ -26,7 +26,7 @@ const Login = () => {
       if (loginRes.status === 200) {
         dispatch(login(loginRes.data));
         localStorage.setItem('token', loginRes.data.token);  
-        navigate('/dashboard', {state: loginRes.data })
+        navigate('/dashboard')
         setSuccess(true);
       }
     } catch (error) {

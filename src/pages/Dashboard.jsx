@@ -112,6 +112,7 @@ export default function Dashboard() {
                   Designation : {data.desig}
                 </Typography>
                 <Typography textAlign="center">Hq : {data.hq}</Typography>
+                <Typography textAlign="center">Hq : {data.empGroup}</Typography>
               </MenuItem>
             </Menu>
           </Box>
@@ -120,7 +121,7 @@ export default function Dashboard() {
 
       <Box component="main" sx={{ flexGrow: 1, p: 3, overflowX: "auto" }}>
         <DrawerHeader />
-        {["ASM", "Sr.ASM", "RMS", "Account", "AASM", "SM", "HOD"].includes(data.desig) ? (
+        { data.empGroup !== 'level1' ? (
           <EmployeeTables />
         ) : (
           <TabPanelTables />
