@@ -12,8 +12,11 @@ import { useSelector, useDispatch } from "react-redux";
 import ImagePreview from "../ImagePreview";
 import { expenceData } from "../../store/loginSlice";
 import toast, { Toaster } from "react-hot-toast";
+import { MonthDropDown, YearDropDown } from "../Dropdown";
+import dayjs from "dayjs";
+import Loader from "../loader/Loader";
 
-const ExpenceTable = ({ year, month }) => {
+const ExpenceTable = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const tableRef = useRef(null);
@@ -31,6 +34,9 @@ const ExpenceTable = ({ year, month }) => {
   const [displayFlag, setDisplayFlag] = useState(null);
   const [totalExpData, setTotalExpData] = useState(null);
   const [approvalRefresh, setApprovalRefresh] = useState(false);
+  const [date, setDate] = useState(dayjs());
+  const [year, setYear] = useState(dayjs(date.$d).format("YYYY"));
+  const [month, setMonth] = useState(dayjs(date.$d).format("MM").split("")[1]);
 
   async function fetchData() {
     setLoading(true);
@@ -39,8 +45,8 @@ const ExpenceTable = ({ year, month }) => {
 
     if (state?.emp === "emp") {
       expData.empId = state.empId;
-      expData.month = state.month;
-      expData.year = state.year;
+      expData.month = month;
+      expData.year = year;
       expData.user = data?.empGroup;
     } else {
       expData.empId = data.empId;
@@ -49,30 +55,37 @@ const ExpenceTable = ({ year, month }) => {
       expData.user = data?.empGroup;
     }
 
-    const res = await get(
-      "/web/getexpense",
-      expData.empId,
-      expData.month,
-      expData.year,
-      expData?.user
-    );
+    try {
+      const res = await get(
+        "/web/getexpense",
+        expData.empId,
+        expData.month,
+        expData.year,
+        expData?.user
+      );
 
-    setTableData(res.data);
-    dispatch(expenceData(res.data));
-    setChangeLogsData(res.data_log);
-    setGrandTotal(res.grand_total);
-    setEditFlag(res.editFlag);
-    setDisplayFlag(res.displayFlag);
-    setTotalExpData(res);
-    setLoading(false);
+      setTableData(res.data);
+      dispatch(expenceData(res.data));
+      setChangeLogsData(res.data_log);
+      setGrandTotal(res.grand_total);
+      setEditFlag(res.editFlag);
+      setDisplayFlag(res.displayFlag);
+      setTotalExpData(res);
+      setLoading(false);
+    } catch (error) {
+      console.log("expence get error: ", error);
+    }
   }
 
+  console.log("editFlag: ", editFlag);
+
   useEffect(() => {
+    console.log("return from update", state);
     fetchData();
   }, [month, year, closeForm, approvalRefresh]);
 
   const handleEdit = (mydata) => {
-    navigate("/updatetable", { state: { ...state, ...mydata } });
+    navigate("/dashboard/update-expence", { state: { ...state, ...mydata } });
   };
 
   const handlePreviewImage = (imgpath) => {
@@ -81,6 +94,7 @@ const ExpenceTable = ({ year, month }) => {
   };
 
   const approveHandler = async () => {
+    console.log("approval");
     let id = state?.emp === "emp" ? state.empId : data.empId;
     let approvedata = {
       empId: id,
@@ -125,44 +139,58 @@ const ExpenceTable = ({ year, month }) => {
 
   return (
     <>
-      <div className="flex items-center gap-3">
-        <div>
-          {state?.emp === "emp" ? (
-            <></>
-          ) : (
-            <button
-              className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600 cursor-pointer"
-              onClick={() => setOpenForm(true)}
-              disabled={editFlag === false ? true : false}
-            >
-              <AddIcon />
-              Add
-            </button>
-          )}
+      <div className="flex flex-row items-center md:flex-row md:items-center gap-2 md:gap-4">
+        <div className="md:flex">
+          <div>
+            <MonthDropDown
+              label="Expense Month"
+              month={month}
+              setMonth={setMonth}
+            />
+          </div>
+          <div>
+            <YearDropDown label="Expense Year" year={year} setYear={setYear} />
+          </div>
         </div>
-        <div>
-          <DownloadTableExcel
-            filename="employee table"
-            sheet="employee"
-            currentTableRef={tableRef.current}
-          >
-            <button className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600">
-              Export Data
-            </button>
-          </DownloadTableExcel>
+        <div className="md:flex md:gap-2">
+          <div>
+            {state?.emp === "emp" ? (
+              <></>
+            ) : (
+              <button
+                className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600 cursor-pointer"
+                onClick={() => setOpenForm(true)}
+                disabled={editFlag === false ? true : false}
+              >
+                <AddIcon />
+                Add
+              </button>
+            )}
+          </div>
+          <div>
+            <DownloadTableExcel
+              filename="employee table"
+              sheet="employee"
+              currentTableRef={tableRef.current}
+            >
+              <button className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600">
+                Export Data
+              </button>
+            </DownloadTableExcel>
+          </div>
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table ref={tableRef}>
+      <div id="table-scroll" className="table-scroll">
+        <table ref={tableRef} id="main-table" className="main-table">
           <thead>
-            <tr>
+            <tr className="expBrand">
               <th colSpan={27} className="text-4xl">
                 Sapat International Pvt. Ltd - Monthly Expenses
               </th>
             </tr>
             {state?.emp === "emp" ? (
-              <tr>
+              <tr className="expEmpData">
                 <th colSpan={4}>Name: {state.empName}</th>
                 <th colSpan={4}>Designation: {state.empDesig}</th>
                 <th colSpan={4}>Emp Code: {state.empId}</th>
@@ -183,7 +211,7 @@ const ExpenceTable = ({ year, month }) => {
                 </th>
               </tr>
             ) : (
-              <tr>
+              <tr className="expEmpData">
                 <th colSpan={4}>Name: {data?.name}</th>
                 <th colSpan={4}>Designation: {data?.desig}</th>
                 <th colSpan={4}>Emp Code: {data?.empId}</th>
@@ -205,7 +233,7 @@ const ExpenceTable = ({ year, month }) => {
               </tr>
             )}
 
-            <tr>
+            <tr className="expHeader">
               <th className="text-center">Action</th>
               <th className="text-center">Date</th>
               <th className="text-center">Attendence</th>
@@ -217,7 +245,7 @@ const ExpenceTable = ({ year, month }) => {
               <th className="text-center">TRAVEL FROM</th>
               <th className="text-center">TRAVEL TO</th>
               <th className="text-center">MODE TRAVEL</th>
-              <th className="text-center">KM</th>
+              <th className="text-center">ONE SIDE KM</th>
               <th className="text-center">DALY CONV</th>
               <th className="text-center">LOCAL CONVEY</th>
               <th className="text-center">TRAVELING LONG</th>
@@ -234,12 +262,14 @@ const ExpenceTable = ({ year, month }) => {
               <th className="text-center">
                 APPROVAL
                 {editFlag ? (
-                  <button
-                    className="bg-cyan-500 px-3 rounded text-white"
-                    onClick={approveHandler}
-                  >
-                    submit
-                  </button>
+                  <>
+                    <button
+                      className="bg-cyan-500 px-3 rounded text-white cursor-pointer"
+                      onClick={approveHandler}
+                    >
+                      submit
+                    </button>
+                  </>
                 ) : (
                   <></>
                 )}
@@ -251,7 +281,7 @@ const ExpenceTable = ({ year, month }) => {
             <tbody>
               {loading ? (
                 <div>
-                  <Skeleton count={10} width={1200} />
+                  <Loader />
                 </div>
               ) : (
                 tableData?.map((data, index) => {
@@ -438,25 +468,25 @@ const ExpenceTable = ({ year, month }) => {
                   {totalExpData?.sum_otherGst}
                 </td>
                 <td className="text-center font-bold"></td>
-          
+
                 <td className="text-center font-bold">{grandTotal}</td>
               </tr>
               <tr>
-                <td colSpan={26}>
-                </td>
+                <td colSpan={26}></td>
               </tr>
               <tr>
                 <td colSpan={5} className="font-bold">
-                  Prepared By: {state?.emp === "emp" ? state?.empName : data?.name}
+                  Prepared By:{" "}
+                  {state?.emp === "emp" ? state?.empName : data?.name}
                 </td>
                 <td colSpan={5} className="font-bold">
-                  ASM : 
+                  ASM :
                 </td>
                 <td colSpan={5} className="font-bold">
                   Check By: Suhas Ghare
                 </td>
                 <td colSpan={5} className="font-bold">
-                  RSM : Jotiram Ghnawat
+                  RSM : Jotiram Ghanawat
                 </td>
                 <td colSpan={6} className="font-bold">
                   Account : Arjun / Mahesh Wagh
@@ -464,7 +494,9 @@ const ExpenceTable = ({ year, month }) => {
               </tr>
               <tr>
                 <td colSpan={20}></td>
-                <td colSpan={6} className=" font-bold font-serif italic">This is computer generated no signature required</td>
+                <td colSpan={6} className=" font-bold font-serif italic">
+                  This is computer generated no signature required
+                </td>
               </tr>
             </tbody>
           ) : (

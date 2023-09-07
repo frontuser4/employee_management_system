@@ -15,6 +15,7 @@ export const EmployeeTable = () => {
   const [month, setMonth] = useState(dayjs(date.$d).format("MM").split("")[1]);
   const { data } = useSelector((state) => state.login.data);
   const [filterApproval, setFilterApproval] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const filterData = empData.filter((items1) =>
     filterApproval?.some((items2) => {
@@ -31,6 +32,7 @@ export const EmployeeTable = () => {
         data.empGroup
       );
       setEmpData(result);
+      setIsLoading(false)
     } catch (error) {
       console.log("emp list error: ", error);
     }
@@ -58,11 +60,7 @@ export const EmployeeTable = () => {
     }
   };
 
-  useEffect(() => {
-    getEmployeData();
-    handleFilterApproval();
-  }, []);
-
+ 
   useEffect(() => {
     getEmployeData();
     handleFilterApproval();
@@ -82,7 +80,7 @@ export const EmployeeTable = () => {
         return (
           <button
             onClick={() =>
-              navigate(`/expence`, {
+              navigate(`/dashboard/expense`, {
                 state: {
                   emp: "emp",
                   empId: cell.row.original.empId,
@@ -96,7 +94,7 @@ export const EmployeeTable = () => {
               })
             }
             style={{
-              background: `${color}`,
+              background: `${filterData?.length === 0 ? 'white' : color}`,
               padding: "10px 20px",
               borderRadius: "10px",
               color: "#000",
@@ -135,32 +133,51 @@ export const EmployeeTable = () => {
   return (
     <MaterialReactTable
       columns={columns}
-      data={data?.empGroup === "level3" ? empData : filterData ?? []}
+      data={data?.empGroup === "level3" ? empData : filterData}
       enableColumnActions={false}
       enableColumnFilters={false}
       enablePagination={false}
       enableSorting={false}
       enableBottomToolbar={false}
       enableTopToolbar
+      state={{isLoading: isLoading}}
       muiTableBodyRowProps={{ hover: false }}
       renderTopToolbarCustomActions={() => (
         <>
-          <div className="flex items-center gap-4">
+         
+          <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
             <div>
-              <MonthDropDown month={month} setMonth={setMonth} />
+              <MonthDropDown label="Filter Month" month={month} setMonth={setMonth} />
             </div>
             <div>
-              <YearDropDown year={year} setYear={setYear} />
+              <YearDropDown label="Filter Year" year={year} setYear={setYear} />
             </div>
             {data.empGroup === "level2" ||
             data.empGroup === "level3" ||
             data.empGroup === "level4" ? (
-              <button
-                onClick={() => navigate("/expence")}
-                className="bg-cyan-500 p-2 rounded text-white"
-              >
-                Add / View Expence
-              </button>
+              <>
+                <button
+                  onClick={() => navigate("/dashboard/expense")}
+                  className="bg-cyan-500 p-1 md:p-2 rounded text-white"
+                >
+                  Add / View Expence
+                </button>
+              </>
+            ) : (
+              <></>
+            )}
+
+            {data.empGroup === "level3" ||
+            data.empGroup === "level4" ||
+            data.empGroup === "level5" ? (
+              <>
+                <button
+                  onClick={() => navigate("/dashboard/summary-expense", {state:{month, year}})}
+                  className="bg-cyan-500 p-2 rounded text-white"
+                >
+                  Get Summary
+                </button>
+              </>
             ) : (
               <></>
             )}
@@ -170,6 +187,7 @@ export const EmployeeTable = () => {
       muiTableProps={{
         sx: {
           border: "1px solid rgba(81, 81, 81, 1)",
+          overflowX: "scroll",
         },
       }}
       muiTableHeadCellProps={{

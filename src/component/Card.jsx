@@ -1,22 +1,38 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Typography, Paper, Box } from "@mui/material";
-import { get } from '../utils/api';
+import { get, scoreSummaryGet } from '../utils/api';
 
-const Card = ({ score, saleTargetLY, saleTargetTY, month, year }) => {
+const Card = ({ month, year }) => {
   
   const { data } = useSelector((state) => state.login.data);
   const [scoreData, setScoreData] = useState(null);
+  const [score, setScore] = useState(null);
+  const [saleTargetLY, setSaleTargetLY] = useState(null);
+  const [saleTargetTY, setSaleTargetTY] = useState(null);
 
   const getScore = async()=> {
-      const res = await get('/score', data.empId, month, year);
+      const res = await get('/web/score', data.empId, month, year);
       setScoreData(res.data_score);
-      // console.log("res: ", res.data_score);
+      console.log("res: ", res.data_score);
   }
 
+  const fetchScoreCardData = async () => {
+    const res = await scoreSummaryGet(
+      "/account/score",
+      data.empId,
+      month,
+      year
+    );
+    setScore(res.score);
+    setSaleTargetLY(res.sale_target_LY);
+    setSaleTargetTY(res.sale_target_TY);
+  };
+
   useEffect(()=>{
+    fetchScoreCardData();
     getScore();
-  }, [])
+  }, [month, year])
 
   return (
     <Box
@@ -58,10 +74,10 @@ const Card = ({ score, saleTargetLY, saleTargetTY, month, year }) => {
           <Typography>{scoreData?.workingDays}</Typography>
         </Box>
 
-        <Box className="flex items-center flex-col justify-center w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
+        {/* <Box className="flex items-center flex-col justify-center w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
           <Typography>WORK HOURS</Typography>
           <Typography>{scoreData?.wHr_sum}</Typography>
-        </Box>
+        </Box> */}
 
         <Box className="flex items-center flex-col justify-center w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
           <Typography>LY ACH</Typography>

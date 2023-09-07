@@ -2,15 +2,20 @@ import { useState, useEffect } from "react";
 import { TextField, Button } from "@mui/material";
 import { post } from "../utils/api";
 import toast, { Toaster } from "react-hot-toast";
-import { get } from '../utils/api';
+import Card from "../component/Card";
+import { MonthDropDown, YearDropDown } from "../component/Dropdown";
+import { useSelector } from "react-redux";
+import dayjs from "dayjs";
 
-const ScoreCard = ({ empId, month, year }) => {
-
-  const [claimGift, setClaimGift ] = useState(null);
+const ScoreCard = () => {
+  const { data } = useSelector((state) => state.login.data);
+  const [claimGift, setClaimGift] = useState(null);
   const [marksOne, setMarksOne] = useState(0);
   const [marksTwo, setMarksTwo] = useState(0);
   const [marksThree, setMarksThree] = useState(0);
-  const [scores, setScores] = useState(null);
+  const [date, setDate] = useState(dayjs());
+  const [year, setYear] = useState(dayjs(date.$d).format("YYYY"));
+  const [month, setMonth] = useState(dayjs(date.$d).format("MM").split("")[1]);
 
   const [scoreGradeOne, setScoreGradeOne] = useState("");
   const [scoreGradeTwo, setScoreGradeTwo] = useState("");
@@ -85,7 +90,7 @@ const ScoreCard = ({ empId, month, year }) => {
 
   const handlerClaimGift = async (e) => {
     e.preventDefault();
-    if(!e.target[0].value){
+    if (!e.target[0].value) {
       return;
     }
     const res = await post("/web/claimgift", {
@@ -94,26 +99,20 @@ const ScoreCard = ({ empId, month, year }) => {
       month,
       year,
     });
-    setClaimGift( e.target[0].value);
+    setClaimGift(e.target[0].value);
     toast.success(res.data.Details);
     e.target[0].value = "";
   };
-
-  const fetchScore = async()=>{
-     const res = await get('/web/score', empId, month, year);
-     setScores(res.data_score.claimGift);
-  }
 
   useEffect(() => {
     scoreOneGrade(40);
     scoreTwoGrade(20);
     scoreThreeGrade(15);
-    fetchScore();
-  }, [claimGift]);
+  }, [claimGift, month, year]);
 
   return (
     <>
-      <div className="mb-3">
+      <div className="flex gap-3mb-3">
         <form className="flex items-center gap-2" onSubmit={handlerClaimGift}>
           <TextField
             label="Claim/Gift"
@@ -126,6 +125,23 @@ const ScoreCard = ({ empId, month, year }) => {
             Submit
           </Button>
         </form>
+
+        <div className="flex">
+          <div>
+            <MonthDropDown
+              label="ScoreCard Month"
+              month={month}
+              setMonth={setMonth}
+            />
+          </div>
+          <div>
+            <YearDropDown
+              label="ScoreCard Year"
+              year={year}
+              setYear={setYear}
+            />
+          </div>
+        </div>
       </div>
       <div className="container">
         <table style={{ width: "100%" }}>
@@ -142,25 +158,19 @@ const ScoreCard = ({ empId, month, year }) => {
               <td>TOTAL CALLS(TC)</td>
               <td className="text-center">40</td>
               <td className="text-center">10</td>
-              <td className="text-center">
-                {marksOne} 
-              </td>
+              <td className="text-center">{marksOne}</td>
             </tr>
             <tr>
               <td>PRODUCTIVE CALLS(PC)</td>
               <td className="text-center">25</td>
               <td className="text-center">10</td>
-              <td className="text-center">
-                {marksTwo} 
-              </td>
+              <td className="text-center">{marksTwo}</td>
             </tr>
             <tr>
               <td>POP VISELITY</td>
               <td className="text-center">15</td>
               <td className="text-center">10</td>
-              <td className="text-center">
-                {marksThree} 
-              </td>
+              <td className="text-center">{marksThree}</td>
             </tr>
             <tr>
               <td>MONTHLY TARGET</td>
@@ -182,7 +192,7 @@ const ScoreCard = ({ empId, month, year }) => {
             </tr>
             <tr>
               <td>CLAIM/GIFT SUBMISSIONS</td>
-              <td className="text-center">{scores}</td>
+              <td className="text-center">{9}</td>
               <td className="text-center">5</td>
               <td className="text-center">{totalScore.scoreSeven}</td>
             </tr>
@@ -196,6 +206,7 @@ const ScoreCard = ({ empId, month, year }) => {
           </tbody>
         </table>
       </div>
+      <Card empId={data.empId} month={month} year={year} />
       <Toaster position="top-center" />
     </>
   );

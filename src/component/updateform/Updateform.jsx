@@ -1,16 +1,15 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Box,
   TextField,
-  FormGroup,
   FormControlLabel,
-  Checkbox,
   Button,
   FormControl,
   FormLabel,
   RadioGroup,
   Radio,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import Accordions from "../Accordions";
 import {
@@ -27,6 +26,7 @@ import { useSelector } from "react-redux";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { update, imageDelete } from "../../utils/api";
 import CancelIcon from "@mui/icons-material/Cancel";
+import toast from "react-hot-toast";
 
 export default function UpdateForm({ editData, setCloseUpdateform }) {
   const BASE_URL = "http://64.227.141.209:8080";
@@ -43,7 +43,8 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   const [pjpChnage, setPjpChange] = useState(false);
   const [posterActivity, setPosterActivity] = useState(null);
   const [date, setDate] = useState(dayjs(state.dateExp));
-  const [distance, setDistance] = useState(null);
+  const [distance, setDistance] = useState(formData.distance);
+  const [localConv, setLocalConv] = useState(null);
 
   const [distanceFile, setDistanceFile] = useState(null);
   const [lodgingBillFile, setLodgingBillFile] = useState(null);
@@ -52,6 +53,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   const [mobileBillFile, setMobileBillFile] = useState(null);
   const [courierBillFile, setCourierBillFile] = useState(null);
   const [stationaryBillFile, setStationaryBillFile] = useState(null);
+  const [empId, setEmpId] = useState(null);
 
   const [distancePreview, setDistancePreview] = useState(
     `${BASE_URL}${editData.distanceFile}`
@@ -81,6 +83,14 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
     date.$d
   ).format("MM")}${dayjs(date.$d).format("DD")}`;
 
+  useEffect(() => {
+    if (state?.emp === "emp") {
+      setEmpId(state.empId);
+    } else {
+      setEmpId(data.empId);
+    }
+  }, []);
+
   const handleFormChange = (event) => {
     setFormData((prev) => ({
       ...prev,
@@ -91,19 +101,28 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   async function UpdateData(updatedata) {
     const id = state?.emp === "emp" ? state?.empId : data.empId;
 
-    const res = await update(
-      "/web/getexpense",
-      id,
-      dayjs(date.$d).format("MM"),
-      dayjs(date.$d).format("YYYY"),
-      data.empGroup,
-      updatedata
-    );
-    console.log("update: ", res);
+    try {
+      const res = await update(
+        "/web/getexpense",
+        id,
+        dayjs(date.$d).format("MM"),
+        dayjs(date.$d).format("YYYY"),
+        data.empGroup,
+        updatedata
+      );
+      if (res.status === 200) {
+        toast.success("expence update successfully");
+      }
+    } catch (error) {
+      if (error.response.status === 400) {
+        toast.success(error.response.data.error);
+      }
+      console.log("update form error: ", error);
+    }
   }
 
   const handleFormSubmit = () => {
-    const { emp, empDesig, empId, empLevel, expenseId } = state;
+    const { emp, empDesig, empId, empLevel, expenseId, empHq, empName } = state;
     let id;
     let desig;
     let level;
@@ -121,6 +140,8 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
       expId = expenceId;
     }
 
+    let local = distance <= 100 ? distance * 2 * 2 : localConv;
+
     const updatedata = {
       ...formData,
       empId: id,
@@ -130,6 +151,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
       dateExp: dayjs(date).format("YYYY-MM-DD"),
       expenseId: expId,
       distance,
+      localConv: local,
       distanceFile,
       lodgingBillFile,
       foodFile,
@@ -143,17 +165,17 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
     };
 
     UpdateData(updatedata);
-    navigate("/dashboard", { state: data });
-    setAttendance("present");
+    navigate("/dashboard/expense", {
+      state: { emp, empDesig, empId, empLevel, expenseId, empHq, empName },
+    });
+
+    setAttendance("PRESENT");
     setModeTravel("");
     setStockistData("");
     setDistance("");
     setCloseUpdateform((prev) => !prev);
   };
 
-  const handleDistanceChange = (e) => {
-    setDistance(e.target.value);
-  };
 
   return (
     <>
@@ -234,6 +256,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                 : false
             }
           />
+
           <TextField
             type="number"
             fullWidth
@@ -242,23 +265,36 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             onChange={handleFormChange}
             label="WORKING HOURS"
             size="small"
-            disabled={
-              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(attendance)
-                ? true
-                : false
-            }
+            disabled={true}
           />
-          <StockistDropdown
-            title="Stockist"
-            option={stockist}
-            value={stockistData}
-            onChange={(e) => setStockistData(e)}
-            disabled={
-              ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(attendance)
-                ? true
-                : false
-            }
-          />
+
+          {data.desig === "RMS" ? (
+            <TextField
+              type="text"
+              fullWidth
+              value={stockistData}
+              onChange={(e) => setStockistData(e.target.value)}
+              label="STOCKIST"
+              size="small"
+              disabled={
+                ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(attendance)
+                  ? true
+                  : false
+              }
+            />
+          ) : (
+            <StockistDropdown
+              title="Stockist"
+              option={stockist}
+              value={stockistData}
+              onChange={(e) => setStockistData(e)}
+              disabled={
+                ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(attendance)
+                  ? true
+                  : false
+              }
+            />
+          )}
         </div>
 
         <div className="grid md:grid-cols-2 gap-3 mb-4">
@@ -348,16 +384,29 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       }
                     />
 
-                    <TextField
-                      type="number"
-                      name="localConv"
-                      value={distance * 2 * 2}
-                      onChange={handleDistanceChange}
-                      fullWidth
-                      label="LOCAL CONV"
-                      size="small"
-                      disabled={true}
-                    />
+                    {distance <= 100 ? (
+                      <p className="text-lg flex items-center justify-center border-gray-200 w-full bg-slate-100">
+                        LocalConv: {distance * 2 * 2}
+                      </p>
+                    ) : (
+                      <TextField
+                        type="number"
+                        value={localConv}
+                        onChange={(e) => {
+                          setLocalConv(e.target.value);
+                        }}
+                        fullWidth
+                        label="LOCAL CONV"
+                        size="small"
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
+                      />
+                    )}
 
                     <TextField
                       type="number"
@@ -399,7 +448,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         type="number"
                         name="distance"
                         value={distance}
-                        onChange={handleDistanceChange}
+                        onChange={(e) => setDistance(e.target.value)}
                         fullWidth
                         label="ONE SIDE KM"
                         size="small"
@@ -412,9 +461,9 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         }
                       />
                     </Box>
-                    {distance > 100 ? (
+                    {distance >= 100 ? (
                       <>
-                        {distancePreview || editData.distanceFile ? (
+                        {distancePreview || formData.distanceFile ? (
                           <div className=" md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
                             <img
                               src={distancePreview}
@@ -427,32 +476,34 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         )}
 
                         {distancePreview || editData.distanceFile ? (
-                          <IconButton
-                            disabled={
-                              [
-                                "LEAVE",
-                                "WEEKLY OFF",
-                                "HOLIDAY",
-                                "C/OFF",
-                              ].includes(attendance)
-                                ? true
-                                : false
-                            }
-                            color="primary"
-                            size="medium"
-                            onClick={async () => {
-                              setDistancePreview(null);
-                              const res = await imageDelete(
-                                "/web/deleteimage",
-                                data.empId,
-                                formData.dateExp,
-                                "distanceFile"
-                              );
-                              console.log("delete Distance File: ", res);
-                            }}
-                          >
-                            <CancelIcon />
-                          </IconButton>
+                          <Tooltip title="delete image" placement="top">
+                            <IconButton
+                              disabled={
+                                [
+                                  "LEAVE",
+                                  "WEEKLY OFF",
+                                  "HOLIDAY",
+                                  "C/OFF",
+                                ].includes(attendance)
+                                  ? true
+                                  : false
+                              }
+                              color="error"
+                              size="medium"
+                              onClick={async () => {
+                                setDistancePreview(null);
+                                const res = await imageDelete(
+                                  "/web/deleteimage",
+                                  empId,
+                                  formData.dateExp,
+                                  "distanceFile"
+                                );
+                                console.log("delete Distance File: ", res);
+                              }}
+                            >
+                              <CancelIcon />
+                            </IconButton>
+                          </Tooltip>
                         ) : (
                           <></>
                         )}
@@ -461,36 +512,11 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       ""
                     )}
 
-                    {distance > 100 ? (
-                      <div className="flex-1">
-                        {" "}
-                        <input
-                          disabled={
-                            [
-                              "LEAVE",
-                              "WEEKLY OFF",
-                              "HOLIDAY",
-                              "C/OFF",
-                            ].includes(attendance)
-                              ? true
-                              : false
-                          }
-                          type="file"
-                          name="distanceBill"
-                          id="upload-distance"
-                          style={{ display: "none" }}
-                          accept=".png, .jpeg, .jpg"
-                          onChange={(e) => {
-                            setDistanceFile(e.target.files[0]);
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                              setDistancePreview(reader.result);
-                            };
-                            reader.readAsDataURL(e.target.files[0]);
-                          }}
-                        />
-                        <label htmlFor="upload-distance">
-                          <Button
+                    {distance >= 100 ? (
+                      <Tooltip title="upload images" placement="top">
+                        <div className="flex-1">
+                          {" "}
+                          <input
                             disabled={
                               [
                                 "LEAVE",
@@ -501,18 +527,45 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                                 ? true
                                 : false
                             }
-                            className="w-full"
-                            variant="contained"
-                            color="primary"
-                            component="span"
-                            startIcon={<CloudUploadIcon />}
-                          >
-                            {distancePreview
-                              ? distanceFile?.name
-                              : editData.distanceFile}
-                          </Button>
-                        </label>
-                      </div>
+                            type="file"
+                            name="distanceBill"
+                            id="upload-distance"
+                            style={{ display: "none" }}
+                            accept=".png, .jpeg, .jpg"
+                            onChange={(e) => {
+                              setDistanceFile(e.target.files[0]);
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setDistancePreview(reader.result);
+                              };
+                              reader.readAsDataURL(e.target.files[0]);
+                            }}
+                          />
+                          <label htmlFor="upload-distance">
+                            <Button
+                              disabled={
+                                [
+                                  "LEAVE",
+                                  "WEEKLY OFF",
+                                  "HOLIDAY",
+                                  "C/OFF",
+                                ].includes(attendance)
+                                  ? true
+                                  : false
+                              }
+                              fullWidth
+                              variant="contained"
+                              color="primary"
+                              component="span"
+                              startIcon={<CloudUploadIcon />}
+                            >
+                              {distancePreview
+                                ? distanceFile?.name
+                                : "upload images"}
+                            </Button>
+                          </label>
+                        </div>
+                      </Tooltip>
                     ) : (
                       ""
                     )}
@@ -548,62 +601,42 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           />
                         </div>
 
-                        <IconButton
-                          disabled={
-                            [
-                              "LEAVE",
-                              "WEEKLY OFF",
-                              "HOLIDAY",
-                              "C/OFF",
-                            ].includes(attendance)
-                              ? true
-                              : false
-                          }
-                          color="primary"
-                          size="medium"
-                          onClick={async () => {
-                            setLodgingPreview(null);
-                            const res = await imageDelete(
-                              "/web/deleteimage",
-                              data.empId,
-                              formData.dateExp,
-                              "lodgingBillFile"
-                            );
-                            console.log("delete loadging File: ", res);
-                          }}
-                        >
-                          <CancelIcon />
-                        </IconButton>
+                        <Tooltip title="delete image" placement="top">
+                          <IconButton
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
+                            color="error"
+                            size="medium"
+                            onClick={async () => {
+                              setLodgingPreview(null);
+                              const res = await imageDelete(
+                                "/web/deleteimage",
+                                empId,
+                                formData.dateExp,
+                                "lodgingBillFile"
+                              );
+                              console.log("delete loadging File: ", res);
+                            }}
+                          >
+                            <CancelIcon />
+                          </IconButton>
+                        </Tooltip>
                       </>
                     ) : (
                       <></>
                     )}
 
-                    <div className="flex-1">
-                      <input
-                        disabled={
-                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                            attendance
-                          )
-                            ? true
-                            : false
-                        }
-                        type="file"
-                        name="lodgingBill"
-                        id="upload-lodging"
-                        style={{ display: "none" }}
-                        accept=".png, .jpeg, .jpg"
-                        onChange={(e) => {
-                          setLodgingBillFile(e.target.files[0]);
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            setLodgingPreview(reader.result);
-                          };
-                          reader.readAsDataURL(e.target.files[0]);
-                        }}
-                      />
-                      <label htmlFor="upload-lodging">
-                        <Button
+                    <Tooltip title="upload images" placement="top">
+                      <div className="flex-1">
+                        <input
                           disabled={
                             [
                               "LEAVE",
@@ -614,17 +647,45 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                               ? true
                               : false
                           }
-                          variant="contained"
-                          color="primary"
-                          component="span"
-                          startIcon={<CloudUploadIcon />}
-                        >
-                          {lodgingPreview
-                            ? lodgingBillFile?.name
-                            : editData.lodgingBillFile}
-                        </Button>
-                      </label>
-                    </div>
+                          type="file"
+                          name="lodgingBill"
+                          id="upload-lodging"
+                          style={{ display: "none" }}
+                          accept=".png, .jpeg, .jpg"
+                          onChange={(e) => {
+                            setLodgingBillFile(e.target.files[0]);
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setLodgingPreview(reader.result);
+                            };
+                            reader.readAsDataURL(e.target.files[0]);
+                          }}
+                        />
+                        <label htmlFor="upload-lodging">
+                          <Button
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {lodgingPreview
+                              ? lodgingBillFile?.name
+                              : "upload images"}
+                          </Button>
+                        </label>
+                      </div>
+                    </Tooltip>
                   </Box>
                 </div>
               </>
@@ -667,32 +728,8 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                     </div>
 
-                    <IconButton
-                      disabled={
-                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                          attendance
-                        )
-                          ? true
-                          : false
-                      }
-                      color="primary"
-                      size="medium"
-                      onClick={async () => {
-                        setFoodPreview(null);
-                        const res = await imageDelete(
-                          "/web/deleteimage",
-                          data.empId,
-                          formData.dateExp,
-                          "foodFile"
-                        );
-                        console.log("delete Food File: ", res);
-                      }}
-                    >
-                      <CancelIcon />
-                    </IconButton>
-
-                    <div className="flex-1">
-                      <input
+                    <Tooltip title="delete image" placement="top">
+                      <IconButton
                         disabled={
                           ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
                             attendance
@@ -700,22 +737,26 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                             ? true
                             : false
                         }
-                        type="file"
-                        name="foodBill"
-                        id="upload-foodBill"
-                        style={{ display: "none" }}
-                        accept=".png, .jpeg, .jpg"
-                        onChange={(e) => {
-                          setFoodFile(e.target.files[0]);
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            setFoodPreview(reader.result);
-                          };
-                          reader.readAsDataURL(e.target.files[0]);
+                        color="error"
+                        size="medium"
+                        onClick={async () => {
+                          setFoodPreview(null);
+                          const res = await imageDelete(
+                            "/web/deleteimage",
+                            empId,
+                            formData.dateExp,
+                            "foodFile"
+                          );
+                          console.log("delete Food File: ", res);
                         }}
-                      />
-                      <label htmlFor="upload-foodBill">
-                        <Button
+                      >
+                        <CancelIcon />
+                      </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title="upload images" placement="top">
+                      <div className="flex-1">
+                        <input
                           disabled={
                             [
                               "LEAVE",
@@ -726,17 +767,43 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                               ? true
                               : false
                           }
-                          variant="contained"
-                          color="primary"
-                          component="span"
-                          startIcon={<CloudUploadIcon />}
-                        >
-                          {foodPreview === null
-                            ? "upload files"
-                            : editData.foodFile}
-                        </Button>
-                      </label>
-                    </div>
+                          type="file"
+                          name="foodBill"
+                          id="upload-foodBill"
+                          style={{ display: "none" }}
+                          accept=".png, .jpeg, .jpg"
+                          onChange={(e) => {
+                            setFoodFile(e.target.files[0]);
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setFoodPreview(reader.result);
+                            };
+                            reader.readAsDataURL(e.target.files[0]);
+                          }}
+                        />
+                        <label htmlFor="upload-foodBill">
+                          <Button
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {foodPreview ? foodFile?.name : "upload images"}
+                          </Button>
+                        </label>
+                      </div>
+                    </Tooltip>
                   </Box>
 
                   <Box className="flex flex-col md:flex-row gap-2 items-center">
@@ -769,62 +836,42 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                           />
                         </div>
 
-                        <IconButton
-                          disabled={
-                            [
-                              "LEAVE",
-                              "WEEKLY OFF",
-                              "HOLIDAY",
-                              "C/OFF",
-                            ].includes(attendance)
-                              ? true
-                              : false
-                          }
-                          color="primary"
-                          size="medium"
-                          onClick={async () => {
-                            setFoodGstPreview(null);
-                            const res = await imageDelete(
-                              "/web/deleteimage",
-                              data.empId,
-                              formData.dateExp,
-                              "foodGstFile"
-                            );
-                            console.log("delete FoodGst File: ", res);
-                          }}
-                        >
-                          <CancelIcon />
-                        </IconButton>
+                        <Tooltip title="delete images" placement="top">
+                          <IconButton
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
+                            color="error"
+                            size="medium"
+                            onClick={async () => {
+                              setFoodGstPreview(null);
+                              const res = await imageDelete(
+                                "/web/deleteimage",
+                                empId,
+                                formData.dateExp,
+                                "foodGstFile"
+                              );
+                              console.log("delete FoodGst File: ", res);
+                            }}
+                          >
+                            <CancelIcon />
+                          </IconButton>
+                        </Tooltip>
                       </>
                     ) : (
                       <></>
                     )}
 
-                    <div className="flex-1">
-                      <input
-                        disabled={
-                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                            attendance
-                          )
-                            ? true
-                            : false
-                        }
-                        type="file"
-                        name="foodGstBill"
-                        id="upload-foodGstBill"
-                        style={{ display: "none" }}
-                        accept=".png, .jpeg, .jpg"
-                        onChange={(e) => {
-                          setFoodGstFile(e.target.files[0]);
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            setFoodGstPreview(reader.result);
-                          };
-                          reader.readAsDataURL(e.target.files[0]);
-                        }}
-                      />
-                      <label htmlFor="upload-foodGstBill">
-                        <Button
+                    <Tooltip title="upload images" placement="top">
+                      <div className="flex-1">
+                        <input
                           disabled={
                             [
                               "LEAVE",
@@ -835,17 +882,45 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                               ? true
                               : false
                           }
-                          variant="contained"
-                          color="primary"
-                          component="span"
-                          startIcon={<CloudUploadIcon />}
-                        >
-                          {foodGstPreview
-                            ? foodGstFile?.name
-                            : editData.foodGstFile}
-                        </Button>
-                      </label>
-                    </div>
+                          type="file"
+                          name="foodGstBill"
+                          id="upload-foodGstBill"
+                          style={{ display: "none" }}
+                          accept=".png, .jpeg, .jpg"
+                          onChange={(e) => {
+                            setFoodGstFile(e.target.files[0]);
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setFoodGstPreview(reader.result);
+                            };
+                            reader.readAsDataURL(e.target.files[0]);
+                          }}
+                        />
+                        <label htmlFor="upload-foodGstBill">
+                          <Button
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {foodGstPreview
+                              ? foodGstFile?.name
+                              : "upload images"}
+                          </Button>
+                        </label>
+                      </div>
+                    </Tooltip>
                   </Box>
                 </div>
               </>
@@ -888,29 +963,31 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                     </div>
 
-                    <IconButton
-                      disabled={
-                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                          attendance
-                        )
-                          ? true
-                          : false
-                      }
-                      color="primary"
-                      size="medium"
-                      onClick={async () => {
-                        setMobileBillPreview(null);
-                        const res = await imageDelete(
-                          "/web/deleteimage",
-                          data.empId,
-                          formData.dateExp,
-                          "mobileBillFile"
-                        );
-                        console.log("delete mobileBillFile File: ", res);
-                      }}
-                    >
-                      <CancelIcon />
-                    </IconButton>
+                    <Tooltip title="delete images" placement="top">
+                      <IconButton
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
+                        color="error"
+                        size="medium"
+                        onClick={async () => {
+                          setMobileBillPreview(null);
+                          const res = await imageDelete(
+                            "/web/deleteimage",
+                            empId,
+                            formData.dateExp,
+                            "mobileBillFile"
+                          );
+                          console.log("delete mobileBillFile File: ", res);
+                        }}
+                      >
+                        <CancelIcon />
+                      </IconButton>
+                    </Tooltip>
 
                     <div className="flex-1">
                       <input
@@ -947,14 +1024,15 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                               ? true
                               : false
                           }
+                          fullWidth
                           variant="contained"
                           color="primary"
                           component="span"
                           startIcon={<CloudUploadIcon />}
                         >
-                          {mobileBillPreview === null
-                            ? mobileBillFile?.file
-                            : editData.mobileBillFile}
+                          {mobileBillPreview
+                            ? mobileBillFile?.name
+                            : "upload files"}
                         </Button>
                       </label>
                     </div>
@@ -988,32 +1066,8 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                     </div>
 
-                    <IconButton
-                      disabled={
-                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                          attendance
-                        )
-                          ? true
-                          : false
-                      }
-                      color="primary"
-                      size="medium"
-                      onClick={async () => {
-                        setCourierBillPreview(null);
-                        const res = await imageDelete(
-                          "/web/deleteimage",
-                          data.empId,
-                          formData.dateExp,
-                          "courierBillFile"
-                        );
-                        console.log("delete courierBillFile File: ", res);
-                      }}
-                    >
-                      <CancelIcon />
-                    </IconButton>
-
-                    <div className="flex-1">
-                      <input
+                    <Tooltip title="delete images" placement="top">
+                      <IconButton
                         disabled={
                           ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
                             attendance
@@ -1021,22 +1075,26 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                             ? true
                             : false
                         }
-                        type="file"
-                        name="postageCourierBill"
-                        id="upload-postageCourierBill"
-                        style={{ display: "none" }}
-                        accept=".png, .jpeg, .jpg"
-                        onChange={(e) => {
-                          setCourierBillFile(e.target.files[0]);
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            setCourierBillPreview(reader.result);
-                          };
-                          reader.readAsDataURL(e.target.files[0]);
+                        color="error"
+                        size="medium"
+                        onClick={async () => {
+                          setCourierBillPreview(null);
+                          const res = await imageDelete(
+                            "/web/deleteimage",
+                            empId,
+                            formData.dateExp,
+                            "courierBillFile"
+                          );
+                          console.log("delete courierBillFile File: ", res);
                         }}
-                      />
-                      <label htmlFor="upload-postageCourierBill">
-                        <Button
+                      >
+                        <CancelIcon />
+                      </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title="upload images" placement="top">
+                      <div className="flex-1">
+                        <input
                           disabled={
                             [
                               "LEAVE",
@@ -1047,17 +1105,45 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                               ? true
                               : false
                           }
-                          variant="contained"
-                          color="primary"
-                          component="span"
-                          startIcon={<CloudUploadIcon />}
-                        >
-                          {courierBillPreview === null
-                            ? courierBillFile.file
-                            : editData.courierBillFile}
-                        </Button>
-                      </label>
-                    </div>
+                          type="file"
+                          name="postageCourierBill"
+                          id="upload-postageCourierBill"
+                          style={{ display: "none" }}
+                          accept=".png, .jpeg, .jpg"
+                          onChange={(e) => {
+                            setCourierBillFile(e.target.files[0]);
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setCourierBillPreview(reader.result);
+                            };
+                            reader.readAsDataURL(e.target.files[0]);
+                          }}
+                        />
+                        <label htmlFor="upload-postageCourierBill">
+                          <Button
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {courierBillPreview
+                              ? courierBillFile?.name
+                              : "upload image"}
+                          </Button>
+                        </label>
+                      </div>
+                    </Tooltip>
                   </Box>
 
                   <Box className="flex flex-col md:flex-row gap-2 items-center">
@@ -1088,32 +1174,8 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                       />
                     </div>
 
-                    <IconButton
-                      disabled={
-                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                          attendance
-                        )
-                          ? true
-                          : false
-                      }
-                      color="primary"
-                      size="medium"
-                      onClick={async () => {
-                        setStationaryBillPreview(null);
-                        const res = await imageDelete(
-                          "/web/deleteimage",
-                          data.empId,
-                          formData.dateExp,
-                          "stationaryBillFile"
-                        );
-                        console.log("delete stationaryBillFile File: ", res);
-                      }}
-                    >
-                      <CancelIcon />
-                    </IconButton>
-
-                    <div className="flex-1">
-                      <input
+                    <Tooltip title="delete images" placement="top">
+                      <IconButton
                         disabled={
                           ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
                             attendance
@@ -1121,22 +1183,26 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                             ? true
                             : false
                         }
-                        type="file"
-                        name="stationaryBill"
-                        id="upload-stationaryBill"
-                        accept=".png, .jpeg, .jpg"
-                        style={{ display: "none" }}
-                        onChange={(e) => {
-                          setStationaryBillFile(e.target.files[0]);
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            setStationaryBillPreview(reader.result);
-                          };
-                          reader.readAsDataURL(e.target.files[0]);
+                        color="error"
+                        size="medium"
+                        onClick={async () => {
+                          setStationaryBillPreview(null);
+                          const res = await imageDelete(
+                            "/web/deleteimage",
+                            empId,
+                            formData.dateExp,
+                            "stationaryBillFile"
+                          );
+                          console.log("delete stationaryBillFile File: ", res);
                         }}
-                      />
-                      <label htmlFor="upload-stationaryBill">
-                        <Button
+                      >
+                        <CancelIcon />
+                      </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title="upload images" placement="top">
+                      <div className="flex-1">
+                        <input
                           disabled={
                             [
                               "LEAVE",
@@ -1147,17 +1213,45 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                               ? true
                               : false
                           }
-                          variant="contained"
-                          color="primary"
-                          component="span"
-                          startIcon={<CloudUploadIcon />}
-                        >
-                          {stationaryBillPreview === null
-                            ? stationaryBillFile.file
-                            : editData.stationaryBillFile}
-                        </Button>
-                      </label>
-                    </div>
+                          type="file"
+                          name="stationaryBill"
+                          id="upload-stationaryBill"
+                          accept=".png, .jpeg, .jpg"
+                          style={{ display: "none" }}
+                          onChange={(e) => {
+                            setStationaryBillFile(e.target.files[0]);
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setStationaryBillPreview(reader.result);
+                            };
+                            reader.readAsDataURL(e.target.files[0]);
+                          }}
+                        />
+                        <label htmlFor="upload-stationaryBill">
+                          <Button
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            {stationaryBillPreview
+                              ? stationaryBillFile?.name
+                              : "upload image"}
+                          </Button>
+                        </label>
+                      </div>
+                    </Tooltip>
                   </Box>
                 </div>
               </>
@@ -1261,7 +1355,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
         <div className="flex gap-4 items-center">
           <Button
             variant="contained"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/dashboard/expense")}
             autoFocus
           >
             Back

@@ -185,12 +185,29 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
 
     submitFormDataHandler(addData);
     setFormData(defaultState);
-    setAttendance("present");
+    setAttendance("PRESENT");
     setModeTravel("");
     setStockistData("");
-    setDistance("");
+    setDistance(null);
     setLocalConv(null);
     setCloseForm((prev) => !prev);
+
+    setDistancePreview(null);
+    setLodgingPreview(null);
+    setFoodPreview(null);
+    setFoodGstPreview(null);
+    setMobileBillPreview(null);
+    setCourierBillPreview(null);
+    setStationaryBillPreview(null);
+
+    setDistanceFile(null);
+    setLodgingBillFile(null);
+    setFoodFile(null);
+    setFoodGstFile(null);
+    setMobileBillFile(null);
+    setCourierBillFile(null);
+    setStationaryBillFile(null);
+    setPosterActivity(null);
   };
 
   return (
@@ -314,7 +331,7 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
               />
               {data.desig === "RMS" ? (
                 <TextField
-                  type="number"
+                  type="text"
                   fullWidth
                   value={stockistData}
                   onChange={(e) => setStockistData(e.target.value)}

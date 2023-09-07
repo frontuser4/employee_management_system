@@ -125,7 +125,7 @@ const ModeDropdown = ({title, option, value, onChange, disabled})=>{
   )
 }
 
-const MonthDropDown = ({month, setMonth})=>{
+const MonthDropDown = ({month, setMonth, label})=>{
   const [open, setOpen] = useState(false);
 
   const handleChange = (event) => {
@@ -142,7 +142,7 @@ const MonthDropDown = ({month, setMonth})=>{
 
   return(
     <FormControl sx={{ m: 1, minWidth: 120 }}>
-        <InputLabel id="demo-controlled-open-select-label">Month</InputLabel>
+        <InputLabel id="demo-controlled-open-select-label">{label || 'Month'}</InputLabel>
         <Select
           labelId="demo-controlled-open-select-label"
           id="demo-controlled-open-select"
@@ -150,7 +150,7 @@ const MonthDropDown = ({month, setMonth})=>{
           onClose={handleClose}
           onOpen={handleOpen}
           value={month}
-          label="Month"
+          label={label || 'Month'}
           onChange={handleChange}
           size='small'
         >
@@ -171,7 +171,7 @@ const MonthDropDown = ({month, setMonth})=>{
   )
 }
 
-const YearDropDown = ({year, setYear})=>{
+const YearDropDown = ({year, setYear, label})=>{
 
   // console.log(year.map((year)=> year+1));
 
@@ -191,7 +191,7 @@ const YearDropDown = ({year, setYear})=>{
 
   return(
     <FormControl sx={{ m: 1, minWidth: 120 }}>
-        <InputLabel id="demo-controlled-open-select-label">Year</InputLabel>
+        <InputLabel id="demo-controlled-open-select-label">{label || 'Year'}</InputLabel>
         <Select
           labelId="demo-controlled-open-select-label"
           id="demo-controlled-open-select"
@@ -199,12 +199,12 @@ const YearDropDown = ({year, setYear})=>{
           onClose={handleClose}
           onOpen={handleOpen}
           value={year}
-          label="Year"
+          label={label || 'Year'}
           onChange={handleChange}
           size='small'
         >
           {
-            [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024].map((value, i)=>{
+            [2020, 2021, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030].map((value, i)=>{
               return (
                 <MenuItem key={i} value={value}>{value}</MenuItem>
               )
