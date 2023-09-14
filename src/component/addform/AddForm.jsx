@@ -54,6 +54,7 @@ const defaultState = {
   printingStationary: "",
   other: "",
   otherGst: "",
+  // otherDescription:"",
   poster: "",
 };
 
@@ -118,7 +119,9 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
   };
 
   const handleFormChange = (event) => {
-    console.log("handle form change: ", {[event.target.name]: event.target.value})
+    console.log("handle form change: ", {
+      [event.target.name]: event.target.value,
+    });
     setFormData((prev) => ({
       ...prev,
       [event.target.name]: event.target.value,
@@ -157,7 +160,7 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
       expId = expenceId;
       desig = data.desig;
     }
-   
+
     let local = distance <= 100 ? distance * 2 * 2 : localConv;
 
     const addData = {
@@ -325,9 +328,7 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                 onChange={handleFormChange}
                 label="WORKING HOURS"
                 size="small"
-                disabled={
-                 true
-                }
+                disabled={true}
               />
               {data.desig === "RMS" ? (
                 <TextField
@@ -517,14 +518,14 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
 
                         {distance <= 100 ? (
                           <p className="text-lg flex items-center justify-center border-gray-200 w-full bg-slate-100">
-                           LocalConv: {distance * 2 * 2}
+                            LocalConv: {distance * 2 * 2}
                           </p>
                         ) : (
                           <TextField
                             type="number"
                             value={localConv}
-                            onChange={(e)=> {
-                              setLocalConv(e.target.value)
+                            onChange={(e) => {
+                              setLocalConv(e.target.value);
                             }}
                             fullWidth
                             label="LOCAL CONV"
@@ -548,7 +549,7 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                           value={formData.travelingLong}
                           onChange={handleFormChange}
                           fullWidth
-                          label="TRAVEL LONG(GST)"
+                          label="TRAVEL SPL ALLOWANCE"
                           size="small"
                           disabled={
                             [
@@ -588,7 +589,9 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                             type="number"
                             name="distance"
                             value={distance}
-                            onChange={(e) => setDistance(e.target.value)}
+                            onChange={(e) => {
+                              setDistance(e.target.value);
+                            }}
                             fullWidth
                             label="ONE SIDE KM"
                             size="small"
@@ -1273,6 +1276,23 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                             : false
                         }
                       />
+
+                      {/* <TextField
+                        type="text"
+                        name="otherDescription"
+                        value={formData.otherDescription}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="OTHERS DESCRIPTION"
+                        size="small"
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
+                      /> */}
                     </div>
                   </>
                 }
@@ -1334,7 +1354,7 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" autoFocus onClick={handleClose}>
+          <Button variant="contained" color="error" autoFocus onClick={handleClose}>
             Cancel
           </Button>
           <Button variant="contained" onClick={handleFormSubmit} autoFocus>

@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import {
+  Button,
   Paper,
   Table,
   TableBody,
@@ -11,20 +12,23 @@ import {
 } from "@mui/material";
 import axiosInstance from "../utils/axios";
 import { DownloadTableExcel } from "react-export-table-to-excel";
-import dayjs from "dayjs";
-import { MonthDropDown, YearDropDown } from "../component/Dropdown";
-import Loader from '../component/loader/Loader';
+import Loader from "../component/loader/Loader";
+import { DateTimeContext } from "../context/dateTimeContext";
+import { useSelector } from "react-redux";
+import { post } from "../utils/api";
+import toast, {Toaster} from "react-hot-toast";
 
 export default function SummaryTable() {
+  const { data } = useSelector((state) => state.login.data);
+  const { empData } = useSelector((state) => state.empData);
   const tableRef = useRef(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [summeryDetails, setSummeryDetails] = useState(null);
   const [summeryTotal, setSummeryTotal] = useState(null);
-  const [date, setDate] = useState(dayjs());
-  const [year, setYear] = useState(dayjs(date.$d).format("YYYY"));
-  const [month, setMonth] = useState(dayjs(date.$d).format("MM").split("")[1]);
   const [isLoading, setIsLoading] = useState(true);
+  const [approvalRefresh, setApprovalRefresh] = useState(false);
+  const { month, year } = useContext(DateTimeContext);
   const handleChangePage = (_event, newPage) => {
     setPage(newPage);
   };
@@ -37,7 +41,7 @@ export default function SummaryTable() {
   const getSummery = async () => {
     try {
       const response = await axiosInstance.get("/web/getsummery", {
-        params: { month, year },
+        params: { month, year, user: data.empGroup },
       });
       setSummeryDetails(response.data.data);
       setSummeryTotal(response.data);
@@ -47,27 +51,45 @@ export default function SummaryTable() {
     }
   };
 
+  const filteredSummery = empData.filter((obj1) => {
+    return summeryDetails?.find((obj2) => obj2.empId === obj1.empId);
+  });
+
+  const approveHandler = async (empId) => {
+    let approvedata = {
+      empId: empId,
+      month,
+      year,
+      submitby: data.empGroup,
+    };
+
+    try {
+      const res = await post("/web/approval", approvedata);
+      if (res.data.status === 200) {
+        // toast.success(res.data.data);
+        setApprovalRefresh((prev)=> !prev)
+      }
+    } catch (error) {
+      console.log("approval error: ", error);
+    }
+  };
+
   useEffect(() => {
     getSummery();
-  }, [month, year]);
+  }, [month, year, approvalRefresh]);
+
+  const handleLockExpense = (id) => {
+   
+    approveHandler(id);
+  };
 
   return (
     <>
       <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
         <div>
-          <MonthDropDown
-            label="Summary Month"
-            month={month}
-            setMonth={setMonth}
-          />
-        </div>
-        <div>
-          <YearDropDown label="Summary Year" year={year} setYear={setYear} />
-        </div>
-        <div>
           <DownloadTableExcel
-            filename="employee table"
-            sheet="employee"
+            filename="summery-data"
+            sheet="summery-data"
             currentTableRef={tableRef.current}
           >
             <button className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600">
@@ -93,14 +115,21 @@ export default function SummaryTable() {
                 <TableCell>Final TA</TableCell>
                 <TableCell>Final Other Expenses</TableCell>
                 <TableCell>Final Claimed Amount</TableCell>
+                <TableCell>Total Deducation</TableCell>
                 <TableCell>Approved Amount</TableCell>
+                <TableCell>Last Updated</TableCell>
+                {data.empGroup === "level6" ? (
+                  <TableCell>Lock Expense</TableCell>
+                ) : (
+                  <></>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
               {isLoading ? (
                 <>
                   <div className="w-full h-full flex items-center justify-center">
-                  <Loader />
+                    <Loader />
                   </div>
                 </>
               ) : (
@@ -118,7 +147,27 @@ export default function SummaryTable() {
                           <TableCell>{row.sum_TA}</TableCell>
                           <TableCell>{row.sum_OTHR}</TableCell>
                           <TableCell>{row.sum_AMT}</TableCell>
+                          <TableCell>{row.sum_AMT_DEDUCTED}</TableCell>
                           <TableCell>{row.sum_AMT_APPROVED}</TableCell>
+                          <TableCell>{row.lastUpdate}</TableCell>
+                          {data.empGroup === "level6" ? (
+                            <TableCell>
+                              <Button
+                                onClick={() => {
+                                  console.log("delted")
+                                  toast.error("expense data locked");
+                                  handleLockExpense(row.empId)
+                                } }
+                                disabled={row.lockButton ? true : false}
+                                color="primary"
+                                variant="contained"
+                              >
+                                Lock
+                              </Button>
+                            </TableCell>
+                          ) : (
+                            <></>
+                          )}
                         </TableRow>
                       );
                     })}
@@ -131,6 +180,7 @@ export default function SummaryTable() {
                 <TableCell>{summeryTotal?.TA}</TableCell>
                 <TableCell>{summeryTotal?.OTHERS}</TableCell>
                 <TableCell>{summeryTotal?.AMOUNT_CLAIMED}</TableCell>
+                <TableCell>{summeryTotal?.DEDUCTED}</TableCell>
                 <TableCell>{summeryTotal?.AMOUNT_APPROVED}</TableCell>
               </TableRow>
             </TableBody>
@@ -146,6 +196,7 @@ export default function SummaryTable() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      <Toaster position="top-center" />
     </>
   );
 }

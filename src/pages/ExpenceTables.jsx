@@ -1,7 +1,7 @@
 import ExpenceTable from "../component/expence/ExpenceTable";
 
-const ExpenceTables = ({ year, month }) => {
-  return <ExpenceTable year={year} month={month} />;
+const ExpenceTables = () => {
+  return <ExpenceTable />;
 };
 
 export default ExpenceTables;

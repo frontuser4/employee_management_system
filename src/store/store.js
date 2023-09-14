@@ -3,6 +3,7 @@ import loginReducer from './loginSlice';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer } from 'redux-persist';
 import { combineReducers } from '@reduxjs/toolkit';
+import empReducer from './empSlice';
 
 const persistConfig = {
   key: 'root',
@@ -10,7 +11,8 @@ const persistConfig = {
 }
 
 const reducer = combineReducers({
-  login : loginReducer
+  login : loginReducer,
+  empData: empReducer
 })
 
 const persistReducers = persistReducer(persistConfig, reducer)

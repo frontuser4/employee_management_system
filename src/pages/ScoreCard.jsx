@@ -1,11 +1,23 @@
 import { useState, useEffect } from "react";
-import { TextField, Button } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  Paper,
+} from "@mui/material";
 import { post } from "../utils/api";
 import toast, { Toaster } from "react-hot-toast";
 import Card from "../component/Card";
-import { MonthDropDown, YearDropDown } from "../component/Dropdown";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
+import { useContext } from "react";
+import { DateTimeContext } from "../context/dateTimeContext";
 
 const ScoreCard = () => {
   const { data } = useSelector((state) => state.login.data);
@@ -13,9 +25,7 @@ const ScoreCard = () => {
   const [marksOne, setMarksOne] = useState(0);
   const [marksTwo, setMarksTwo] = useState(0);
   const [marksThree, setMarksThree] = useState(0);
-  const [date, setDate] = useState(dayjs());
-  const [year, setYear] = useState(dayjs(date.$d).format("YYYY"));
-  const [month, setMonth] = useState(dayjs(date.$d).format("MM").split("")[1]);
+  const { month, year } = useContext(DateTimeContext);
 
   const [scoreGradeOne, setScoreGradeOne] = useState("");
   const [scoreGradeTwo, setScoreGradeTwo] = useState("");
@@ -112,7 +122,7 @@ const ScoreCard = () => {
 
   return (
     <>
-      <div className="flex gap-3mb-3">
+      <div className="flex gap-3 mb-3">
         <form className="flex items-center gap-2" onSubmit={handlerClaimGift}>
           <TextField
             label="Claim/Gift"
@@ -125,87 +135,66 @@ const ScoreCard = () => {
             Submit
           </Button>
         </form>
+      </div>
 
-        <div className="flex">
-          <div>
-            <MonthDropDown
-              label="ScoreCard Month"
-              month={month}
-              setMonth={setMonth}
-            />
-          </div>
-          <div>
-            <YearDropDown
-              label="ScoreCard Year"
-              year={year}
-              setYear={setYear}
-            />
-          </div>
-        </div>
-      </div>
-      <div className="container">
-        <table style={{ width: "100%" }}>
-          <thead>
-            <tr>
-              <th>PARAMETERS</th>
-              <th>TARGET</th>
-              <th>SCORE</th>
-              <th>TOTAL SCORE</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>TOTAL CALLS(TC)</td>
-              <td className="text-center">40</td>
-              <td className="text-center">10</td>
-              <td className="text-center">{marksOne}</td>
-            </tr>
-            <tr>
-              <td>PRODUCTIVE CALLS(PC)</td>
-              <td className="text-center">25</td>
-              <td className="text-center">10</td>
-              <td className="text-center">{marksTwo}</td>
-            </tr>
-            <tr>
-              <td>POP VISELITY</td>
-              <td className="text-center">15</td>
-              <td className="text-center">10</td>
-              <td className="text-center">{marksThree}</td>
-            </tr>
-            <tr>
-              <td>MONTHLY TARGET</td>
-              <td className="text-center">100</td>
-              <td className="text-center">50</td>
-              <td className="text-center">{totalScore.scoreFour}</td>
-            </tr>
-            <tr>
-              <td>PROMOTION ACTIVITY</td>
-              <td className="text-center">100</td>
-              <td className="text-center">10</td>
-              <td className="text-center">{totalScore.scoreFive}</td>
-            </tr>
-            <tr>
-              <td>PJP CHANGE</td>
-              <td className="text-center">100</td>
-              <td className="text-center">5</td>
-              <td className="text-center">{totalScore.scoreFive}</td>
-            </tr>
-            <tr>
-              <td>CLAIM/GIFT SUBMISSIONS</td>
-              <td className="text-center">{9}</td>
-              <td className="text-center">5</td>
-              <td className="text-center">{totalScore.scoreSeven}</td>
-            </tr>
-            <tr>
-              <td colSpan={2} className="text-center font-bold">
-                TOTAL
-              </td>
-              <td className="text-center">100</td>
-              <td className="text-center">0</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <Paper sx={{ width: "100%", overflow: "hidden" }}>
+        <TableContainer sx={{ maxHeight: 440 }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow sx={{ "&.MuiTableRow-root": { background: "#0000" } }}>
+                <TableCell>PARAMETERS</TableCell>
+                <TableCell>TARGET</TableCell>
+                <TableCell>SCORE</TableCell>
+                <TableCell>TOTAL SCORE</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>PRODUCTIVE CALLS(PC)</TableCell>
+                <TableCell>40</TableCell>
+                <TableCell>10</TableCell>
+                <TableCell>50</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>POP VISELITY</TableCell>
+                <TableCell>40</TableCell>
+                <TableCell>10</TableCell>
+                <TableCell>50</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>MONTHLY TARGET</TableCell>
+                <TableCell>40</TableCell>
+                <TableCell>10</TableCell>
+                <TableCell>50</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>PROMOTION ACTIVITY</TableCell>
+                <TableCell>40</TableCell>
+                <TableCell>10</TableCell>
+                <TableCell>50</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>PJP CHANGE</TableCell>
+                <TableCell>40</TableCell>
+                <TableCell>10</TableCell>
+                <TableCell>50</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>CLAIM/GIFT SUBMISSIONS</TableCell>
+                <TableCell>40</TableCell>
+                <TableCell>10</TableCell>
+                <TableCell>50</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>TOTAL</TableCell>
+                <TableCell>40</TableCell>
+                <TableCell>10</TableCell>
+                <TableCell>50</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
       <Card empId={data.empId} month={month} year={year} />
       <Toaster position="top-center" />
     </>

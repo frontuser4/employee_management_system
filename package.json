@@ -41,7 +41,8 @@
     "react-swipeable-views": "^0.14.0",
     "redux-persist": "^6.0.0",
     "simplebar-react": "^3.2.4",
-    "styled-components": "^5.3.11"
+    "styled-components": "^5.3.11",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",

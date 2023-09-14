@@ -1,9 +1,7 @@
-/* table, th, td {
+table, th, td {
   border: 1px solid black;
-  width: 100px;
-  height: 50px;
-  padding: 10px;
-} */
+  font-size: 14px;
+}
 
 .table-scroll {
   position: relative;
@@ -11,7 +9,7 @@
   z-index: 1;
   margin: auto;
   overflow: auto;
-  height: 450px;
+  height: 650px;
 }
 
 .table-scroll table {
@@ -55,16 +53,16 @@
 .table-scroll thead .expHeader th:nth-child(2) {
   position: -webkit-sticky;
   position: sticky;
-  left: 71px;
+  left: 65px;
   z-index: 2;
 }
 
-.table-scroll thead .expHeader th:nth-child(3) {
+/* .table-scroll thead .expHeader th:nth-child(3) {
   position: -webkit-sticky;
   position: sticky;
   left: 128px;
   z-index: 2;
-}
+} */
 
 .table-scroll tbody td:first-child  {
   position: -webkit-sticky;
@@ -76,16 +74,16 @@
 .table-scroll tbody td:nth-child(2)  {
   position: -webkit-sticky;
   position: sticky;
-  left: 71px;
+  left: 65px;
   z-index: 2;
 }
 
-.table-scroll tbody td:nth-child(3)  {
+/* .table-scroll tbody td:nth-child(3)  {
   position: -webkit-sticky;
   position: sticky;
   left: 128px;
   z-index: 2;
-}
+} */
 
 /* 
 thead th:first-child,

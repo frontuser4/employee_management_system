@@ -7,6 +7,9 @@ const APP_LOGIN = "http://142.93.208.119:80";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
+  headers:{
+    Authorization: `jhsajdkhsakdjhsdjakjdhsajdsd`
+  }
 });
 
 async function loginPage(url, data) {

@@ -15,6 +15,8 @@ import toast, { Toaster } from "react-hot-toast";
 import { MonthDropDown, YearDropDown } from "../Dropdown";
 import dayjs from "dayjs";
 import Loader from "../loader/Loader";
+import { useContext } from "react";
+import { DateTimeContext } from "../../context/dateTimeContext";
 
 const ExpenceTable = () => {
   const navigate = useNavigate();
@@ -34,9 +36,7 @@ const ExpenceTable = () => {
   const [displayFlag, setDisplayFlag] = useState(null);
   const [totalExpData, setTotalExpData] = useState(null);
   const [approvalRefresh, setApprovalRefresh] = useState(false);
-  const [date, setDate] = useState(dayjs());
-  const [year, setYear] = useState(dayjs(date.$d).format("YYYY"));
-  const [month, setMonth] = useState(dayjs(date.$d).format("MM").split("")[1]);
+  const { month, year } = useContext(DateTimeContext);
 
   async function fetchData() {
     setLoading(true);
@@ -77,10 +77,7 @@ const ExpenceTable = () => {
     }
   }
 
-  console.log("editFlag: ", editFlag);
-
   useEffect(() => {
-    console.log("return from update", state);
     fetchData();
   }, [month, year, closeForm, approvalRefresh]);
 
@@ -94,12 +91,14 @@ const ExpenceTable = () => {
   };
 
   const approveHandler = async () => {
-    console.log("approval");
+    console.log("sstte: ", state)
     let id = state?.emp === "emp" ? state.empId : data.empId;
+    let emplevel = state?.emp === "emp" ? state.empLevel : data.empGroup;
     let approvedata = {
       empId: id,
       month,
       year,
+      empLevel: emplevel,
       submitby: data.empGroup,
     };
 
@@ -140,18 +139,6 @@ const ExpenceTable = () => {
   return (
     <>
       <div className="flex flex-row items-center md:flex-row md:items-center gap-2 md:gap-4">
-        <div className="md:flex">
-          <div>
-            <MonthDropDown
-              label="Expense Month"
-              month={month}
-              setMonth={setMonth}
-            />
-          </div>
-          <div>
-            <YearDropDown label="Expense Year" year={year} setYear={setYear} />
-          </div>
-        </div>
         <div className="md:flex md:gap-2">
           <div>
             {state?.emp === "emp" ? (
@@ -169,8 +156,8 @@ const ExpenceTable = () => {
           </div>
           <div>
             <DownloadTableExcel
-              filename="employee table"
-              sheet="employee"
+              filename="expense-data"
+              sheet="expense-data"
               currentTableRef={tableRef.current}
             >
               <button className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600">
@@ -178,11 +165,31 @@ const ExpenceTable = () => {
               </button>
             </DownloadTableExcel>
           </div>
+          <div>
+            {data.empGroup === "level4" ? (
+              <>
+                {editFlag ? (
+                  <>
+                    <button
+                      className="bg-cyan-500 px-3 py-1 text-lg rounded text-white cursor-pointer"
+                      onClick={approveHandler}
+                    >
+                      Approval Submit
+                    </button>
+                  </>
+                ) : (
+                  <></>
+                )}
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
         </div>
       </div>
 
       <div id="table-scroll" className="table-scroll">
-        <table ref={tableRef} id="main-table" className="main-table">
+        <table ref={tableRef} id="main-table">
           <thead>
             <tr className="expBrand">
               <th colSpan={27} className="text-4xl">
@@ -253,7 +260,7 @@ const ExpenceTable = () => {
               <th className="text-center">FOOD</th>
               <th className="text-center">FOOD GST</th>
               <th className="text-center">NIGHT ALLOWANCE</th>
-              <th className="text-center">INTERNET</th>
+              <th className="text-center"> NET/MOBILE</th>
               <th className="text-center">POSTAGE COURIER</th>
               <th className="text-center">PRINTING STATIONARY</th>
               <th className="text-center">OTHER</th>
@@ -261,19 +268,25 @@ const ExpenceTable = () => {
               {/* <th className="text-center">WORKING HOURS</th> */}
               <th className="text-center">
                 APPROVAL
+                {data.empGroup !== "level4" ? (
+              <>
                 {editFlag ? (
                   <>
                     <button
-                      className="bg-cyan-500 px-3 rounded text-white cursor-pointer"
+                      className="bg-cyan-500 px-3 py-1 text-lg rounded text-white cursor-pointer"
                       onClick={approveHandler}
                     >
-                      submit
+                      Submit
                     </button>
                   </>
                 ) : (
                   <></>
                 )}
-              </th>
+              </>
+            ) : (
+              <></>
+            )}
+                </th>
               <th className="text-center">TOTAL</th>
             </tr>
           </thead>

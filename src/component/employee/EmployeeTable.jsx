@@ -1,23 +1,24 @@
 import { useEffect, useState } from "react";
 import { MaterialReactTable } from "material-react-table";
-import dayjs from "dayjs";
 import { getEmp } from "../../utils/api";
-import { MonthDropDown, YearDropDown } from "../Dropdown";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { axiosInstance } from "../../utils/api";
+import { useContext } from "react";
+import {DateTimeContext} from "../../context/dateTimeContext";
+import { employeeDetails } from '../../store/empSlice';
+
 
 export const EmployeeTable = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [empData, setEmpData] = useState([]);
-  const [date, setDate] = useState(dayjs());
-  const [year, setYear] = useState(dayjs(date.$d).format("YYYY"));
-  const [month, setMonth] = useState(dayjs(date.$d).format("MM").split("")[1]);
   const { data } = useSelector((state) => state.login.data);
   const [filterApproval, setFilterApproval] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { month, year} = useContext(DateTimeContext);
 
-  const filterData = empData.filter((items1) =>
+  const filterData = empData?.filter((items1) =>
     filterApproval?.some((items2) => {
       return items1.empId === items2.empId;
     })
@@ -31,6 +32,7 @@ export const EmployeeTable = () => {
         data.desig,
         data.empGroup
       );
+      dispatch(employeeDetails(result))
       setEmpData(result);
       setIsLoading(false)
     } catch (error) {
@@ -60,7 +62,6 @@ export const EmployeeTable = () => {
     }
   };
 
- 
   useEffect(() => {
     getEmployeData();
     handleFilterApproval();
@@ -146,12 +147,6 @@ export const EmployeeTable = () => {
         <>
          
           <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
-            <div>
-              <MonthDropDown label="Filter Month" month={month} setMonth={setMonth} />
-            </div>
-            <div>
-              <YearDropDown label="Filter Year" year={year} setYear={setYear} />
-            </div>
             {data.empGroup === "level2" ||
             data.empGroup === "level3" ||
             data.empGroup === "level4" ? (
@@ -169,7 +164,7 @@ export const EmployeeTable = () => {
 
             {data.empGroup === "level3" ||
             data.empGroup === "level4" ||
-            data.empGroup === "level5" ? (
+            data.empGroup === "level5" ||  data.empGroup === "level6" ? (
               <>
                 <button
                   onClick={() => navigate("/dashboard/summary-expense", {state:{month, year}})}
