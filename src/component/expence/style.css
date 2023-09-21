@@ -32,16 +32,7 @@ table, th, td {
   vertical-align: top;
 }
 
-/* safari and ios need the tfoot itself to be position:sticky also */
-.table-scroll tfoot,
-.table-scroll tfoot th,
-.table-scroll tfoot td {
-  position: -webkit-sticky;
-  position: sticky;
-  bottom: 0;
-  background: #666;
-  z-index: 4;
-}
+
 
 .table-scroll thead .expHeader th:first-child {
   position: -webkit-sticky;
@@ -57,13 +48,6 @@ table, th, td {
   z-index: 2;
 }
 
-/* .table-scroll thead .expHeader th:nth-child(3) {
-  position: -webkit-sticky;
-  position: sticky;
-  left: 128px;
-  z-index: 2;
-} */
-
 .table-scroll tbody td:first-child  {
   position: -webkit-sticky;
   position: sticky;
@@ -78,15 +62,4 @@ table, th, td {
   z-index: 2;
 }
 
-/* .table-scroll tbody td:nth-child(3)  {
-  position: -webkit-sticky;
-  position: sticky;
-  left: 128px;
-  z-index: 2;
-} */
 
-/* 
-thead th:first-child,
-tfoot th:first-child {
-  z-index: 5;
-} */

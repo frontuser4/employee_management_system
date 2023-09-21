@@ -7,7 +7,7 @@ import { axiosInstance } from "../../utils/api";
 import { useContext } from "react";
 import {DateTimeContext} from "../../context/dateTimeContext";
 import { employeeDetails } from '../../store/empSlice';
-
+import toast from "react-hot-toast";
 
 export const EmployeeTable = () => {
   const navigate = useNavigate();
@@ -58,7 +58,8 @@ export const EmployeeTable = () => {
 
       setFilterApproval(response.data.empList);
     } catch (error) {
-      console.log("filter approval error: ", error);
+      toast.error(error.message);
+      console.log("filter approval error: ", error.message);
     }
   };
 
@@ -96,7 +97,7 @@ export const EmployeeTable = () => {
             }
             style={{
               background: `${filterData?.length === 0 ? 'white' : color}`,
-              padding: "10px 20px",
+              padding: "5px 10px",
               borderRadius: "10px",
               color: "#000",
               cursor: "pointer",
@@ -179,6 +180,10 @@ export const EmployeeTable = () => {
           </div>
         </>
       )}
+      initialState={{
+        
+        density: "compact",
+      }}
       muiTableProps={{
         sx: {
           border: "1px solid rgba(81, 81, 81, 1)",

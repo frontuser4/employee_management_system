@@ -260,6 +260,8 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                   "HOLIDAY",
                   "C/OFF",
                   "LEAVE",
+                  "STOCKIST SURVEY",
+                  "VAN ACTIVITY",
                 ]}
                 value={attendance}
                 onChange={(e) => setAttendance(e)}
@@ -501,7 +503,14 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
 
                         <ModeDropdown
                           title="Mode of Travel"
-                          option={["train", "bus", "bike"]}
+                          option={[
+                            "train",
+                            "bus",
+                            "bike",
+                            "auto",
+                            "taxi",
+                            "train pass",
+                          ]}
                           value={modeTravel}
                           onChange={(e) => setModeTravel(e)}
                           disabled={
@@ -585,27 +594,52 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
 
                       <Box className="flex flex-col items-center md:flex-row gap-2">
                         <Box className="w-full md:w-3/5 flex-1">
-                          <TextField
-                            type="number"
-                            name="distance"
-                            value={distance}
-                            onChange={(e) => {
-                              setDistance(e.target.value);
-                            }}
-                            fullWidth
-                            label="ONE SIDE KM"
-                            size="small"
-                            disabled={
-                              [
-                                "LEAVE",
-                                "WEEKLY OFF",
-                                "HOLIDAY",
-                                "C/OFF",
-                              ].includes(attendance)
-                                ? true
-                                : false
-                            }
-                          />
+                          {["auto", "taxi", "train pass"].includes(
+                            modeTravel
+                          ) ? (
+                            <TextField
+                              type="number"
+                              value={localConv}
+                              onChange={(e) => {
+                                setLocalConv(e.target.value);
+                              }}
+                              fullWidth
+                              label="LOCAL CONV"
+                              size="small"
+                              disabled={
+                                [
+                                  "LEAVE",
+                                  "WEEKLY OFF",
+                                  "HOLIDAY",
+                                  "C/OFF",
+                                ].includes(attendance)
+                                  ? true
+                                  : false
+                              }
+                            />
+                          ) : (
+                            <TextField
+                              type="number"
+                              name="distance"
+                              value={distance}
+                              onChange={(e) => {
+                                setDistance(e.target.value);
+                              }}
+                              fullWidth
+                              label="ONE SIDE KM"
+                              size="small"
+                              disabled={
+                                [
+                                  "LEAVE",
+                                  "WEEKLY OFF",
+                                  "HOLIDAY",
+                                  "C/OFF",
+                                ].includes(attendance)
+                                  ? true
+                                  : false
+                              }
+                            />
+                          )}
                         </Box>
                         {distance > 100 ? (
                           <>
@@ -1354,7 +1388,12 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="error" autoFocus onClick={handleClose}>
+          <Button
+            variant="contained"
+            color="error"
+            autoFocus
+            onClick={handleClose}
+          >
             Cancel
           </Button>
           <Button variant="contained" onClick={handleFormSubmit} autoFocus>
