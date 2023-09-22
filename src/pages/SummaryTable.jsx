@@ -19,6 +19,7 @@ import { post } from "../utils/api";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function SummaryTable() {
+  
   const { data } = useSelector((state) => state.login.data);
   const { empData } = useSelector((state) => state.empData);
   const tableRef = useRef(null);
@@ -29,6 +30,7 @@ export default function SummaryTable() {
   const [isLoading, setIsLoading] = useState(true);
   const [approvalRefresh, setApprovalRefresh] = useState(false);
   const { month, year } = useContext(DateTimeContext);
+
   const handleChangePage = (_event, newPage) => {
     setPage(newPage);
   };
@@ -171,7 +173,6 @@ export default function SummaryTable() {
                             <TableCell>
                               <Button
                                 onClick={() => {
-                                  console.log("delted");
                                   toast.error("expense data locked");
                                   handleLockExpense(row.empId);
                                 }}

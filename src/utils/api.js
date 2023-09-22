@@ -1,9 +1,9 @@
 import axios from "axios";
 axios.defaults.headers.common["Authorization"] = `jhsajdkhsakdjhsdjakjdhsajdsd`;
-const SALES_TG_URL = "http://142.93.208.119:80";
-const BASE_URL = "http://64.227.141.209:8080";
-// const BASE_URL = "http://192.168.0.120:8000";
-const APP_LOGIN = "http://142.93.208.119:80";
+const SALES_TG_URL = import.meta.env.VITE_APP_LOGIN_URL;
+const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
+// const BASE_URL = import.meta.env.VITE_APP_LOCAL_URL;
+const APP_LOGIN = import.meta.env.VITE_APP_LOGIN_URL;
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -66,10 +66,13 @@ async function getEmp(url, empId, desig, group) {
   try {
     const result = await axios.get(`${SALES_TG_URL}${url}`, {
       params: { empId: empId, desig: desig, empGroup: group },
+      headers:{
+        Authorization : `${localStorage.getItem('token')}`
+      }
     });
     return result.data.empList;
   } catch (error) {
-    console.log("get: ", error);
+    console.log("emp get: ", error);
   }
 }
 

@@ -14,9 +14,9 @@ import toast, { Toaster } from "react-hot-toast";
 import Loader from "../loader/Loader";
 import { useContext } from "react";
 import { DateTimeContext } from "../../context/dateTimeContext";
+import axios from "axios";
 
 const ExpenceTable = () => {
-  
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const tableRef = useRef(null);
@@ -35,6 +35,7 @@ const ExpenceTable = () => {
   const [totalExpData, setTotalExpData] = useState(null);
   const [approvalRefresh, setApprovalRefresh] = useState(false);
   const { month, year } = useContext(DateTimeContext);
+  const [error, setError] = useState(null);
 
   async function fetchData() {
     setLoading(true);
@@ -89,7 +90,6 @@ const ExpenceTable = () => {
   };
 
   const approveHandler = async () => {
-    console.log("sstte: ", state)
     let id = state?.emp === "emp" ? state.empId : data.empId;
     let emplevel = state?.emp === "emp" ? state.empLevel : data.empGroup;
     let approvedata = {
@@ -134,10 +134,59 @@ const ExpenceTable = () => {
     }
   };
 
+  const handleExport = async () => {
+    const expData = {};
+
+    if (state?.emp === "emp") {
+      expData.empId = state.empId;
+      expData.empDesig = state.empDesig;
+      expData.empName = state.empName;
+      expData.empArea = state.empHq;
+      expData.empMonth = month;
+      expData.empYear = year;
+      expData.empLevel = data?.empGroup;
+    } else {
+      expData.empId = data.empId;
+      expData.empDesig = data.desig;
+      expData.empName = data.name;
+      expData.empArea = data.hq;
+      expData.empMonth = month;
+      expData.empYear = year;
+      expData.empLevel = data?.empGroup;
+    }
+
+    try {
+      const response = await axios.get(
+        `http://192.168.0.120:8000/web/exportdata`,
+        {
+          headers: {
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+          params: {
+            ...expData,
+          },
+        }
+      );
+
+      const a = document.createElement("a");
+      a.href = `http://192.168.0.120:8000/${response.data.file}`;
+      a.download = "downloaded-file.xlsx"; // Set the file name
+      a.click();
+    } catch (error) {
+      if (error.response.data.status === 404) {
+        setError({
+          status: error.response.data.status,
+          message: error.response.data.status.message,
+        });
+      }
+      console.log("export error: ", error);
+    }
+  };
+
   return (
     <>
       <div className="flex flex-row items-center md:flex-row md:items-center gap-2 md:gap-4">
-        <div className="md:flex md:gap-2">
+        <div className="flex flex-row gap-2 items-center md:flex md:gap-2">
           <div>
             {state?.emp === "emp" ? (
               <></>
@@ -153,15 +202,19 @@ const ExpenceTable = () => {
             )}
           </div>
           <div>
-            <DownloadTableExcel
+            {/* <DownloadTableExcel
               filename="expense-data"
               sheet="expense-data"
               currentTableRef={tableRef.current}
+            > */}
+            <button
+              disabled={tableData === null || tableData?.length === 0 ? true : false}
+              onClick={handleExport}
+              className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
             >
-              <button className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600">
-                Export Data
-              </button>
-            </DownloadTableExcel>
+              Export Data
+            </button>
+            {/* </DownloadTableExcel> */}
           </div>
           <div>
             {data.empGroup === "level4" ? (
@@ -267,24 +320,24 @@ const ExpenceTable = () => {
               <th className="text-center">
                 APPROVAL
                 {data.empGroup !== "level4" ? (
-              <>
-                {editFlag ? (
                   <>
-                    <button
-                      className="bg-cyan-500 px-3 py-1 text-lg rounded text-white cursor-pointer"
-                      onClick={approveHandler}
-                    >
-                      Submit
-                    </button>
+                    {editFlag ? (
+                      <>
+                        <button
+                          className="bg-cyan-500 px-3 py-1 text-lg rounded text-white cursor-pointer"
+                          onClick={approveHandler}
+                        >
+                          Submit
+                        </button>
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </>
                 ) : (
                   <></>
                 )}
-              </>
-            ) : (
-              <></>
-            )}
-                </th>
+              </th>
               <th className="text-center">TOTAL</th>
             </tr>
           </thead>

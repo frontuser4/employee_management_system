@@ -29,8 +29,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import toast from "react-hot-toast";
 
 export default function UpdateForm({ editData, setCloseUpdateform }) {
-  const BASE_URL = "http://64.227.141.209:8080";
-  // const BASE_URL = "http://192.168.0.120:8000";
+  const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
 
   const navigate = useNavigate();
   const { state } = useLocation();

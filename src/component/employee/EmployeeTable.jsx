@@ -147,7 +147,7 @@ export const EmployeeTable = () => {
       renderTopToolbarCustomActions={() => (
         <>
          
-          <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+          <div className="flex flex-col  md:flex-row items-center gap-2 md:gap-4">
             {data.empGroup === "level2" ||
             data.empGroup === "level3" ||
             data.empGroup === "level4" ? (
@@ -181,7 +181,6 @@ export const EmployeeTable = () => {
         </>
       )}
       initialState={{
-        
         density: "compact",
       }}
       muiTableProps={{
