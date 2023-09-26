@@ -1,9 +1,9 @@
 import axios from "axios";
 axios.defaults.headers.common["Authorization"] = `jhsajdkhsakdjhsdjakjdhsajdsd`;
-const SALES_TG_URL = import.meta.env.VITE_APP_LOGIN_URL;
-const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
+const SALES_TG_URL = 'http://142.93.208.119:80';
+const BASE_URL = 'http://64.227.141.209:8080';
 // const BASE_URL = import.meta.env.VITE_APP_LOCAL_URL;
-const APP_LOGIN = import.meta.env.VITE_APP_LOGIN_URL;
+const APP_LOGIN = 'http://142.93.208.119:80';
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,

@@ -156,12 +156,12 @@ export default function SummaryTable() {
                         <TableRow hover key={index} sx={{ '&:last-child td, &:last-child th': {padding:'8px'} }} >
                           <TableCell>{row.empId}</TableCell>
                           <TableCell>{row.name}</TableCell>
-                          <TableCell>{row.sum_DA}</TableCell>
-                          <TableCell>{row.SUM_travel}</TableCell>
-                          <TableCell>{row.SUM_total_tel}</TableCell>
-                          <TableCell>{row.SUM_postage}</TableCell>
-                          <TableCell>{row.SUM_stationary}</TableCell>
-                          <TableCell>{row.sum_AMT}</TableCell>
+                          <TableCell>{row.sum_dailyConv}</TableCell>
+                          <TableCell>{row.sum_travel}</TableCell>
+                          <TableCell>{row.sum_internet}</TableCell>
+                          <TableCell>{row.sum_postageCourier}</TableCell>
+                          <TableCell>{row.sum_printingStationary}</TableCell>
+                          <TableCell>{row.sum_amountClaim}</TableCell>
                           <TableCell>{row.sum_AMT_DEDUCTED}</TableCell>
                           <TableCell>{row.AMT_PAID}</TableCell>
                           <TableCell>{row.sum_AMT_APPROVED}</TableCell>
@@ -192,7 +192,7 @@ export default function SummaryTable() {
               <TableRow sx={{ '&:last-child td, &:last-child th': {padding:'8px', fontWeight:'bold' } }}>
                 <TableCell></TableCell>
                 <TableCell>Grand Total</TableCell>
-                <TableCell>{summeryTotal?.DA}</TableCell>
+                <TableCell>{summeryTotal?.TOTAL_daily}</TableCell>
                 {/* <TableCell>{summeryTotal?.TA}</TableCell> */}
                 <TableCell>{summeryTotal?.TOTAL_travel}</TableCell>
                 <TableCell>{summeryTotal?.TOTAL_tel}</TableCell>

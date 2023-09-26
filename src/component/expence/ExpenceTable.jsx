@@ -157,7 +157,7 @@ const ExpenceTable = () => {
 
     try {
       const response = await axios.get(
-        `http://192.168.0.120:8000/web/exportdata`,
+        `http://64.227.141.209:8080/web/exportdata`,
         {
           headers: {
             Authorization: `${localStorage.getItem("token")}`,
@@ -210,19 +210,19 @@ const ExpenceTable = () => {
             )}
           </div>
           <div>
-            {/* <DownloadTableExcel
+            <DownloadTableExcel
               filename="expense-data"
               sheet="expense-data"
               currentTableRef={tableRef.current}
-            > */}
+            >
             <button
               disabled={tableData === null || tableData?.length === 0 ? true : false}
-              onClick={handleExport}
+              // onClick={handleExport}
               className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
             >
               Export Data
             </button>
-            {/* </DownloadTableExcel> */}
+            </DownloadTableExcel>
           </div>
           <div>
             {data.empGroup === "level4" ? (
