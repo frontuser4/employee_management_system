@@ -7,8 +7,8 @@ import { login } from "../store/loginSlice";
 const APP_LOGIN = "http://142.93.208.119:80/account/weblogin";
 
 const Login = () => {
+
   const userRef = useRef();
-  const errorRef = useRef();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [empId, setEmpId] = useState("");
@@ -97,7 +97,6 @@ const Login = () => {
                   Password
                 </label>
                 <input
-                  // ref={userRef}
                   onChange={(e) => {
                     setPassword(e.target.value);
                   }}

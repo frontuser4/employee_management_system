@@ -165,13 +165,21 @@ const ExpenceTable = () => {
           params: {
             ...expData,
           },
+          responseType:'blob'
         }
       );
 
-      const a = document.createElement("a");
-      a.href = `http://192.168.0.120:8000/${response.data.file}`;
-      a.download = "downloaded-file.xlsx"; // Set the file name
+      let blob = new Blob([response.data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'expense-data.xlsx'
+
       a.click();
+    
     } catch (error) {
       if (error.response.data.status === 404) {
         setError({

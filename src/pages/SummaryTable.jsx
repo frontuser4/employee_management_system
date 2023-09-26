@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import { post } from "../utils/api";
 import toast, { Toaster } from "react-hot-toast";
 
+
 export default function SummaryTable() {
   
   const { data } = useSelector((state) => state.login.data);
@@ -96,7 +97,7 @@ export default function SummaryTable() {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+      <div>
         <div>
           <DownloadTableExcel
             filename="summery-data"
@@ -115,11 +116,7 @@ export default function SummaryTable() {
           <Table stickyHeader aria-label="sticky table" ref={tableRef}>
             <TableHead>
               <TableRow
-                sx={{
-                  "& .MuiTableRow-root": {
-                    fontWeight: "bold",
-                  },
-                }}
+                sx={{ '&:last-child td, &:last-child th': {padding:'8px', fontWeight:'bold' } }}
               >
                 <TableCell>EmpId</TableCell>
                 <TableCell>Emp Name</TableCell>
@@ -156,7 +153,7 @@ export default function SummaryTable() {
                     )
                     .map((row, index) => {
                       return (
-                        <TableRow hover key={index}>
+                        <TableRow hover key={index} sx={{ '&:last-child td, &:last-child th': {padding:'8px'} }} >
                           <TableCell>{row.empId}</TableCell>
                           <TableCell>{row.name}</TableCell>
                           <TableCell>{row.sum_DA}</TableCell>
@@ -192,10 +189,11 @@ export default function SummaryTable() {
                 </>
               )}
 
-              <TableRow>
+              <TableRow sx={{ '&:last-child td, &:last-child th': {padding:'8px', fontWeight:'bold' } }}>
+                <TableCell></TableCell>
                 <TableCell>Grand Total</TableCell>
                 <TableCell>{summeryTotal?.DA}</TableCell>
-                <TableCell>{summeryTotal?.TA}</TableCell>
+                {/* <TableCell>{summeryTotal?.TA}</TableCell> */}
                 <TableCell>{summeryTotal?.TOTAL_travel}</TableCell>
                 <TableCell>{summeryTotal?.TOTAL_tel}</TableCell>
                 <TableCell>{summeryTotal?.TOTAL_postage}</TableCell>
