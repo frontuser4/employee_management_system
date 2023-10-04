@@ -54,7 +54,7 @@ const defaultState = {
   printingStationary: "",
   other: "",
   otherGst: "",
-  // otherDescription:"",
+  remarks: "",
   poster: "",
 };
 
@@ -81,6 +81,7 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
   const [mobileBillFile, setMobileBillFile] = useState(null);
   const [courierBillFile, setCourierBillFile] = useState(null);
   const [stationaryBillFile, setStationaryBillFile] = useState(null);
+  const [otherBillFile, setOtherBillFile] = useState(null);
 
   const [distancePreview, setDistancePreview] = useState(null);
   const [lodgingPreview, setLodgingPreview] = useState(null);
@@ -89,6 +90,7 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
   const [mobileBillPreview, setMobileBillPreview] = useState(null);
   const [courierBillPreview, setCourierBillPreview] = useState(null);
   const [stationaryBillPreview, setStationaryBillPreview] = useState(null);
+  const [otherRemarksPreview, setOtherRemarksPreview] = useState(null);
 
   const expenceId = `${data.empId}${dayjs(date.$d).format("YYYY")}${dayjs(
     date.$d
@@ -103,7 +105,8 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
     setMobileBillPreview(null);
     setCourierBillPreview(null);
     setStationaryBillPreview(null);
-
+    setOtherRemarksPreview(null);
+ 
     setDistanceFile(null);
     setLodgingBillFile(null);
     setFoodFile(null);
@@ -115,6 +118,7 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
     setDistance(null);
     setModeTravel("");
     setStockistData(null);
+    setOtherBillFile(null);
     setPosterActivity(null);
   };
 
@@ -182,6 +186,7 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
       mobileBillFile,
       courierBillFile,
       stationaryBillFile,
+      otherBillFile,
       desig: desig,
       empLevel: level,
     };
@@ -1001,7 +1006,7 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                 heading="Essentials"
                 components={
                   <>
-                    <div className="grid md:grid-cols-1 gap-3 ">
+                    <div className="grid md:grid-cols-1 gap-3">
                       <Box className="flex flex-col md:flex-row gap-2 items-center">
                         <Box className="w-full md:w-3/5 flex-1">
                           <TextField
@@ -1273,60 +1278,140 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
             {/* others */}
             <div className="grid mb-4">
               <Accordions
-                heading="others"
+                heading="Others"
                 components={
                   <>
-                    <div className="grid md:grid-cols-2 gap-3 mb-4">
-                      <TextField
-                        type="number"
-                        fullWidth
-                        label="OTHER EXP."
-                        name="other"
-                        value={formData.other}
-                        onChange={handleFormChange}
-                        size="small"
-                        disabled={
-                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                            attendance
-                          )
-                            ? true
-                            : false
-                        }
-                      />
+                    <div>
+                      <Box className="grid md:grid-cols-2 gap-3 mb-2">
+                        <TextField
+                          type="number"
+                          fullWidth
+                          label="OTHERS EXP."
+                          name="other"
+                          value={formData.other}
+                          onChange={handleFormChange}
+                          size="small"
+                          disabled={
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
+                              ? true
+                              : false
+                          }
+                        />
 
-                      <TextField
-                        type="number"
-                        name="otherGst"
-                        value={formData.otherGst}
-                        onChange={handleFormChange}
-                        fullWidth
-                        label="OTHERS GST"
-                        size="small"
-                        disabled={
-                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                            attendance
-                          )
-                            ? true
-                            : false
-                        }
-                      />
+                        <TextField
+                          type="number"
+                          name="otherGst"
+                          value={formData.otherGst}
+                          onChange={handleFormChange}
+                          fullWidth
+                          label="OTHERS GST"
+                          size="small"
+                          disabled={
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
+                              ? true
+                              : false
+                          }
+                        />
+                      </Box>
 
-                      {/* <TextField
-                        type="text"
-                        name="otherDescription"
-                        value={formData.otherDescription}
-                        onChange={handleFormChange}
-                        fullWidth
-                        label="OTHERS DESCRIPTION"
-                        size="small"
-                        disabled={
-                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                            attendance
-                          )
-                            ? true
-                            : false
-                        }
-                      /> */}
+                      <Box className="flex flex-col md:flex-row gap-2 items-center">
+                        <Box className="w-full md:w-4/5 flex-1">
+                          <TextField
+                            type="text"
+                            name="remarks"
+                            value={formData.remarks}
+                            onChange={handleFormChange}
+                            fullWidth
+                            label="OTHERS REMARKS"
+                            size="small"
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
+                          />
+                        </Box>
+
+                        {otherRemarksPreview !== null ? (
+                          <div className=" w-full md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                            <img
+                              src={otherRemarksPreview}
+                              alt="otherRemarksPreview"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+
+                        <div className="flex-1">
+                          <input
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
+                            type="file"
+                            name="otherBillFile"
+                            id="upload-otherBillFile"
+                            style={{ display: "none" }}
+                            accept=".png, .jpeg, .jpg"
+                            onChange={(e) => {
+                              setOtherBillFile(e.target.files[0]);
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setOtherRemarksPreview(reader.result);
+                              };
+                              reader.readAsDataURL(e.target.files[0]);
+                            }}
+                            required
+                          />
+
+                          <label htmlFor="upload-otherBillFile">
+                            <Button
+                              disabled={
+                                [
+                                  "LEAVE",
+                                  "WEEKLY OFF",
+                                  "HOLIDAY",
+                                  "C/OFF",
+                                ].includes(attendance)
+                                  ? true
+                                  : false
+                              }
+                              className="w-full"
+                              variant="contained"
+                              color="primary"
+                              component="span"
+                              startIcon={<CloudUploadIcon />}
+                            >
+                              {otherBillFile
+                                ? otherBillFile.name
+                                : "OTHER BILL"}
+                            </Button>
+                          </label>
+                        </div>
+                      </Box>
                     </div>
                   </>
                 }

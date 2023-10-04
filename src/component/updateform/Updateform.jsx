@@ -29,6 +29,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import toast from "react-hot-toast";
 
 export default function UpdateForm({ editData, setCloseUpdateform }) {
+
   const BASE_URL = 'http://64.227.141.209:8080';
 
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   const [mobileBillFile, setMobileBillFile] = useState(null);
   const [courierBillFile, setCourierBillFile] = useState(null);
   const [stationaryBillFile, setStationaryBillFile] = useState(null);
+  const [otherBillFile, setOtherBillFile] = useState(null);
   const [empId, setEmpId] = useState(null);
 
   const [distancePreview, setDistancePreview] = useState(
@@ -71,11 +73,17 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
   const [mobileBillPreview, setMobileBillPreview] = useState(
     `${BASE_URL}${editData.mobileBillFile}`
   );
+
   const [courierBillPreview, setCourierBillPreview] = useState(
     `${BASE_URL}${editData.courierBillFile}`
   );
+
   const [stationaryBillPreview, setStationaryBillPreview] = useState(
     `${BASE_URL}${editData.stationaryBillFile}`
+  );
+
+  const [otherBillPreview, setOtherBillPreview] = useState(
+    `${BASE_URL}${editData.otherBillFile}`
   );
 
   const expenceId = `${data.empId}${dayjs(date.$d).format("YYYY")}${dayjs(
@@ -158,6 +166,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
       mobileBillFile,
       courierBillFile,
       stationaryBillFile,
+      otherBillFile,
       pjpChnage,
       posterActivity,
       empLevel: level,
@@ -933,7 +942,8 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             heading="Essentials"
             components={
               <>
-                <div className="grid md:grid-cols-1 gap-3 ">
+                <div className="grid md:grid-cols-1 gap-3">
+
                   <Box className="flex flex-col md:flex-row gap-2 items-center">
                     <Box className="w-full md:w-3/5 flex-1">
                       <TextField
@@ -1265,6 +1275,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             components={
               <>
                 <div className="grid md:grid-cols-2 gap-3 mb-4">
+
                   <TextField
                     type="number"
                     fullWidth
@@ -1298,7 +1309,110 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         : false
                     }
                   />
+
                 </div>
+                <Box className="flex flex-col md:flex-row gap-2 items-center">
+                    <Box className="w-full md:w-3/5 flex-1">
+                      <TextField
+                        // type="number"
+                        name="remarks"
+                        value={formData.remarks}
+                        onChange={handleFormChange}
+                        fullWidth
+                        label="OTHERS DESCRIPTION"
+                        size="small"
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
+                      />
+                    </Box>
+
+                    <div className=" md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                      <img
+                        src={otherBillPreview}
+                        alt="otherBillPreview"
+                        className="w-full h-full"
+                      />
+                    </div>
+
+                    <Tooltip title="delete images" placement="top">
+                      <IconButton
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
+                        color="error"
+                        size="medium"
+                        onClick={async () => {
+                          setOtherBillPreview(null);
+                          const res = await imageDelete(
+                            "/web/deleteimage",
+                            empId,
+                            formData.dateExp,
+                            "otherBillFile"
+                          );
+                          console.log("delete otherBillFile File: ", res);
+                        }}
+                      >
+                        <CancelIcon />
+                      </IconButton>
+                    </Tooltip>
+
+                    <div className="flex-1">
+                      <input
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
+                        type="file"
+                        name="otherBillFile"
+                        id="upload-otherBillFile"
+                        style={{ display: "none" }}
+                        accept=".png, .jpeg, .jpg"
+                        onChange={(e) => {
+                          setOtherBillFile(e.target.files[0]);
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setOtherBillPreview(reader.result);
+                          };
+                          reader.readAsDataURL(e.target.files[0]);
+                        }}
+                      />
+                      <label htmlFor="upload-otherBillFile">
+                        <Button
+                          disabled={
+                            [
+                              "LEAVE",
+                              "WEEKLY OFF",
+                              "HOLIDAY",
+                              "C/OFF",
+                            ].includes(attendance)
+                              ? true
+                              : false
+                          }
+                          fullWidth
+                          variant="contained"
+                          color="primary"
+                          component="span"
+                          startIcon={<CloudUploadIcon />}
+                        >
+                          {otherBillPreview
+                            ? otherBillFile?.name
+                            : "upload files"}
+                        </Button>
+                      </label>
+                    </div>
+                </Box>
               </>
             }
           />

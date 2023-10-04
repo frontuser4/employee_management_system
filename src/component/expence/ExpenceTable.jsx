@@ -324,7 +324,7 @@ const ExpenceTable = () => {
               <th className="text-center">PRINTING STATIONARY</th>
               <th className="text-center">OTHER</th>
               <th className="text-center">OTHER GST</th>
-              {/* <th className="text-center">WORKING HOURS</th> */}
+              <th className="text-center">OTHERS REMARKS</th>
               <th className="text-center">
                 APPROVAL
                 {data.empGroup !== "level4" ? (
@@ -487,7 +487,19 @@ const ExpenceTable = () => {
                       </td>
                       <td className="text-center">{data.other}</td>
                       <td className="text-center">{data.otherGst}</td>
-                      {/* <td className="text-center">{data.workingHr}</td> */}
+                      <td className="text-center">
+                        {data.remarks}
+                        {data.otherBillFile !== null ? (
+                          <button
+                            className="bg-cyan-500 mt-2 p-1 rounded"
+                            onClick={() => handlePreviewImage(data.otherBillFile)}
+                          >
+                            preview
+                          </button>
+                        ) : (
+                          <></>
+                        )}
+                      </td>
                       <td>{data.approval}</td>
                       <td className="text-center">{data.total}</td>
                     </tr>
