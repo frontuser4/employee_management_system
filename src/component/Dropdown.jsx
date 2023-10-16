@@ -102,7 +102,7 @@ const ModeDropdown = ({title, option, value, onChange, disabled})=>{
 
   return(
     <FormControl sx={{ width: '100%'}}>
-        <InputLabel id="demo-controlled-open-select-label">{title}</InputLabel>
+        <InputLabel size='small' id="demo-controlled-open-select-label">{title}</InputLabel>
         <Select
           labelId="demo-controlled-open-select-label"
           id="demo-controlled-open-select"

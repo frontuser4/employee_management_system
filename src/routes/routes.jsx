@@ -1,6 +1,4 @@
-
 import { Navigate } from "react-router-dom";
-
 import DashboardLayouts from "../layouts/DashboardLayout";
 import PageNotFound from "../pages/PageNotFound";
 import Login from '../pages/Login';
@@ -12,7 +10,6 @@ import UpdateExpense from "../pages/UpdateTable";
 import SummaryExpense from "../pages/SummaryTable";
 
 
-
 const AuthGuard = ({ children }) => {
   const auth = localStorage.getItem("token");
   return auth ? <>{children}</> : <Navigate to="/login" />;
@@ -21,9 +18,7 @@ const AuthGuard = ({ children }) => {
 const GuestGuard = ({children})=> {
   const auth = localStorage.getItem("token");
   return auth ? <Navigate to="/dashboard" /> : <>{children}</>
-}
-
-
+};
 
 const routes = [
   {

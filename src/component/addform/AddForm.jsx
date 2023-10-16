@@ -267,6 +267,7 @@ export default function AddForm({ open, setOpen, setCloseForm, empData }) {
                   "LEAVE",
                   "STOCKIST SURVEY",
                   "VAN ACTIVITY",
+                  "TRAVEL"
                 ]}
                 value={attendance}
                 onChange={(e) => setAttendance(e)}

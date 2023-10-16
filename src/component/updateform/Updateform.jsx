@@ -28,9 +28,8 @@ import { update, imageDelete } from "../../utils/api";
 import CancelIcon from "@mui/icons-material/Cancel";
 import toast from "react-hot-toast";
 
-export default function UpdateForm({ editData, setCloseUpdateform }) {
-
-  const BASE_URL = 'http://64.227.141.209:8080';
+export default function UpdateForm({ editData }) {
+  const BASE_URL = "http://64.227.141.209:8080";
 
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -181,9 +180,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
     setModeTravel("");
     setStockistData("");
     setDistance("");
-    setCloseUpdateform((prev) => !prev);
   };
-
 
   return (
     <>
@@ -210,6 +207,9 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
               "HOLIDAY",
               "C/OFF",
               "LEAVE",
+              "STOCKIST SURVEY",
+              "VAN ACTIVITY",
+              "TRAVEL",
             ]}
             value={attendance}
             onChange={(e) => setAttendance(e)}
@@ -326,6 +326,7 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             name="dailyConv"
             value={formData.dailyConv}
             onChange={handleFormChange}
+            onWheel={(e)=> e.preventDefault()}
             label="D.A."
             size="small"
             disabled={
@@ -380,7 +381,14 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
 
                     <ModeDropdown
                       title="Mode of Travel"
-                      option={["train", "bus", "bike"]}
+                      option={[
+                        "train",
+                        "bus",
+                        "bike",
+                        "auto",
+                        "taxi",
+                        "train pass",
+                      ]}
                       value={modeTravel}
                       onChange={(e) => setModeTravel(e)}
                       disabled={
@@ -452,22 +460,53 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
 
                   <Box className="flex flex-col items-center md:flex-row gap-2">
                     <Box className="w-full md:w-3/5 flex-1">
-                      <TextField
-                        type="number"
-                        name="distance"
-                        value={distance}
-                        onChange={(e) => setDistance(e.target.value)}
-                        fullWidth
-                        label="ONE SIDE KM"
-                        size="small"
-                        disabled={
-                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                            attendance
-                          )
-                            ? true
-                            : false
-                        }
-                      />
+                      {["auto", "taxi", "train pass"].includes(modeTravel) ? (
+                        <>
+                          <TextField
+                            onWheel={(e)=> e.preventDefault()}
+                            type="number"
+                            value={localConv}
+                            onChange={(e) => {
+                              setLocalConv(e.target.value);
+                            }}
+                            fullWidth
+                            label="LOCAL CONV"
+                            size="small"
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <TextField
+                            type="number"
+                            name="distance"
+                            value={distance}
+                            onChange={(e) => setDistance(e.target.value)}
+                            fullWidth
+                            label="ONE SIDE KM"
+                            size="small"
+                            disabled={
+                              [
+                                "LEAVE",
+                                "WEEKLY OFF",
+                                "HOLIDAY",
+                                "C/OFF",
+                              ].includes(attendance)
+                                ? true
+                                : false
+                            }
+                          />
+                        </>
+                      )}
                     </Box>
                     {distance >= 100 ? (
                       <>
@@ -943,7 +982,6 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             components={
               <>
                 <div className="grid md:grid-cols-1 gap-3">
-
                   <Box className="flex flex-col md:flex-row gap-2 items-center">
                     <Box className="w-full md:w-3/5 flex-1">
                       <TextField
@@ -1275,7 +1313,6 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
             components={
               <>
                 <div className="grid md:grid-cols-2 gap-3 mb-4">
-
                   <TextField
                     type="number"
                     fullWidth
@@ -1309,109 +1346,105 @@ export default function UpdateForm({ editData, setCloseUpdateform }) {
                         : false
                     }
                   />
-
                 </div>
                 <Box className="flex flex-col md:flex-row gap-2 items-center">
-                    <Box className="w-full md:w-3/5 flex-1">
-                      <TextField
-                        // type="number"
-                        name="remarks"
-                        value={formData.remarks}
-                        onChange={handleFormChange}
+                  <Box className="w-full md:w-3/5 flex-1">
+                    <TextField
+                      // type="number"
+                      name="remarks"
+                      value={formData.remarks}
+                      onChange={handleFormChange}
+                      fullWidth
+                      label="OTHERS DESCRIPTION"
+                      size="small"
+                      disabled={
+                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                          attendance
+                        )
+                          ? true
+                          : false
+                      }
+                    />
+                  </Box>
+
+                  <div className=" md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
+                    <img
+                      src={otherBillPreview}
+                      alt="otherBillPreview"
+                      className="w-full h-full"
+                    />
+                  </div>
+
+                  <Tooltip title="delete images" placement="top">
+                    <IconButton
+                      disabled={
+                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                          attendance
+                        )
+                          ? true
+                          : false
+                      }
+                      color="error"
+                      size="medium"
+                      onClick={async () => {
+                        setOtherBillPreview(null);
+                        const res = await imageDelete(
+                          "/web/deleteimage",
+                          empId,
+                          formData.dateExp,
+                          "otherBillFile"
+                        );
+                        console.log("delete otherBillFile File: ", res);
+                      }}
+                    >
+                      <CancelIcon />
+                    </IconButton>
+                  </Tooltip>
+
+                  <div className="flex-1">
+                    <input
+                      disabled={
+                        ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                          attendance
+                        )
+                          ? true
+                          : false
+                      }
+                      type="file"
+                      name="otherBillFile"
+                      id="upload-otherBillFile"
+                      style={{ display: "none" }}
+                      accept=".png, .jpeg, .jpg"
+                      onChange={(e) => {
+                        setOtherBillFile(e.target.files[0]);
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setOtherBillPreview(reader.result);
+                        };
+                        reader.readAsDataURL(e.target.files[0]);
+                      }}
+                    />
+                    <label htmlFor="upload-otherBillFile">
+                      <Button
+                        disabled={
+                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
+                            attendance
+                          )
+                            ? true
+                            : false
+                        }
                         fullWidth
-                        label="OTHERS DESCRIPTION"
-                        size="small"
-                        disabled={
-                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                            attendance
-                          )
-                            ? true
-                            : false
-                        }
-                      />
-                    </Box>
-
-                    <div className=" md:w-8 md:h-9 border-solid border-2 border-sky-500 rounded flex-1">
-                      <img
-                        src={otherBillPreview}
-                        alt="otherBillPreview"
-                        className="w-full h-full"
-                      />
-                    </div>
-
-                    <Tooltip title="delete images" placement="top">
-                      <IconButton
-                        disabled={
-                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                            attendance
-                          )
-                            ? true
-                            : false
-                        }
-                        color="error"
-                        size="medium"
-                        onClick={async () => {
-                          setOtherBillPreview(null);
-                          const res = await imageDelete(
-                            "/web/deleteimage",
-                            empId,
-                            formData.dateExp,
-                            "otherBillFile"
-                          );
-                          console.log("delete otherBillFile File: ", res);
-                        }}
+                        variant="contained"
+                        color="primary"
+                        component="span"
+                        startIcon={<CloudUploadIcon />}
                       >
-                        <CancelIcon />
-                      </IconButton>
-                    </Tooltip>
-
-                    <div className="flex-1">
-                      <input
-                        disabled={
-                          ["LEAVE", "WEEKLY OFF", "HOLIDAY", "C/OFF"].includes(
-                            attendance
-                          )
-                            ? true
-                            : false
-                        }
-                        type="file"
-                        name="otherBillFile"
-                        id="upload-otherBillFile"
-                        style={{ display: "none" }}
-                        accept=".png, .jpeg, .jpg"
-                        onChange={(e) => {
-                          setOtherBillFile(e.target.files[0]);
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            setOtherBillPreview(reader.result);
-                          };
-                          reader.readAsDataURL(e.target.files[0]);
-                        }}
-                      />
-                      <label htmlFor="upload-otherBillFile">
-                        <Button
-                          disabled={
-                            [
-                              "LEAVE",
-                              "WEEKLY OFF",
-                              "HOLIDAY",
-                              "C/OFF",
-                            ].includes(attendance)
-                              ? true
-                              : false
-                          }
-                          fullWidth
-                          variant="contained"
-                          color="primary"
-                          component="span"
-                          startIcon={<CloudUploadIcon />}
-                        >
-                          {otherBillPreview
-                            ? otherBillFile?.name
-                            : "upload files"}
-                        </Button>
-                      </label>
-                    </div>
+                        {otherBillPreview
+                          ? otherBillFile?.name
+                          : "upload files"}
+                      </Button>
+                    </label>
+                  </div>
                 </Box>
               </>
             }

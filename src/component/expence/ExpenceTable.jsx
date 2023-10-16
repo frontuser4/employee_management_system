@@ -165,21 +165,20 @@ const ExpenceTable = () => {
           params: {
             ...expData,
           },
-          responseType:'blob'
+          responseType: "blob",
         }
       );
 
       let blob = new Blob([response.data], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
 
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = 'expense-data.xlsx'
+      a.download = "expense-data.xlsx";
 
       a.click();
-    
     } catch (error) {
       if (error.response.data.status === 404) {
         setError({
@@ -215,13 +214,15 @@ const ExpenceTable = () => {
               sheet="expense-data"
               currentTableRef={tableRef.current}
             >
-            <button
-              disabled={tableData === null || tableData?.length === 0 ? true : false}
-              // onClick={handleExport}
-              className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
-            >
-              Export Data
-            </button>
+              <button
+                disabled={
+                  tableData === null || tableData?.length === 0 ? true : false
+                }
+                // onClick={handleExport}
+                className="bg-[#0ea5e9] px-3 py-1 text-lg rounded text-white mb-2 hover:bg-cyan-600"
+              >
+                Export Data
+              </button>
             </DownloadTableExcel>
           </div>
           <div>
@@ -355,7 +356,8 @@ const ExpenceTable = () => {
                 <div>
                   <Loader />
                 </div>
-              ) : (
+              ) : 
+              (
                 tableData?.map((data, index) => {
                   return (
                     <tr key={index}>
@@ -492,7 +494,9 @@ const ExpenceTable = () => {
                         {data.otherBillFile !== null ? (
                           <button
                             className="bg-cyan-500 mt-2 p-1 rounded"
-                            onClick={() => handlePreviewImage(data.otherBillFile)}
+                            onClick={() =>
+                              handlePreviewImage(data.otherBillFile)
+                            }
                           >
                             preview
                           </button>
@@ -505,7 +509,17 @@ const ExpenceTable = () => {
                     </tr>
                   );
                 })
-              )}
+              )
+
+              // {tableData?.length <= 0 ? (
+              //   <p className="text-center bg-slate-500 w-full h-3/4 text-white text-3xl p-24">
+              //     data not found
+              //   </p>
+              // ) : (
+              //   <></>
+              // )}
+              
+              }
               <tr>
                 <td colSpan={3} className="font-bold">
                   Grand Total
@@ -552,6 +566,7 @@ const ExpenceTable = () => {
                   {totalExpData?.sum_otherGst}
                 </td>
                 <td className="text-center font-bold"></td>
+                <td className="text-center font-bold"></td>
 
                 <td className="text-center font-bold">{grandTotal}</td>
               </tr>
@@ -565,9 +580,9 @@ const ExpenceTable = () => {
                 </td>
                 <td colSpan={5} className="font-bold">
                   ASM :
-                </td>
+                </td>   
                 <td colSpan={5} className="font-bold">
-                  Check By: Suhas Ghare
+                  Check By: Suhas Ghare / Sunaina Nar
                 </td>
                 <td colSpan={5} className="font-bold">
                   RSM : Jotiram Ghanawat
@@ -589,44 +604,34 @@ const ExpenceTable = () => {
         </table>
       </div>
 
-      {tableData?.length <= 0 ? (
-        <p className="text-center bg-slate-500 w-full h-3/4 text-white text-3xl p-24">
-          data not found
-        </p>
-      ) : (
-        <></>
-      )}
+     
 
-      {tableData?.length <= 0 ? (
-        <></>
-      ) : (
-        <div className="flex bg-slate-800 p-4 gap-4 my-8">
-          <div className=" p-2 rounded text-white flex gap-3 flex-wrap">
-            {changeLogsData?.map((data, index) => {
-              return (
-                <div key={index} className="bg-teal-600 p-2 rounded">
-                  <p>Date : {data?.dateExp}</p>
-                  <span>ChangeBy: {data?.changedBy}</span>
-                  <p>{data.message}</p>
-                  {data?.changes?.map((data, index) => {
-                    return (
-                      <div className="bg-pink-500 p-1 rounded" key={index}>
-                        <span>{data?.item}</span>
-                        <span className="mx-1">|</span>
-                        <span>{data?.oldPara}</span>
-                        <span className="mx-1">|</span>
-                        <span>{data?.newPara}</span>
-                        <span className="mx-1">|</span>
-                        <span>{data?.desig}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })}
-          </div>
+      <div className="flex bg-slate-800 p-4 gap-4 my-8">
+        <div className=" p-2 rounded text-white flex gap-3 flex-wrap">
+          {changeLogsData?.map((data, index) => {
+            return (
+              <div key={index} className="bg-teal-600 p-2 rounded">
+                <p>Date : {data?.dateExp}</p>
+                <span>ChangeBy: {data?.changedBy}</span>
+                <p>{data.message}</p>
+                {data?.changes?.map((data, index) => {
+                  return (
+                    <div className="bg-pink-500 p-1 rounded" key={index}>
+                      <span>{data?.item}</span>
+                      <span className="mx-1">|</span>
+                      <span>{data?.oldPara}</span>
+                      <span className="mx-1">|</span>
+                      <span>{data?.newPara}</span>
+                      <span className="mx-1">|</span>
+                      <span>{data?.desig}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
         </div>
-      )}
+      </div>
 
       <AddForm
         open={openForm}

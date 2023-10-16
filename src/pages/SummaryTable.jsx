@@ -41,7 +41,7 @@ export default function SummaryTable() {
   });
 
   const filterEmpName = filteredSummery?.map((data) => ({
-    empId: data.empId,
+    // empId: data.empId,
     name: data.name,
   }));
 
@@ -153,7 +153,7 @@ export default function SummaryTable() {
                     )
                     .map((row, index) => {
                       return (
-                        <TableRow hover key={index} sx={{ '&:last-child td, &:last-child th': {padding:'8px'} }} >
+                        <TableRow hover key={index}>
                           <TableCell>{row.empId}</TableCell>
                           <TableCell>{row.name}</TableCell>
                           <TableCell>{row.sum_dailyConv}</TableCell>
