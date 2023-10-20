@@ -190,6 +190,8 @@ const ExpenceTable = () => {
     }
   };
 
+  // console.log("tableData: ", tableData.length)
+
   return (
     <>
       <div className="flex flex-row items-center md:flex-row md:items-center gap-2 md:gap-4">
@@ -352,173 +354,192 @@ const ExpenceTable = () => {
           </thead>
           {displayFlag ? (
             <tbody>
-              {loading ? (
-                <div>
-                  <Loader />
-                </div>
-              ) : 
-              (
-                tableData?.map((data, index) => {
-                  return (
-                    <tr key={index}>
-                      <td className="text-center">
-                        <button
-                          onClick={() => handleEdit(data)}
-                          disabled={editFlag ? false : true}
-                        >
-                          <EditIcon />
-                        </button>
-                      </td>
-                      <td className="text-center" style={{ fontSize: "14px" }}>
-                        {data.dateExp}
-                      </td>
-                      <td className="text-center">{data.attendance}</td>
-                      <td className="text-center">{data.tc}</td>
-                      <td className="text-center">{data.pc}</td>
-                      <td className="text-center">{data.sale}</td>
-                      <td className="text-center">{data.payer}</td>
-                      <td className="text-center">{data.townMarketWork}</td>
-                      <td className="text-center">{data.travelSource}</td>
-                      <td className="text-center">{data.travelDestination}</td>
-                      <td className="text-center">{data.modeTravel}</td>
-                      <td className="text-center">
-                        {data.distance}
-                        {data.distanceFile !== null ? (
-                          <button
-                            className="bg-cyan-500 mt-2 p-1 rounded"
-                            onClick={() =>
-                              handlePreviewImage(data.distanceFile)
-                            }
-                          >
-                            preview
-                          </button>
-                        ) : (
-                          <></>
-                        )}
-                      </td>
-                      <td className="text-center">{data.dailyConv}</td>
-                      <td className="text-center">{data.localConv}</td>
-                      <td className="text-center">{data.travelingLong}</td>
-                      <td className="text-center">
-                        {data.lodginBoardig}
+              {
+                loading ? (
+                  <div>
+                    <Loader />
+                  </div>
+                ) : (
+                  <>
+                    {tableData.length === 0 ? (
+                      <p>data not found</p>
+                    ) : (
+                      <>
+                        {tableData?.map((data, index) => {
+                          return (
+                            <tr key={index}>
+                              <td className="text-center">
+                                <button
+                                  onClick={() => handleEdit(data)}
+                                  disabled={editFlag ? false : true}
+                                >
+                                  <EditIcon />
+                                </button>
+                              </td>
+                              <td
+                                className="text-center"
+                                style={{ fontSize: "14px" }}
+                              >
+                                {data.dateExp}
+                              </td>
+                              <td className="text-center">{data.attendance}</td>
+                              <td className="text-center">{data.tc}</td>
+                              <td className="text-center">{data.pc}</td>
+                              <td className="text-center">{data.sale}</td>
+                              <td className="text-center">{data.payer}</td>
+                              <td className="text-center">
+                                {data.townMarketWork}
+                              </td>
+                              <td className="text-center">
+                                {data.travelSource}
+                              </td>
+                              <td className="text-center">
+                                {data.travelDestination}
+                              </td>
+                              <td className="text-center">{data.modeTravel}</td>
+                              <td className="text-center">
+                                {data.distance}
+                                {data.distanceFile !== null ? (
+                                  <button
+                                    className="bg-cyan-500 mt-2 p-1 rounded"
+                                    onClick={() =>
+                                      handlePreviewImage(data.distanceFile)
+                                    }
+                                  >
+                                    preview
+                                  </button>
+                                ) : (
+                                  <></>
+                                )}
+                              </td>
+                              <td className="text-center">{data.dailyConv}</td>
+                              <td className="text-center">{data.localConv}</td>
+                              <td className="text-center">
+                                {data.travelingLong}
+                              </td>
+                              <td className="text-center">
+                                {data.lodginBoardig}
 
-                        {data.lodgingBillFile !== null ? (
-                          <button
-                            className="bg-cyan-500 mt-2 p-1 rounded"
-                            onClick={() =>
-                              handlePreviewImage(data.lodgingBillFile)
-                            }
-                          >
-                            preview
-                          </button>
-                        ) : (
-                          <></>
-                        )}
-                      </td>
-                      <td className="text-center">
-                        {data.food}
-                        {data.foodFile !== null ? (
-                          <button
-                            className="bg-cyan-500 mt-2 p-1 rounded"
-                            onClick={() => handlePreviewImage(data.foodFile)}
-                          >
-                            preview
-                          </button>
-                        ) : (
-                          <></>
-                        )}
-                      </td>
-                      <td className="text-center">
-                        {data.foodGST}
-                        {data.foodGstFile !== null ? (
-                          <button
-                            className="bg-cyan-500 mt-2 p-1 rounded"
-                            onClick={() => handlePreviewImage(data.foodGstFile)}
-                          >
-                            preview
-                          </button>
-                        ) : (
-                          <></>
-                        )}
-                      </td>
-                      <td className="text-center">{data.nightAllowance}</td>
-                      <td className="text-center">
-                        {data.internet}
-                        {data.mobileBillFile !== null ? (
-                          <button
-                            className="bg-cyan-500 mt-2 p-1 rounded"
-                            onClick={() =>
-                              handlePreviewImage(data.mobileBillFile)
-                            }
-                          >
-                            preview
-                          </button>
-                        ) : (
-                          <></>
-                        )}
-                      </td>
-                      <td className="text-center">
-                        {data.postageCourier}
-                        {data.courierBillFile !== null ? (
-                          <button
-                            className="bg-cyan-500 mt-2 p-1 rounded"
-                            onClick={() =>
-                              handlePreviewImage(data.courierBillFile)
-                            }
-                          >
-                            preview
-                          </button>
-                        ) : (
-                          <></>
-                        )}
-                      </td>
-                      <td className="text-center">
-                        {data.printingStationary}
-                        {data.stationaryBillFile !== null ? (
-                          <button
-                            className="bg-cyan-500 mt-2 p-1 rounded"
-                            onClick={() =>
-                              handlePreviewImage(data.stationaryBillFile)
-                            }
-                          >
-                            preview
-                          </button>
-                        ) : (
-                          <></>
-                        )}
-                      </td>
-                      <td className="text-center">{data.other}</td>
-                      <td className="text-center">{data.otherGst}</td>
-                      <td className="text-center">
-                        {data.remarks}
-                        {data.otherBillFile !== null ? (
-                          <button
-                            className="bg-cyan-500 mt-2 p-1 rounded"
-                            onClick={() =>
-                              handlePreviewImage(data.otherBillFile)
-                            }
-                          >
-                            preview
-                          </button>
-                        ) : (
-                          <></>
-                        )}
-                      </td>
-                      <td>{data.approval}</td>
-                      <td className="text-center">{data.total}</td>
-                    </tr>
-                  );
-                })
-              )
-
-              // {tableData?.length <= 0 ? (
-              //   <p className="text-center bg-slate-500 w-full h-3/4 text-white text-3xl p-24">
-              //     data not found
-              //   </p>
-              // ) : (
-              //   <></>
-              // )}
-              
+                                {data.lodgingBillFile !== null ? (
+                                  <button
+                                    className="bg-cyan-500 mt-2 p-1 rounded"
+                                    onClick={() =>
+                                      handlePreviewImage(data.lodgingBillFile)
+                                    }
+                                  >
+                                    preview
+                                  </button>
+                                ) : (
+                                  <></>
+                                )}
+                              </td>
+                              <td className="text-center">
+                                {data.food}
+                                {data.foodFile !== null ? (
+                                  <button
+                                    className="bg-cyan-500 mt-2 p-1 rounded"
+                                    onClick={() =>
+                                      handlePreviewImage(data.foodFile)
+                                    }
+                                  >
+                                    preview
+                                  </button>
+                                ) : (
+                                  <></>
+                                )}
+                              </td>
+                              <td className="text-center">
+                                {data.foodGST}
+                                {data.foodGstFile !== null ? (
+                                  <button
+                                    className="bg-cyan-500 mt-2 p-1 rounded"
+                                    onClick={() =>
+                                      handlePreviewImage(data.foodGstFile)
+                                    }
+                                  >
+                                    preview
+                                  </button>
+                                ) : (
+                                  <></>
+                                )}
+                              </td>
+                              <td className="text-center">
+                                {data.nightAllowance}
+                              </td>
+                              <td className="text-center">
+                                {data.internet}
+                                {data.mobileBillFile !== null ? (
+                                  <button
+                                    className="bg-cyan-500 mt-2 p-1 rounded"
+                                    onClick={() =>
+                                      handlePreviewImage(data.mobileBillFile)
+                                    }
+                                  >
+                                    preview
+                                  </button>
+                                ) : (
+                                  <></>
+                                )}
+                              </td>
+                              <td className="text-center">
+                                {data.postageCourier}
+                                {data.courierBillFile !== null ? (
+                                  <button
+                                    className="bg-cyan-500 mt-2 p-1 rounded"
+                                    onClick={() =>
+                                      handlePreviewImage(data.courierBillFile)
+                                    }
+                                  >
+                                    preview
+                                  </button>
+                                ) : (
+                                  <></>
+                                )}
+                              </td>
+                              <td className="text-center">
+                                {data.printingStationary}
+                                {data.stationaryBillFile !== null ? (
+                                  <button
+                                    className="bg-cyan-500 mt-2 p-1 rounded"
+                                    onClick={() =>
+                                      handlePreviewImage(
+                                        data.stationaryBillFile
+                                      )
+                                    }
+                                  >
+                                    preview
+                                  </button>
+                                ) : (
+                                  <></>
+                                )}
+                              </td>
+                              <td className="text-center">{data.other}</td>
+                              <td className="text-center">{data.otherGst}</td>
+                              <td className="text-center">
+                                {data.remarks}
+                                {data.otherBillFile !== null ? (
+                                  <button
+                                    className="bg-cyan-500 mt-2 p-1 rounded"
+                                    onClick={() =>
+                                      handlePreviewImage(data.otherBillFile)
+                                    }
+                                  >
+                                    preview
+                                  </button>
+                                ) : (
+                                  <></>
+                                )}
+                              </td>
+                              <td>{data.approval}</td>
+                              <td className="text-center">{data.total}</td>
+                            </tr>
+                          );
+                        })}
+                      </>
+                    )}
+                  </>
+                )
+               
               }
               <tr>
                 <td colSpan={3} className="font-bold">
@@ -580,9 +601,9 @@ const ExpenceTable = () => {
                 </td>
                 <td colSpan={5} className="font-bold">
                   ASM :
-                </td>   
+                </td>
                 <td colSpan={5} className="font-bold">
-                  Check By: Suhas Ghare / Sunaina Nar
+                  Check By: Suhas Ghare / Sunayana Nar
                 </td>
                 <td colSpan={5} className="font-bold">
                   RSM : Jotiram Ghanawat
@@ -597,40 +618,47 @@ const ExpenceTable = () => {
                   This is computer generated no signature required
                 </td>
               </tr>
+
+              <tr>
+                <td colSpan={27}>
+                  <div className="flex bg-slate-800 p-4 gap-4 my-8">
+                    <div
+                      className=" p-2 rounded text-white flex gap-3 flex-wrap"
+                    >
+                      {changeLogsData?.map((data, index) => {
+                        return (
+                          <div key={index} className="bg-teal-600 p-2 rounded">
+                            <p>Date : {data?.dateExp}</p>
+                            <span>ChangeBy: {data?.changedBy}</span>
+                            <p>{data.message}</p>
+                            {data?.changes?.map((data, index) => {
+                              return (
+                                <div
+                                  className="bg-pink-500 p-1 rounded"
+                                  key={index}
+                                >
+                                  <span>{data?.item}</span>
+                                  <span className="mx-1">|</span>
+                                  <span>{data?.oldPara}</span>
+                                  <span className="mx-1">|</span>
+                                  <span>{data?.newPara}</span>
+                                  <span className="mx-1">|</span>
+                                  <span>{data?.desig}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </td>
+              </tr>
             </tbody>
           ) : (
             <></>
           )}
         </table>
-      </div>
-
-     
-
-      <div className="flex bg-slate-800 p-4 gap-4 my-8">
-        <div className=" p-2 rounded text-white flex gap-3 flex-wrap">
-          {changeLogsData?.map((data, index) => {
-            return (
-              <div key={index} className="bg-teal-600 p-2 rounded">
-                <p>Date : {data?.dateExp}</p>
-                <span>ChangeBy: {data?.changedBy}</span>
-                <p>{data.message}</p>
-                {data?.changes?.map((data, index) => {
-                  return (
-                    <div className="bg-pink-500 p-1 rounded" key={index}>
-                      <span>{data?.item}</span>
-                      <span className="mx-1">|</span>
-                      <span>{data?.oldPara}</span>
-                      <span className="mx-1">|</span>
-                      <span>{data?.newPara}</span>
-                      <span className="mx-1">|</span>
-                      <span>{data?.desig}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
       </div>
 
       <AddForm

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   TextField,
@@ -43,7 +43,6 @@ export default function UpdateForm({ editData }) {
   const [posterActivity, setPosterActivity] = useState(null);
   const [date, setDate] = useState(dayjs(state.dateExp));
   const [distance, setDistance] = useState(formData.distance);
-  const [localConv, setLocalConv] = useState(null);
 
   const [distanceFile, setDistanceFile] = useState(null);
   const [lodgingBillFile, setLodgingBillFile] = useState(null);
@@ -66,9 +65,11 @@ export default function UpdateForm({ editData }) {
   const [foodPreview, setFoodPreview] = useState(
     `${BASE_URL}${editData.foodFile}`
   );
+  
   const [foodGstPreview, setFoodGstPreview] = useState(
     `${BASE_URL}${editData.foodGstFile}`
   );
+
   const [mobileBillPreview, setMobileBillPreview] = useState(
     `${BASE_URL}${editData.mobileBillFile}`
   );
@@ -88,6 +89,7 @@ export default function UpdateForm({ editData }) {
   const expenceId = `${data.empId}${dayjs(date.$d).format("YYYY")}${dayjs(
     date.$d
   ).format("MM")}${dayjs(date.$d).format("DD")}`;
+
 
   useEffect(() => {
     if (state?.emp === "emp") {
@@ -146,7 +148,7 @@ export default function UpdateForm({ editData }) {
       expId = expenceId;
     }
 
-    let local = distance <= 100 ? distance * 2 * 2 : localConv;
+    // let local = distance <= 100 ? distance * 2 * 2 : localConv;
 
     const updatedata = {
       ...formData,
@@ -156,8 +158,6 @@ export default function UpdateForm({ editData }) {
       payer: stockistData,
       dateExp: dayjs(date).format("YYYY-MM-DD"),
       expenseId: expId,
-      distance,
-      localConv: local,
       distanceFile,
       lodgingBillFile,
       foodFile,
@@ -326,7 +326,6 @@ export default function UpdateForm({ editData }) {
             name="dailyConv"
             value={formData.dailyConv}
             onChange={handleFormChange}
-            onWheel={(e)=> e.preventDefault()}
             label="D.A."
             size="small"
             disabled={
@@ -407,10 +406,9 @@ export default function UpdateForm({ editData }) {
                     ) : (
                       <TextField
                         type="number"
-                        value={localConv}
-                        onChange={(e) => {
-                          setLocalConv(e.target.value);
-                        }}
+                        value={formData.localConv}
+                        onChange={handleFormChange}
+                        name="localConv"
                         fullWidth
                         label="LOCAL CONV"
                         size="small"
@@ -465,10 +463,9 @@ export default function UpdateForm({ editData }) {
                           <TextField
                             onWheel={(e)=> e.preventDefault()}
                             type="number"
-                            value={localConv}
-                            onChange={(e) => {
-                              setLocalConv(e.target.value);
-                            }}
+                            name="localConv"
+                            value={formData.localConv}
+                            onChange={handleFormChange}
                             fullWidth
                             label="LOCAL CONV"
                             size="small"
@@ -489,8 +486,8 @@ export default function UpdateForm({ editData }) {
                           <TextField
                             type="number"
                             name="distance"
-                            value={distance}
-                            onChange={(e) => setDistance(e.target.value)}
+                            value={formData.distance}
+                            onChange={handleFormChange}
                             fullWidth
                             label="ONE SIDE KM"
                             size="small"

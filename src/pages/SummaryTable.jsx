@@ -18,7 +18,6 @@ import { useSelector } from "react-redux";
 import { post } from "../utils/api";
 import toast, { Toaster } from "react-hot-toast";
 
-
 export default function SummaryTable() {
   
   const { data } = useSelector((state) => state.login.data);
@@ -41,13 +40,20 @@ export default function SummaryTable() {
   });
 
   const filterEmpName = filteredSummery?.map((data) => ({
-    // empId: data.empId,
+    empId: data.empId,
     name: data.name,
   }));
 
-  const filterSummery = summeryDetails?.map((item, index) => ({
-    ...item,
-    ...filterEmpName[index],
+  // Create a mapping of empId to empName from array2
+  const empIdToEmpNameMap = {};
+  filterEmpName?.forEach((obj) => {
+    empIdToEmpNameMap[obj.empId] = obj.name;
+  });
+
+  // Filter array1 and add empName from array2
+  const filteredArray1 = summeryDetails?.map((obj) => ({
+    ...obj,
+    empName: empIdToEmpNameMap[obj.empId] || "Unknown",
   }));
 
   const handleChangeRowsPerPage = (event) => {
@@ -69,6 +75,7 @@ export default function SummaryTable() {
   };
 
   const approveHandler = async (empId) => {
+    
     let approvedata = {
       empId: empId,
       month,
@@ -79,7 +86,6 @@ export default function SummaryTable() {
     try {
       const res = await post("/web/approval", approvedata);
       if (res.data.status === 200) {
-        // toast.success(res.data.data);
         setApprovalRefresh((prev) => !prev);
       }
     } catch (error) {
@@ -116,7 +122,12 @@ export default function SummaryTable() {
           <Table stickyHeader aria-label="sticky table" ref={tableRef}>
             <TableHead>
               <TableRow
-                sx={{ '&:last-child td, &:last-child th': {padding:'8px', fontWeight:'bold' } }}
+                sx={{
+                  "&:last-child td, &:last-child th": {
+                    padding: "8px",
+                    fontWeight: "bold",
+                  },
+                }}
               >
                 <TableCell>EmpId</TableCell>
                 <TableCell>Emp Name</TableCell>
@@ -129,7 +140,7 @@ export default function SummaryTable() {
                 <TableCell>Total Deducation</TableCell>
                 <TableCell>Amount Paid</TableCell>
                 <TableCell>Approved Amount</TableCell>
-                <TableCell>Last Updated</TableCell>
+                {/* <TableCell>Last Updated</TableCell> */}
                 {data.empGroup === "level6" ? (
                   <TableCell>Lock Expense</TableCell>
                 ) : (
@@ -146,7 +157,7 @@ export default function SummaryTable() {
                 </>
               ) : (
                 <>
-                  {filterSummery
+                  {filteredArray1
                     ?.slice(
                       page * rowsPerPage,
                       page * rowsPerPage + rowsPerPage
@@ -155,7 +166,7 @@ export default function SummaryTable() {
                       return (
                         <TableRow hover key={index}>
                           <TableCell>{row.empId}</TableCell>
-                          <TableCell>{row.name}</TableCell>
+                          <TableCell>{row.empName}</TableCell>
                           <TableCell>{row.sum_dailyConv}</TableCell>
                           <TableCell>{row.sum_travel}</TableCell>
                           <TableCell>{row.sum_internet}</TableCell>
@@ -165,7 +176,7 @@ export default function SummaryTable() {
                           <TableCell>{row.sum_AMT_DEDUCTED}</TableCell>
                           <TableCell>{row.AMT_PAID}</TableCell>
                           <TableCell>{row.sum_AMT_APPROVED}</TableCell>
-                          <TableCell>{row.lastUpdate}</TableCell>
+                          {/* <TableCell>{row.lastUpdate}</TableCell> */}
                           {data.empGroup === "level6" ? (
                             <TableCell>
                               <Button
@@ -189,7 +200,14 @@ export default function SummaryTable() {
                 </>
               )}
 
-              <TableRow sx={{ '&:last-child td, &:last-child th': {padding:'8px', fontWeight:'bold' } }}>
+              <TableRow
+                sx={{
+                  "&:last-child td, &:last-child th": {
+                    padding: "8px",
+                    fontWeight: "bold",
+                  },
+                }}
+              >
                 <TableCell></TableCell>
                 <TableCell>Grand Total</TableCell>
                 <TableCell>{summeryTotal?.TOTAL_daily}</TableCell>
