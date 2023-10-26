@@ -138,12 +138,17 @@ export const EmployeeTable = () => {
       data={data?.empGroup === "level3" ? empData : filterData}
       enableColumnActions={false}
       enableColumnFilters={false}
-      enablePagination={false}
+      enablePagination={true}
       enableSorting={false}
-      enableBottomToolbar={false}
+      enableBottomToolbar={true}
       enableTopToolbar
       state={{isLoading: isLoading}}
       muiTableBodyRowProps={{ hover: false }}
+      muiTablePaginationProps={{
+        rowsPerPageOptions: [5, 10, 20, 30, 50, 70, 100],
+        showFirstButton: false,
+        showLastButton: false,
+      }}
       renderTopToolbarCustomActions={() => (
         <>
          

@@ -1,7 +1,9 @@
 import ExpenceTable from "../component/expence/ExpenceTable";
 
 const ExpenceTables = () => {
-  return <ExpenceTable />;
+  return <div className="mt-3">
+    <ExpenceTable />
+  </div>
 };
 
 export default ExpenceTables;

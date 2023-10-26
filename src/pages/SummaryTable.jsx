@@ -227,7 +227,7 @@ export default function SummaryTable() {
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
-          count={5}
+          count={filteredArray1?.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

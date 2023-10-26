@@ -1,21 +1,21 @@
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Typography, Paper, Box } from "@mui/material";
-import { get, scoreSummaryGet } from '../utils/api';
+import { get, scoreSummaryGet } from "../utils/api";
 
 const Card = ({ month, year }) => {
-  
+
   const { data } = useSelector((state) => state.login.data);
   const [scoreData, setScoreData] = useState(null);
   const [score, setScore] = useState(null);
   const [saleTargetLY, setSaleTargetLY] = useState(null);
   const [saleTargetTY, setSaleTargetTY] = useState(null);
 
-  const getScore = async()=> {
-      const res = await get('/web/score', data.empId, month, year);
-      setScoreData(res.data_score);
-      console.log("res: ", res.data_score);
-  }
+  const getScore = async () => {
+    const res = await get("/web/score", data.empId, month, year);
+    setScoreData(res.data_score);
+    console.log("res: ", res.data_score);
+  };
 
   const fetchScoreCardData = async () => {
     const res = await scoreSummaryGet(
@@ -29,10 +29,10 @@ const Card = ({ month, year }) => {
     setSaleTargetTY(res.sale_target_TY);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchScoreCardData();
     getScore();
-  }, [month, year])
+  }, [month, year]);
 
   return (
     <Box
@@ -44,7 +44,7 @@ const Card = ({ month, year }) => {
           width: "100%",
           height: "100%",
         },
-      }} 
+      }}
     >
       <Paper
         className="p-4"
@@ -68,7 +68,7 @@ const Card = ({ month, year }) => {
           <Typography>SALE</Typography>
           <Typography>{scoreData?.sale_sum}</Typography>
         </Box>
-       
+
         <Box className="flex items-center flex-col justify-center w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
           <Typography>WORKIGN DAYS</Typography>
           <Typography>{scoreData?.workingDays}</Typography>
@@ -101,42 +101,60 @@ const Card = ({ month, year }) => {
 
         <Box className="flex items-center flex-col justify-center  bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
           <Typography>AVERAGES HOURS</Typography>
-          <Typography>{Math.round(scoreData?.wHr_sum/scoreData?.workingDays).toFixed(2)}</Typography>
+          <Typography>
+            {Math.round(scoreData?.wHr_sum / scoreData?.workingDays).toFixed(2)}
+          </Typography>
         </Box>
 
         <Box className="flex items-center justify-center  flex-col w-40 bg-teal-700 p-3 rounded">
           <Typography>AVG TC</Typography>
-          <Typography>{Math.round(scoreData?.tc_sum/scoreData?.workingDays).toFixed(2)}</Typography>
+          <Typography>
+            {Math.round(scoreData?.tc_sum / scoreData?.workingDays).toFixed(2)}
+          </Typography>
         </Box>
 
         <Box className="flex items-center justify-center flex-col w-40 bg-purple-500 p-3 rounded">
           <Typography>AVG PC</Typography>
-          <Typography>{Math.round(scoreData?.pc_sum/scoreData?.workingDays).toFixed(2)}</Typography>
+          <Typography>
+            {Math.round(scoreData?.pc_sum / scoreData?.workingDays).toFixed(2)}
+          </Typography>
         </Box>
 
         <Box className="flex items-center justify-center flex-col w-40 bg-rose-500 p-3 rounded">
           <Typography>POSTER</Typography>
           <Typography>{scoreData?.poster}</Typography>
         </Box>
-        
+
         <Box className="flex items-center justify-center flex-col w-40 bg-rose-500 p-3 rounded">
           <Typography>AVG POSTER</Typography>
-          <Typography>{Math.round(scoreData?.poster / scoreData?.workingDays).toFixed(2)}</Typography>
+          <Typography>
+            {Math.round(scoreData?.poster / scoreData?.workingDays).toFixed(2)}
+          </Typography>
         </Box>
-       
+
         <Box className="flex items-center justify-center flex-col w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
           <Typography>INDEX</Typography>
-          <Typography>{parseFloat((saleTargetTY?.kgsum * 100)/saleTargetTY?.tgsum).toFixed(2)}</Typography>
+          <Typography>
+            {parseFloat(
+              (saleTargetTY?.kgsum * 100) / saleTargetTY?.tgsum
+            ).toFixed(2)}
+          </Typography>
         </Box>
 
         <Box className="flex items-center justify-center flex-col w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
           <Typography>GROWTH</Typography>
-          <Typography>{parseFloat((saleTargetTY?.kgsum * 100)/saleTargetLY?.kgsum).toFixed(2)}</Typography>
+          <Typography>
+            {parseFloat(
+              (saleTargetTY?.kgsum * 100) / saleTargetLY?.kgsum
+            ).toFixed(2)}
+          </Typography>
         </Box>
 
         <Box className="flex items-center justify-center flex-col w-40 bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded">
           <Typography>GAP KG</Typography>
-          <Typography>{Math.round(saleTargetLY?.kgsum - saleTargetTY?.kgsum)}</Typography>
+          <Typography>
+            {Math.round(saleTargetLY?.kgsum - saleTargetTY?.kgsum)}
+          </Typography>
         </Box>
       </Paper>
     </Box>
@@ -144,4 +162,3 @@ const Card = ({ month, year }) => {
 };
 
 export default Card;
- 

@@ -4,18 +4,22 @@ import {
   styled,
   Toolbar,
   useMediaQuery,
-  useTheme
+  useTheme,
 } from "@mui/material";
 import ProfilePopover from "./popovers/PopoversProfile";
+import { MonthDropDown, YearDropDown } from "../component/Dropdown";
+import { DateTimeContext } from "../context/dateTimeContext";
+import { useContext } from "react";
 
 // custom styled components
 const DashboardNavbarRoot = styled(AppBar)(() => ({
   zIndex: 11,
   boxShadow: "none",
   paddingTop: "1rem",
-  paddingBottom: "1rem",
+  paddingBottom: "0.5rem",
   backdropFilter: "blur(6px)",
-  backgroundColor: "transparent",
+  backgroundColor: "#fff",
+  borderBottom: "1px solid black",
 }));
 
 const StyledToolBar = styled(Toolbar)(() => ({
@@ -35,12 +39,10 @@ const ToggleIcon = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
 }));
 
-
-const DashboardNavbar = ({
-  setShowMobileSideBar,
-}) => {
-  const theme = useTheme()
+const DashboardNavbar = ({ setShowMobileSideBar }) => {
+  const theme = useTheme();
   const downSm = useMediaQuery(theme.breakpoints.down("sm"));
+  const { month, setMonth, year, setYear } = useContext(DateTimeContext);
 
   if (downSm) {
     return (
@@ -65,10 +67,20 @@ const DashboardNavbar = ({
   return (
     <DashboardNavbarRoot position="sticky">
       <StyledToolBar>
-        <h1
-        >
-          Expense
-        </h1>
+        {downSm ? (
+          <>
+            <h1 className="text-cyan-600 font-bold">Expense</h1>
+          </>
+        ) : (
+          <Box className="flex">
+            <Box>
+              <MonthDropDown label="Month" month={month} setMonth={setMonth} />
+            </Box>
+            <Box>
+              <YearDropDown label="Year" year={year} setYear={setYear} />
+            </Box>
+          </Box>
+        )}
 
         <Box flexGrow={1} ml={1} />
 
