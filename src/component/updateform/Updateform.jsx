@@ -30,7 +30,6 @@ import toast from "react-hot-toast";
 
 export default function UpdateForm({ editData }) {
   const BASE_URL = "http://64.227.141.209:8080";
-
   const navigate = useNavigate();
   const { state } = useLocation();
   const { data } = useSelector((state) => state.login.data);
@@ -53,6 +52,7 @@ export default function UpdateForm({ editData }) {
   const [stationaryBillFile, setStationaryBillFile] = useState(null);
   const [otherBillFile, setOtherBillFile] = useState(null);
   const [empId, setEmpId] = useState(null);
+  const [localConv, setLocalConv] = useState(Number(editData?.distance) * 2 * 2)
 
   const [distancePreview, setDistancePreview] = useState(
     `${BASE_URL}${editData.distanceFile}`
@@ -104,8 +104,12 @@ export default function UpdateForm({ editData }) {
       ...prev,
       [event.target.name]: event.target.value,
     }));
+    if(event.target.name === "distance"){
+      setLocalConv(Number(event.target.value) *2 *2)
+      setFormData((prev) => ({...prev, localConv: Number(event.target.value) *2 *2}))
+    }
   };
-
+ 
   async function UpdateData(updatedata) {
     const id = state?.emp === "emp" ? state?.empId : data.empId;
 
@@ -399,9 +403,9 @@ export default function UpdateForm({ editData }) {
                       }
                     />
 
-                    {distance <= 100 ? (
+                    {formData.distance <= 100 ? (
                       <p className="text-lg flex items-center justify-center border-gray-200 w-full bg-slate-100">
-                        LocalConv: {distance * 2 * 2}
+                        LocalConv: {localConv}
                       </p>
                     ) : (
                       <TextField

@@ -413,7 +413,7 @@ const ExpenceTable = () => {
                                 )}
                               </td>
                               <td className="text-center">{data.dailyConv}</td>
-                              <td className="text-center">{data.localConv}</td>
+                              <td className="text-center">{data.distance > 100 ? data.localConv : Number(data.distance) * 4}</td>
                               <td className="text-center">
                                 {data.travelingLong}
                               </td>
